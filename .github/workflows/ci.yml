@@ -31,7 +31,7 @@ jobs:
         # Clones the repo, so your job can access it
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
           # It should match the one specified in Dockerfile, to avoid unexpected errors
           node-version: 22.13.1
