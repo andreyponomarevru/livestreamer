@@ -1,0 +1,14 @@
+.auth-page {
+  display: flex;
+  flex-flow: column nowrap;
+
+  align-content: stretch;
+  justify-content: stretch;
+  align-items: center;
+  width: 100%;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+
+  display: flex;
+  align-self: center;
+}

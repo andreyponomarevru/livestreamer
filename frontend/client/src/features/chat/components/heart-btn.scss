@@ -1,0 +1,44 @@
+.heart-btn {
+  display: flex;
+  //justify-content: center;
+  align-items: center;
+
+  border: none;
+  // padding: 0.3rem 0.5rem 0.2rem 0.5rem;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: transparent;
+  //transition: background-color 1s ease-out;
+
+  &_disabled {
+    cursor: none;
+    pointer-events: none;
+  }
+
+  &_disabled &__icon {
+    fill: var(--color_brand_gray-50);
+    cursor: none;
+    pointer-events: none;
+  }
+
+  // enable ':hover' only on non-touch devices
+  @media (hover: hover) and (pointer: fine) {
+    &:hover &__icon {
+      fill: red;
+    }
+  }
+
+  &__icon {
+    width: 2em;
+    height: 2rem;
+    padding: 0;
+    margin: 0;
+
+    background: none;
+    fill: #aa0500;
+
+    &:active {
+      fill: #aa0500;
+    }
+  }
+}

@@ -1,0 +1,9 @@
+.form-error {
+  display: flex;
+  border-radius: var(--border_radius_btn);
+  text-align: left;
+  padding: 0.5rem 0.7rem;
+  font-size: var(--font-size_sm);
+
+  margin-top: 0.5rem;
+}

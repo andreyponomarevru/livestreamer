@@ -1,0 +1,242 @@
+/*
+ * Global vars
+ */
+
+:root {
+  /*
+   * Typography
+   */
+
+  /* font-family 
+  (Open Sans is added via Google Fonts as a web font in index.html header( */
+  --font-stack_sans: "Open Sans", Helvetica, Arial, Tahoma, Verdana, sans-serif;
+
+  --font-size_root: 15px;
+  --font-size_xs: 0.7rem;
+  --font-size_sm: 0.87rem;
+  --font-size_lg: 1.2rem;
+  --font-size_xl: 1.4rem;
+
+  --font-size_h1: 3.052rem;
+  --font-size_h2: 2.441rem;
+  --font-size_h3: 1.953rem;
+  --font-size_h4: 1.563rem;
+  --font-size_h5: 1.25rem;
+  --font-size_h6: 1rem;
+
+  --line-height_xs: 1.1;
+  --line-height_sm: 1.3;
+  --line-height_md: 1.5;
+  --line-height_lg: 1.7;
+  --line-height_xl: 1.9;
+  --line-height_xxl: 2.1;
+
+  /* 
+   * Colors 
+   */
+
+  --color_black-100: #000000;
+  --color_black-80: #4d4d4d;
+  --color_black-60: #666666;
+  --color_black-50: #999999;
+  --color_black-40: #b3b3b3;
+  --color_black-30: #cccccc;
+  --color_black-20: #e6e6e6;
+  --color_black-10: #f2f2f2;
+
+  --color_charcoal-100: #141b1f;
+  --color_charcoal-90: #1f282e;
+  --color_charcoal-80: #33434d;
+  --color_charcoal-70: #3d505c;
+  --color_charcoal-60: #5c778a;
+  --color_charcoal-50: #859dad;
+  --color_charcoal-40: #a3b6c2;
+  --color_charcoal-30: #c2ced6;
+  --color_charcoal-20: #e0e7eb;
+  --color_charcoal-10: #f0f3f5;
+
+  --color_blue-60: #0083e2;
+  --color_blue-40: #66bfff;
+  --color_blue-30: #b3dfff;
+  --color_blue-20: #cce9ff;
+  --color_blue-10: #e6f4ff;
+
+  --color_green-80: #2c5432;
+  --color_green-60: #3e7546;
+  --color_green-20: #c4e0c8;
+  --color_green-10: #eef6ef;
+
+  --color_yellow-70: #996600;
+  --color_yellow-50: #ffaa00;
+  --color_yellow-20: #ffd480;
+  --color_yellow-10: #ffeecc;
+
+  --color_red-60: #cc0000;
+  --color_red-50: #e60000;
+  --color_red-40: #ff2a2a;
+  --color_red-30: #ff9999;
+  --color_red-20: #ffcccc;
+  --color_red-10: #ffe6e6;
+
+  --color_brand: var(--color_red-50);
+  --color_text-primary: var(--color_charcoal-90);
+  --color_link: var(--color_blue-60);
+
+  --color_success: var(--color_green-60);
+  --color_warning: var(--color_yellow-50);
+  --color_danger: var(--color_red-40);
+  --color_info: var(--color_blue-60);
+  --color_disabled: var(--color_black-30);
+
+  /* */
+
+  --form__box-shadow_state_initial: 0 0 0 0.2rem hsl(0, 0, 88%);
+  --form__border_state_initial: 1px solid var(--color_gray);
+
+  --form__box-shadow_state_success: 0 0 0 0.2rem #4caf50;
+  --form__border_state_success: 1px solid var(--color_success);
+
+  --form__box-shadow_state_danger: 0 0 0 0.2rem #f26b6b;
+  --form__border_state_danger: 1px solid var(--color_danger);
+
+  /* 
+   * Media quaries 
+   */
+
+  --screen-xs: 360px;
+
+  /* 
+   * Z-indexes 
+   */
+
+  --zindex-dropdown: 1000;
+  --zindex-sticky: 1020;
+  --zindex-fixed: 1030;
+  --zindex-modal-backdrop: 1040;
+  --zindex-modal: 1050;
+  --zindex-popover: 1060;
+  --zindex-tooltip: 1070;
+
+  /* 
+   * Misc
+   */
+
+  --border_radius_controls-primary: 6px;
+  --border_radius_blocks-primary: 12px;
+}
+
+/*
+ *
+ */
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/*
+ * Global classes
+ */
+
+/* Layout */
+
+.layout {
+  height: 100%;
+
+  font-size: var(--font-size_root);
+
+  scroll-behavior: smooth;
+  background-attachment: fixed;
+}
+
+.layout__body {
+  position: relative;
+  min-height: 100%;
+  width: 100%;
+
+  margin: 0 auto;
+
+  font-family: var(--font-stack_sans);
+  color: var(--color_text-primary);
+  line-height: 1.5;
+
+  background-color: red;
+}
+
+/* Misc */
+
+.link {
+  color: white;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.default-icon {
+  box-sizing: border-box;
+  margin: 0;
+  /* Paths and strokes that overflow the viewBox can show in IE11. */
+  overflow: hidden;
+  transition:
+    fill 0.2s ease,
+    background-color 0.2s ease;
+  outline: none;
+  cursor: pointer;
+}

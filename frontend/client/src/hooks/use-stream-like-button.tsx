@@ -2,10 +2,10 @@ import * as React from "react";
 import { useNavigate } from "react-router";
 
 import { API_ROOT_URL } from "../config/env";
-import { ROUTES } from "../config/routes";
-import { useAuthN } from "./use-authn";
+import { PATHS } from "../app/routes";
 import { useFetch } from "./use-fetch";
-import { useStreamLikeCount } from "./use-stream-like-count";
+import { useStreamLikeCount } from "../features/stream/hooks/use-stream-like-count";
+import { type User } from "../types";
 
 type StreamLikeButton = {
   handleBtnClick: () => void;
@@ -13,10 +13,10 @@ type StreamLikeButton = {
   setIsBtnEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function useStreamLikeButton(): StreamLikeButton {
+function useStreamLikeButton(user: User | null): StreamLikeButton {
   function handleBtnClick() {
-    if (!auth.user) {
-      navigate(ROUTES.signIn);
+    if (!user) {
+      navigate(PATHS.signIn);
     } else {
       sendLikeBroadcastRequest(`${API_ROOT_URL}/stream/like`, {
         method: "PUT",
@@ -35,16 +35,18 @@ function useStreamLikeButton(): StreamLikeButton {
       resetState();
       setLikeCount((likeCount) => ++likeCount);
       setIsBtnEnabled(false);
-    } else if (likeBroadcastResponse.error?.status === 401) {
-      auth.setUser(null);
-      navigate(ROUTES.signIn);
+      // TODO
+      // was: } else if (likeBroadcastResponse.error?.status === 401) {
+      // so rewrite with RTQ to check the response status code
+      //} else if (likeBroadcastResponse.error === 401) {
+      //  auth.setUser(null);
+      //  navigate(ROUTES.signIn);
     } else if (likeBroadcastResponse.error) {
       console.error(likeBroadcastResponse.error);
     }
   }, [likeBroadcastResponse]);
 
   const navigate = useNavigate();
-  const auth = useAuthN();
 
   const [isBtnEnabled, setIsBtnEnabled] = React.useState(false);
 

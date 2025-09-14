@@ -1,0 +1,44 @@
+.menu {
+  position: absolute;
+  top: 3rem;
+  left: 0;
+  z-index: var(--zindex-dropdown);
+
+  background-color: var(--color_gray_darkest);
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  display: none;
+  list-style: none;
+  box-shadow: 0 1rem 1rem black;
+
+  &__link {
+    display: grid;
+    grid-template-areas: "Icon Text";
+    grid-auto-flow: column;
+    justify-content: flex-start;
+    column-gap: 1rem;
+    padding: 0.4rem 1rem 0.4rem 1rem;
+    align-items: center;
+
+    color: white;
+    text-decoration: none;
+
+    &:hover {
+      background-color: var(--color_brand_gray-80);
+    }
+  }
+
+  &_open {
+    display: grid;
+    width: 100%;
+    align-items: stretch;
+    align-content: stretch;
+
+    font-size: var(--font-size_h4);
+  }
+}
+
+// React Router v6 adds this class automatically to currently active route
+.active {
+  font-style: italic;
+}

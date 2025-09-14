@@ -21,6 +21,9 @@ COPY --chown=node:node package*.json ./
 #
 
 FROM base AS development
+# Install curl and ping for debugging
+#USER root
+#RUN apt-get update && apt-get install -y curl inetutils-ping
 USER node
 WORKDIR /home/node
 # Install all deps including development

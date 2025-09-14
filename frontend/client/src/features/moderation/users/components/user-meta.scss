@@ -1,0 +1,44 @@
+.user-meta {
+  overflow: hidden;
+
+  &__btn {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background-color: transparent;
+    color: var(--color_gray-light);
+    border: none;
+    border-bottom: 1px solid var(--color_gray_darken);
+    padding: 0.8rem 0.8rem;
+    text-align: left;
+
+    &:hover,
+    &:focus,
+    &:active {
+      background-color: var(--color_gray-darkest);
+    }
+  }
+
+  &__details {
+    display: grid;
+    row-gap: 0.5rem;
+    padding: 0.8rem 0.8rem;
+
+    border-bottom: 1px solid var(--color_gray_darken);
+  }
+
+  &__details-row {
+    display: grid;
+    grid-template-areas: "Key Value";
+    grid-template-columns: 5rem auto;
+    justify-content: space-between;
+  }
+
+  &__key {
+    color: var(--color_gray-dark);
+  }
+
+  &__value {
+    color: var(--color_gray-light);
+  }
+}

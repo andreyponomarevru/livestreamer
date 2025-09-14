@@ -1,0 +1,10 @@
+.text-input {
+  border: none;
+  background-color: var(--color_brand_gray-60);
+  color: var(--color_gray-lighten);
+  padding: 0.4rem 0.8rem;
+  outline-color: red;
+  min-width: 7rem;
+  height: 2.6rem;
+  border-radius: var(--border_radius_btn);
+}

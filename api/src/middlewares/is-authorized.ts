@@ -18,7 +18,7 @@ export function isAuthorized(
     logger.info(`${__filename}: Access "${resource}", action: "${action}"`);
 
     const authUser = req.session.authenticatedUser;
-    const permissions = authUser!.permissions[resource];
+    const permissions = authUser!.permissions?.[resource];
     const hasPermission = permissions && permissions.includes(action);
 
     if (!hasPermission) {

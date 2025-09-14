@@ -3,10 +3,10 @@ import { SanitizedUser } from "../../types";
 
 export function sanitizeUser(user: User): SanitizedUser {
   return {
-    uuid: user.uuid,
+    uuid: user.uuid || "",
     id: user.id,
-    email: user.email,
+    email: user.email || "",
     username: user.username,
-    permissions: user.permissions,
+    permissions: user.permissions || {},
   };
 }

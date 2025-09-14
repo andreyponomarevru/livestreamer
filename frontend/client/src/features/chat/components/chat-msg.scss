@@ -1,0 +1,81 @@
+.chat-msg {
+  display: grid;
+  grid-template-areas:
+    "Header Controls"
+    "Body   Controls";
+
+  font-size: 14px;
+  border-radius: var(--border_radius_block);
+  background-color: var(--color_gray-darkest);
+  padding: 1rem;
+  row-gap: 0.4rem;
+  column-gap: 0.6rem;
+
+  &__header {
+    grid-area: Header;
+
+    display: grid;
+    justify-content: space-between;
+    font-size: var(--font-size_sm);
+    justify-content: flex-start;
+  }
+
+  &__buttons {
+    grid-area: Controls;
+
+    width: 2.3rem;
+    display: grid;
+    row-gap: 0.7rem;
+    justify-self: flex-end;
+    justify-items: flex-end;
+    align-content: flex-end;
+  }
+
+  &__meta {
+    grid-area: Meta;
+
+    color: var(--color_brand_gray-20);
+    display: grid;
+    grid-template-areas: "Username Dot Timestamp";
+    column-gap: 0.4rem;
+    align-items: center;
+  }
+
+  &__username {
+    grid-area: Username;
+
+    color: var(--color_bleu);
+    justify-content: flex-start;
+    border-radius: 5px;
+  }
+
+  &__timestamp {
+    grid-area: Timestamp;
+
+    font-size: var(--font-size_xs);
+    color: var(--color_pink);
+  }
+
+  &__body {
+    grid-area: Body;
+
+    font-weight: normal;
+    color: var(--color_gray-lighten);
+    overflow: hidden;
+  }
+
+  &__like-box {
+    grid-auto-flow: column;
+    display: grid;
+    align-items: center;
+    column-gap: 0.2rem;
+  }
+
+  &__like-counter {
+    font-size: var(--font-size_xs);
+
+    &_liked {
+      color: white;
+    }
+  }
+}

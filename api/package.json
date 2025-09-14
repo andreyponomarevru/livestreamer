@@ -12,6 +12,8 @@
     "test:coverage": "jest --config=./jest.unit.config.json ./src --coverage",
     "test:clearjest": "jest --clearCache",
     "migrate": "DATABASE_URL=\"postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB\" node-pg-migrate --check-order --migrations-dir ./src/migrations --migration-filename-format utc --tsconfig ./tsconfig.json",
+    "migrate-fake-data": "DATABASE_URL=\"postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB\" node-pg-migrate --no-check-order --migrations-dir ./src/migrations/seed-with-fake-user-generated-data --migration-filename-format utc --tsconfig ./tsconfig.json",
+    "migrate-users": "DATABASE_URL=\"postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB\" node-pg-migrate --check-order --migrations-dir ./src/migrations/seed-users --migration-filename-format utc --tsconfig ./tsconfig.json",
     "//": "CI ****************************************************************",
     "": "",
     "ci:lint": "eslint ./src ./test-helpers ./tests-integration ./tests-e2e-api",

@@ -1,9 +1,17 @@
 import { useReducer } from "react";
 
-import { parseResponse } from "../utils/parse-response";
+import { parseResponse } from "../utils";
 import { useIsMounted } from "./use-is-mounted";
-import { handleResponseErr } from "../utils/handle-response-err";
-import { APIResponse } from "../types";
+import { handleResponseErr } from "../utils";
+import { type ParsedResponse } from "../utils";
+import type { APIError } from "../types";
+
+// TODO: delete this type:
+export interface APIResponse<Results> {
+  error: APIError | Error | null | unknown;
+  isLoading: boolean;
+  response: ParsedResponse<Results> | null;
+}
 
 type FetchInit = { type: "FETCH_INIT" };
 type FetchSuccess<T> = {
@@ -71,7 +79,7 @@ function useFetch<ResponseBody>(): {
     let res: Response;
 
     try {
-      res = await fetch(url, request);
+      res = await fetch(url, { ...request, credentials: "include" });
     } catch {
       if (isMounted) {
         dispatch({

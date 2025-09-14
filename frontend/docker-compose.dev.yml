@@ -1,4 +1,4 @@
-version: "3.7"   
+version: "3.7"
 
 services:
   client:
@@ -25,4 +25,4 @@ services:
 networks:
   default:
     external: true
-    name: livestreamer_backend
+    name: livestreamer_backend_dev

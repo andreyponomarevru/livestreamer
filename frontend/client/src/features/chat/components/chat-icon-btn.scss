@@ -1,0 +1,44 @@
+.chat-icon-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: none;
+  padding: 0;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 50%;
+  background: transparent;
+
+  &__text {
+    color: var(--color_gray-light);
+  }
+
+  &__icon {
+    width: 1.4rem;
+    height: 1.4rem;
+    padding: 0.1rem 0.2rem 0.2rem 0.2rem;
+    margin: 0;
+
+    background: none;
+
+    fill: var(--color_gray-dark);
+
+    &_active {
+      fill: white;
+    }
+
+    &:visited {
+      fill: var(--color_gray-light);
+    }
+
+    &:hover {
+      fill: white;
+    }
+
+    &:focus,
+    &:active {
+      fill: var(--color_gray);
+    }
+  }
+}

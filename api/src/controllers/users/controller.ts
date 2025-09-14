@@ -7,7 +7,7 @@ import { User } from "../../models/user/user";
 export const usersController = {
   readAllUsers: async function (
     req: Request,
-    res: Response<{ results: User[] }>,
+    res: Response<{ results: Omit<User, "password">[] }>,
     next: NextFunction,
   ): Promise<void> {
     try {
@@ -15,7 +15,9 @@ export const usersController = {
       const cachedData = await cacheService.get(cacheKey);
       if (cachedData) {
         logger.debug(`${__filename} Got cached data`);
-        res.status(200).json(cachedData as { results: User[] });
+        res
+          .status(200)
+          .json(cachedData as { results: Omit<User, "password">[] });
         return;
       }
 

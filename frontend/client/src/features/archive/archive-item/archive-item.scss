@@ -1,0 +1,83 @@
+.archive-item {
+  display: grid;
+  grid-template-areas:
+    "Meta1"
+    "Heading"
+    "Meta2"
+    /*"Description"*/
+    "Controls";
+  row-gap: 0.5rem;
+  padding: 1rem;
+  background-color: var(--color_brand_gray-60);
+  border-radius: var(--border_radius_block);
+
+  &__header {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+  }
+
+  &__meta1 {
+    grid-area: Meta1;
+
+    display: grid;
+    grid-template-areas: "Date Bookmark";
+    column-gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--font-size_sm);
+  }
+
+  &__meta2 {
+    grid-area: Meta2;
+
+    display: grid;
+    justify-content: flex-start;
+    grid-template-columns: auto auto;
+    column-gap: 1rem;
+  }
+
+  &__bookmark {
+    grid-area: Bookmark;
+  }
+
+  &__date {
+    grid-area: Date;
+    color: var(--color_gray);
+  }
+
+  &__listeners {
+    color: var(--color_gray);
+  }
+
+  &__hearts {
+    color: var(--color_gray);
+  }
+
+  &__count {
+    color: var(--color_gray-lighten);
+  }
+
+  &__heading {
+    grid-area: Heading;
+
+    font-size: var(--font-size_h4);
+    color: white;
+  }
+
+  &__description {
+    grid-area: Description;
+
+    padding: 0 0 1rem 0;
+  }
+
+  &__controls {
+    grid-area: Controls;
+
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    justify-content: flex-start;
+    align-items: center;
+    column-gap: 1rem;
+  }
+}

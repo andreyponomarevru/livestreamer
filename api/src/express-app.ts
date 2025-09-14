@@ -18,7 +18,8 @@ if (SHOULD_EXPRESS_TRUST_FIRST_PROXY) expressApp.set("trust proxy", 1);
 // authentication:
 const sessionParser = session(sessionConfig);
 
-expressApp.use(cors());
+expressApp.use(cors({ credentials: true, origin: true }));
+
 expressApp.use(sessionParser);
 expressApp.use((req, res, next) => {
   logger.debug(req.headers);
@@ -28,7 +29,7 @@ expressApp.use(morganLogger("combined", morganSettings));
 expressApp.use(express.json());
 expressApp.use(express.urlencoded({ extended: true }));
 expressApp.use(express.static(path.join(__dirname, "public")));
-expressApp.use("/", apiRouter);
+expressApp.use("/api/v1", apiRouter);
 // If request doesn't match the routes above, it is past to 404 error handler
 expressApp.use(handle404Error);
 expressApp.use(handleErrors);

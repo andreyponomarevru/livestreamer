@@ -1,5 +1,4 @@
 import { RESOURCES, PERMISSIONS } from "./config/constants";
-import { ParsedResponse } from "./utils/parse-response";
 
 //
 // Forms
@@ -21,23 +20,17 @@ export type Credentials = {
 // API
 //
 
-export interface APIResponse<Results> {
-  error: APIError | Error | null;
-  isLoading: boolean;
-  response: ParsedResponse<Results> | null;
-}
+export type APIResponseSuccess<T> = { results: T };
+export type APIResponseError = {
+  status: number;
+  message: string;
+  moreInfo: string;
+};
+
 export type Permissions = {
-  [key in typeof RESOURCES[number]]?: typeof PERMISSIONS[number][];
+  [key in (typeof RESOURCES)[number]]?: (typeof PERMISSIONS)[number][];
 };
 export type APIError = { status: number; moreInfo: string; message: string };
-export type ScheduledBroadcastResponse = { results: ScheduledBroadcast[] };
-export type BroadcastResponse = { results: Broadcast[] };
-export type UserResponse = { results: User };
-export type UsersResponse = { results: User[] };
-export type ChatMessageResponse = { results: ChatMsg };
-export type ChatMsgsPageResponse = {
-  results: { nextCursor: string | null; messages: ChatMsg[] };
-};
 
 export interface ChatMsg {
   id: number;
@@ -55,7 +48,6 @@ export type ScheduledBroadcast = {
   endAt: string;
 };
 export type Broadcast = {
-  id: number;
   title: string;
   startAt: string;
   endAt: string;
@@ -72,6 +64,10 @@ export type User = {
   email: string;
   username: string;
   permissions: Permissions;
+  createdAt?: string;
+  lastLoginAt?: string | null;
+  isEmailConfirmed?: boolean;
+  isDeleted?: boolean;
 };
 export interface BroadcastDraft {
   id: number;
