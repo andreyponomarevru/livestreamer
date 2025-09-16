@@ -1,0 +1,165 @@
+.btn {
+  display: inline-flex;
+  flex-flow: row wrap;
+  column-gap: 0.5rem;
+  align-content: center;
+  justify-content: center;
+  padding: 0.2rem 1rem 0.4rem 1rem;
+  height: 2.6rem;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  text-decoration: none;
+  white-space: nowrap;
+  font-weight: 600;
+
+  border-radius: var(--border_radius_controls-primary);
+
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+  border: 1px solid transparent;
+
+  cursor: pointer;
+}
+
+.btn svg {
+  max-height: 80%;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.btn_theme_primary_disabled,
+.btn_theme_secondary_disabled,
+.btn_theme_tertiary_disabled,
+.btn_theme_quaternary_disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/*
+ * Primary
+ */
+
+.btn_theme_primary {
+  color: white;
+  background-color: var(--color_charcoal-90);
+}
+
+.btn_theme_primary:visited {
+  color: white;
+  background-color: var(--color_charcoal-90);
+}
+
+.btn_theme_primary:hover {
+  color: white;
+  background-color: var(--color_charcoal-70);
+}
+
+.btn_theme_primary:focus {
+  background-color: var(--color_charcoal-70);
+  outline: none;
+}
+
+.btn_theme_primary:active {
+  color: white;
+  background-color: var(--color_charcoal-70);
+}
+
+/*
+ * Secondary
+ */
+
+.btn_theme_secondary {
+  color: var(--color_charcoal-100);
+  background-color: white;
+  border-color: var(--color_charcoal-100);
+}
+
+.btn_theme_secondary:visited {
+  color: var(--color_charcoal-100);
+  background-color: white;
+  border-color: var(--color_charcoal-100);
+}
+
+.btn_theme_secondary:hover {
+  color: var(--color_charcoal-100);
+  background-color: var(--color_charcoal-10);
+  border-color: var(--color_charcoal-100);
+}
+
+.btn_theme_secondary:focus {
+  background-color: var(--color_charcoal-10);
+  outline: none;
+  border-color: var(--color_charcoal-100);
+}
+
+.btn_theme_secondary:active {
+  color: var(--color_charcoal-100);
+  background-color: var(--color_charcoal-10);
+  border-color: var(--color_charcoal-100);
+}
+
+/*
+ * Tertiary
+ */
+
+.btn_theme_tertiary {
+  color: var(--color_charcoal-100);
+  background-color: transparent;
+}
+
+.btn_theme_tertiary:visited {
+  color: var(--color_charcoal-100);
+  background-color: transparent;
+}
+
+.btn_theme_tertiary:hover {
+  color: var(--color_charcoal-60);
+  background-color: transparent;
+}
+
+.btn_theme_tertiary:focus {
+  background-color: transparent;
+  outline: none;
+}
+
+.btn_theme_tertiary:active {
+  color: var(--color_charcoal-60);
+  background-color: transparent;
+}
+
+/*
+ * Quaternary
+ */
+
+.btn_theme_quaternary {
+  color: white;
+  background-color: var(--color_red-40);
+}
+
+.btn_theme_quaternary:visited {
+  color: white;
+  background-color: var(--color_red-40);
+}
+
+.btn_theme_quaternary:hover {
+  color: white;
+  background-color: var(--color_red-50);
+}
+
+.btn_theme_quaternary:focus {
+  background-color: transparent;
+  outline: none;
+}
+
+.btn_theme_quaternary:active {
+  color: white;
+  background-color: transparent;
+}

@@ -1,29 +1,22 @@
 import * as React from "react";
 
-import "./btn.scss";
+import styles from "./btn.module.css";
+import { type CommonProps } from "./common-props";
 
-interface Props extends React.HTMLAttributes<HTMLSpanElement> {
+interface Props extends CommonProps, React.HTMLAttributes<HTMLSpanElement> {
   handleClick?: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
-  name: string;
-  theme: "white" | "red";
-  isLoading?: boolean;
 }
 
-function Btn(props: Props): React.ReactElement {
-  const className = `btn btn_theme_${props.theme} ${props.className || ""} ${
-    props.isLoading ? "btn_disabled" : ""
-  }`;
+export function Btn(props: Props): React.ReactElement {
+  const themeClass = styles[`btn_theme_${props.theme || "primary"}`];
+
+  const className = `${styles.btn} ${themeClass}  ${props.className || ""}`;
 
   return (
     <button
       onClick={props.handleClick ? props.handleClick : undefined}
       className={className}
       disabled={props.isLoading}
-    >
-      <span>{props.name}</span>
-      {props.isLoading && props.children}
-    </button>
+    ></button>
   );
 }
-
-export { Btn };
