@@ -2,14 +2,16 @@ import React from "react";
 
 import { PassResetBox } from "../features/current-user";
 
-import "./pass-reset-page.scss";
+import styles from "./pass-reset-page.module.css";
 
-function PassResetPage(): React.ReactElement {
+export function PassResetPage(): React.ReactElement {
   return (
-    <div className="pass-reset-page pass-reset-page_box">
+    <div
+      className={`${
+        styles["pass-reset-page"]
+      } ${styles["pass-reset-page_box"]}`}
+    >
       <PassResetBox />
     </div>
   );
 }
-
-export { PassResetPage };

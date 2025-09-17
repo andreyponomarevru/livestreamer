@@ -6,9 +6,9 @@ import { selectCurrentUserProfile } from "../features/current-user/current-user-
 import { useNavigate } from "react-router";
 import { PATHS } from "../app/routes";
 
-import "./auth-page.scss";
+import styles from "./auth-page.module.css";
 
-export function PagesAuth(): React.ReactElement | null {
+export function AuthPage(): React.ReactElement | null {
   const navigate = useNavigate();
   const user = useAppSelector(selectCurrentUserProfile);
 
@@ -17,7 +17,7 @@ export function PagesAuth(): React.ReactElement | null {
   }, [user, navigate]);
 
   return user ? null : (
-    <div className="auth-page">
+    <div className={styles["auth-page"]}>
       <AuthBox />
     </div>
   );

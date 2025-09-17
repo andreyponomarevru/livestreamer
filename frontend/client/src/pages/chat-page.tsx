@@ -9,13 +9,14 @@ import {
   useGetChatHistoryQuery,
   usePostNewMessageMutation,
 } from "../features/chat/chat-slice";
-import { Loader } from "../features/ui/loader/loader";
+import { Loader } from "../features/ui/loader/loader-component";
 import { useStreamStateWSEvent } from "../features/ws/hooks/use-stream-state-ws-event";
-
-import "./chat-page.scss";
 import { StreamBar } from "../features/stream";
+import { Navbar } from "../features/chat";
 
-function PagesChat(): React.ReactElement {
+import styles from "./chat-page.module.css";
+
+export function ChatPage(): React.ReactElement {
   const streamState = useStreamStateWSEvent(); // TODO: get from Redux
   const [postMessage] = usePostNewMessageMutation();
   const [deleteMessage] = useDeleteMessageMutation();
@@ -47,16 +48,21 @@ function PagesChat(): React.ReactElement {
   useDeleteMessageWSEvent(deleteMessage);
 
   return (
-    <div className="chat-page">
-      <StreamBar streamState={streamState} className="chat-page__stream" />
+    <div className={styles["chat-page"]}>
+      <Navbar />
 
-      <div className="chat-page__chat">
-        {isGetChatHistoryLoading && <Loader color="pink" />}
+      <StreamBar
+        streamState={streamState}
+        className={styles["chat-page__stream"]}
+      />
+
+      <div className={styles["chat-page__chat"]}>
+        {isGetChatHistoryLoading && <Loader />}
         {isGetChatHistoryError && (
           <div>Oops! Something went wrong. Please try again later.</div>
         )}
         {isGetChatHistorySuccess && (
-          <ul className="chat-page__messages-list">
+          <ul className={styles["chat-page__messages-list"]}>
             {sortedMessages?.map((msg) => (
               <ChatMsg
                 message={msg}
@@ -64,7 +70,7 @@ function PagesChat(): React.ReactElement {
                 handleDeleteMessage={deleteMessage}
               />
             ))}
-            <li className="scroll-to" ref={messagesEndRef} />
+            <li className={styles["scroll-to"]} ref={messagesEndRef} />
           </ul>
         )}
 
@@ -76,5 +82,3 @@ function PagesChat(): React.ReactElement {
     </div>
   );
 }
-
-export { PagesChat };

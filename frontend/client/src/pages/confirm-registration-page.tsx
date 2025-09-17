@@ -2,17 +2,17 @@ import * as React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import { useQuery } from "../hooks/use-query";
-import { Message } from "../features/ui/message/message";
+import { Message } from "../features/ui/message/message-component";
 import { API_ROOT_URL } from "../config/env";
-import { Loader } from "../features/ui/loader/loader";
+import { Loader } from "../features/ui/loader/loader-component";
 import { useIsMounted } from "../hooks/use-is-mounted";
 import { useFetch } from "../hooks/use-fetch";
-import { Help } from "../features/ui/help/help";
+import { Help } from "../features/ui/help/help-component";
 import { PATHS } from "../app/routes";
 import { useAppSelector } from "../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../features/current-user/current-user-slice";
 
-import "./confirm-registration-page.scss";
+import styles from "./confirm-registration-page.module.css";
 
 export function ConfirmRegistrationPage(): React.ReactElement {
   const navigate = useNavigate();
@@ -52,7 +52,7 @@ export function ConfirmRegistrationPage(): React.ReactElement {
   }, [isMounted, confirmSignUpResponse]);
 
   return (
-    <div className="confirm-registration-page">
+    <div className={styles["confirm-registration-page"]}>
       {isConfirmed === false && (
         <React.Fragment>
           <Message type="danger">{`Sorry, we couldn't verify your email :(`}</Message>
@@ -62,13 +62,13 @@ export function ConfirmRegistrationPage(): React.ReactElement {
 
       {isConfirmed === true && (
         <Message type="success">
-          <div className="circle circle_green page__circle">
+          <div className={styles["circle circle_green page__circle"]}>
             Done! Now, you can <NavLink to={PATHS.signIn}>log in</NavLink>.
           </div>
         </Message>
       )}
 
-      {confirmSignUpResponse.isLoading && <Loader color="pink" for="page" />}
+      {confirmSignUpResponse.isLoading && <Loader />}
     </div>
   );
 }

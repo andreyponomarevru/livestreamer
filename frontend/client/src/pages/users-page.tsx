@@ -1,25 +1,23 @@
 import * as React from "react";
 
-import { PageHeading } from "../features/ui/page-heading/page-heading";
+import { PageHeading } from "../features/ui/page-heading/page-heading-component";
 import { UserDetails } from "../features/moderation/users/components/user-details-component";
-import { Loader } from "../features/ui/loader/loader";
-import { Message } from "../features/ui/message/message";
+import { Loader } from "../features/ui/loader/loader-component";
+import { Message } from "../features/ui/message/message-component";
 import { useGetUsersQuery } from "../features/moderation/users/users-slice";
 
-import "./users-page.scss";
+import styles from "./users-page.module.css";
 
-function PagesUsers(): React.ReactElement {
+export function UsersPage(): React.ReactElement {
   const { data: users, isLoading, isError, error } = useGetUsersQuery();
 
   return (
-    <div className="users-page">
+    <div className={styles["users-page"]}>
       <PageHeading iconName="users" name="Users" />
 
-      {isLoading && <Loader color="pink" />}
+      {isLoading && <Loader />}
       {isError && <Message type="danger">{String(error)}</Message>}
       {users?.map((user) => <UserDetails {...user} key={user.id} />)}
     </div>
   );
 }
-
-export { PagesUsers };

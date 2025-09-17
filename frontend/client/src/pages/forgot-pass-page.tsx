@@ -6,9 +6,9 @@ import { PATHS } from "../app/routes";
 import { useAppSelector } from "../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../features/current-user/current-user-slice";
 
-import "./forgot-pass-page.scss";
+import styles from "./forgot-pass-page.module.css";
 
-function ForgotPassPage(): React.ReactElement {
+export function ForgotPassPage(): React.ReactElement {
   const navigate = useNavigate();
 
   const user = useAppSelector(selectCurrentUserProfile);
@@ -17,10 +17,8 @@ function ForgotPassPage(): React.ReactElement {
   });
 
   return (
-    <div className="forgot-pass-page">
+    <div className={styles["forgot-pass-page"]}>
       <ForgotPassBox />
     </div>
   );
 }
-
-export { ForgotPassPage };

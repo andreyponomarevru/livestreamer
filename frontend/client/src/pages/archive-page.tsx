@@ -1,17 +1,17 @@
 import * as React from "react";
 
 import { ArchiveItem } from "../features/archive/archive-item/archive-item";
-import { PageHeading } from "../features/ui/page-heading/page-heading";
+import { PageHeading } from "../features/ui/page-heading/page-heading-component";
 import { type APIResponseSuccess, type Broadcast } from "../types";
 import { useFetch } from "../hooks/use-fetch";
 import { API_ROOT_URL } from "../config/env";
-import { Loader } from "../features/ui/loader/loader";
+import { Loader } from "../features/ui/loader/loader-component";
 import { useIsMounted } from "../hooks/use-is-mounted";
-import { Message } from "../features/ui/message/message";
+import { Message } from "../features/ui/message/message-component";
 
-import "../features/ui/items-list/items-list.scss";
+import styles from "./archive-page.module.css";
 
-export function PagesArchive(): React.ReactElement {
+export function ArchivePage(): React.ReactElement {
   const isMounted = useIsMounted();
 
   const { state: broadcasts, fetchNow: sendGetBroadcastsRequest } =
@@ -36,10 +36,10 @@ export function PagesArchive(): React.ReactElement {
   //
 
   return (
-    <div className="archive-page archive-page_list">
+    <div className={`${styles["archive-page"]} ${styles["archive-page_list"]}`}>
       <PageHeading iconName="archive" name="Archive" />
 
-      {broadcasts.isLoading && <Loader for="page" color="pink" />}
+      {broadcasts.isLoading && <Loader />}
 
       {broadcasts.error && (
         <Message type="danger">Something went wrong :(</Message>

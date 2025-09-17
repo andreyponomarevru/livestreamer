@@ -4,6 +4,7 @@ export * from "./archive-page";
 export * from "./drafts-page";
 export * from "./events-page";
 export * from "./users-page";
+export * from "./landing-page";
 /* Auth-related pages: */
 export * from "./ask-to-confirm-registration-page";
 export * from "./auth-page";

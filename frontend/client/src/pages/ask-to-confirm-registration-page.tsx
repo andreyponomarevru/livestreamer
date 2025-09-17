@@ -5,7 +5,7 @@ import { PATHS } from "../app/routes";
 import { useAppSelector } from "../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../features/current-user/current-user-slice";
 
-import "./ask-to-confirm-registration-page.scss";
+import styles from "./ask-to-confirm-registration-page.module.css";
 
 export function AskToConfirmRegistrationPage(
   props: React.HTMLAttributes<HTMLDivElement>,
@@ -17,14 +17,14 @@ export function AskToConfirmRegistrationPage(
   }, []);
 
   return (
-    <div className="ask-to-confirm-registration-page page_box">
-      <h1 className="ask-to-confirm-registration-page__heading">
+    <div className={styles["ask-to-confirm-registration-page page_box"]}>
+      <h1 className={styles["ask-to-confirm-registration-page__heading"]}>
         Almost done.
         <br />
         Check your mailbox
       </h1>
 
-      <p className="confirm-registration-page__main">
+      <p className={styles["confirm-registration-page__main"]}>
         We have sent an email with a confirmation link to your email address. In
         order to complete the registration process, please click the
         confirmation link.

@@ -1,10 +1,7 @@
-import { FaCalendar } from "react-icons/fa6";
-import { BsFillVinylFill } from "react-icons/bs";
-import { FaShare } from "react-icons/fa";
 import { BsFillChatDotsFill } from "react-icons/bs";
 import { DjIcon } from "../features/ui/icons/dj";
-import { LinkBtn } from "../features/ui";
-import { FaLinux } from "react-icons/fa";
+import { LinkBtn } from "../features/ui/btn";
+import { FaCalendar, FaLinux, FaShare } from "../features/ui/icons";
 
 import styles from "./landing-page.module.css";
 

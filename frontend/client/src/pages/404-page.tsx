@@ -1,5 +1,5 @@
-import "./404-page.scss";
+import styles from "./404-page.module.css";
 
 export function Page404() {
-  return <div className="page-404">404</div>;
+  return <div className={styles["page-404"]}>404</div>;
 }

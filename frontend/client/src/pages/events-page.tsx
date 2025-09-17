@@ -1,14 +1,14 @@
 import * as React from "react";
 
 import { ScheduleForm } from "../features/event-scheduling/event-form/schedule-form-component";
-import { PageHeading } from "../features/ui";
+import { PageHeading } from "../features/ui/page-heading/page-heading-component";
 import { API_ROOT_URL } from "../config/env";
 import {
   type APIResponseSuccess,
   type ScheduledBroadcast as TScheduledBroadcast,
 } from "../types";
-import { Loader } from "../features/ui";
-import { Message } from "../features/ui";
+import { Loader } from "../features/ui/loader/loader-component";
+import { Message } from "../features/ui/message/message-component";
 import { ScheduledEvent } from "../features/event-scheduling/scheduled-event/scheduled-event-component";
 import { hasPermission } from "../utils";
 import { useAppSelector } from "../hooks/redux-ts-helpers";
@@ -16,11 +16,9 @@ import { selectCurrentUserProfile } from "../features/current-user";
 import { useFetch } from "../hooks/use-fetch";
 import { useIsMounted } from "../hooks/use-is-mounted";
 
-import "../features/ui/btn/btn.scss";
-import "../features/ui/items-list/items-list.scss";
-import "./events-page.scss";
+import styles from "./events-page.module.css";
 
-function PagesSchedule(): React.ReactElement {
+export function SchedulePage(): React.ReactElement {
   const user = useAppSelector(selectCurrentUserProfile);
   const { state: broadcasts, fetchNow: sendBroadcastsRequest } =
     useFetch<APIResponseSuccess<TScheduledBroadcast[]>>();
@@ -61,17 +59,17 @@ function PagesSchedule(): React.ReactElement {
   //
 
   return (
-    <div className="events-page">
+    <div className={styles["events-page"]}>
       <PageHeading iconName="calendar" name="Schedule" />
 
-      <div className="events-page__timezone">Moscow Time (GMT+3)</div>
+      <div className={styles["events-page__timezone"]}>Moscow Time (GMT+3)</div>
 
       {hasPermission(
         { resource: "scheduled_broadcast", action: "create" },
         user,
       ) && <ScheduleForm />}
 
-      {broadcasts.isLoading && <Loader color="pink" for="page" />}
+      {broadcasts.isLoading && <Loader />}
 
       {broadcasts.error && (
         <Message type="danger">Something went wrong :(</Message>
@@ -94,5 +92,3 @@ function PagesSchedule(): React.ReactElement {
     </div>
   );
 }
-
-export { PagesSchedule };

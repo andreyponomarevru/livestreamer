@@ -1,0 +1,28 @@
+.ask-to-confirm-registration-page {
+  max-width: 320px;
+  text-align: center;
+
+  padding: 1rem;
+  display: grid;
+  grid-auto-flow: row;
+  row-gap: 1rem;
+
+  display: flex;
+  align-self: center;
+  align-items: center;
+}
+
+.ask-to-confirm-registration-page__heading {
+  font-size: var(--font-size_h4);
+  color: var(--color_success);
+  font-weight: bold;
+}
+
+.ask-to-confirm-registration-page__main {
+  color: white;
+}
+
+.ask-to-confirm-registration-page_box {
+  display: flex;
+  align-self: center;
+}

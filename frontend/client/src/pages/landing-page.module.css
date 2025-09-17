@@ -127,10 +127,10 @@
   font-weight: 600;
 
   text-decoration: none;
-  color: var(--color_charcoal-50);
+  color: var(--color_charcoal-70);
 }
 .download-box__item:visited {
-  color: var(--color_charcoal-50);
+  color: var(--color_charcoal-70);
 }
 .download-box__item:hover {
   color: var(--color_charcoal-100);

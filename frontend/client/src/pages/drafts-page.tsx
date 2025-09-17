@@ -1,17 +1,16 @@
 import * as React from "react";
 import { ArchiveItem } from "../features/archive/archive-item/archive-item";
-import { PageHeading } from "../features/ui/page-heading/page-heading";
+import { PageHeading } from "../features/ui/page-heading/page-heading-component";
 import { type BroadcastDraft } from "../types";
 import { API_ROOT_URL } from "../config/env";
-import { Loader } from "../features/ui/loader/loader";
-import { Message } from "../features/ui/message/message";
+import { Loader } from "../features/ui/loader/loader-component";
+import { Message } from "../features/ui/message/message-component";
 
-import "../features/ui/items-list/items-list.scss";
-import "./drafts-page.scss";
+import styles from "./drafts-page.module.css";
 
 function useQuery(arg: any) {}
 
-function PagesDrafts(
+export function DraftsPage(
   props: React.HTMLAttributes<HTMLDivElement>,
 ): React.ReactElement {
   const drafts = useQuery({
@@ -43,10 +42,10 @@ function PagesDrafts(
   //
 
   return (
-    <div className="drafts-page">
+    <div className={styles["drafts-page"]}>
       <PageHeading iconName="archive" name="Drafts" />
 
-      {drafts.isLoading && <Loader for="page" color="pink" />}
+      {drafts.isLoading && <Loader />}
 
       {drafts.isError && (
         <Message type="danger">Something went wrong :(</Message>
@@ -70,5 +69,3 @@ function PagesDrafts(
     </div>
   );
 }
-
-export { PagesDrafts };

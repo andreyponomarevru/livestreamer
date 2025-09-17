@@ -8,10 +8,10 @@
   width: 100%;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+}
 
-  &_list {
-    display: grid;
-    align-content: flex-start;
-    padding-bottom: 1rem;
-  }
+.archive-page_list {
+  display: grid;
+  align-content: flex-start;
+  padding-bottom: 1rem;
 }
