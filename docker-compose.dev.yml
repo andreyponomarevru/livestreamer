@@ -7,7 +7,7 @@ services:
       dockerfile: ./docker/Dockerfile
       # Should match the stage name in Dockerfile
       target: development
-    restart: always
+    restart: on-failure
     healthcheck:
       test: "curl --fail http://localhost:5000"
       interval: 5s
@@ -73,6 +73,7 @@ services:
     build:
       context: ./redis
       dockerfile: ./docker/Dockerfile
+    restart: on-failure
     healthcheck:
       test: "redis-cli --raw incr ping"
       interval: 5s
@@ -90,6 +91,7 @@ services:
     build:
       context: ./rabbitmq
       dockerfile: ./docker/Dockerfile
+    restart: on-failure
     healthcheck:
       test: "curl --fail http://localhost:15672"
       interval: 30s
@@ -113,6 +115,6 @@ services:
       - livestreamer_backend_dev
 
 networks:
-  livestreamer_backend:
+  livestreamer_backend_dev:
     name: livestreamer_backend_dev
     driver: bridge

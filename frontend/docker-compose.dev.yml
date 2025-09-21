@@ -6,7 +6,7 @@ services:
     build:
       context: ./client
       dockerfile: ./docker/Dockerfile.dev
-    restart: always
+    restart: on-failure
     volumes:
       - ./client/:/client/
       # Take note of the volume. Without the anonymous volume
