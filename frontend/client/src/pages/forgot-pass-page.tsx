@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useNavigate } from "react-router-dom";
-import { ForgotPassBox } from "../features/current-user/components/forgot-pass/forgot-pass-box-component";
+import { PasswordRecovery } from "../features/current-user/components/password-recovery-component";
 import { PATHS } from "../app/routes";
 import { useAppSelector } from "../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../features/current-user/current-user-slice";
@@ -17,8 +17,8 @@ export function ForgotPassPage(): React.ReactElement {
   });
 
   return (
-    <div className={styles["forgot-pass-page"]}>
-      <ForgotPassBox />
-    </div>
+    <main className={styles["forgot-pass-page"]}>
+      <PasswordRecovery />
+    </main>
   );
 }

@@ -4,6 +4,7 @@ import { LinkBtn } from "../features/ui/btn";
 import { FaCalendar, FaLinux, FaShare } from "../features/ui/icons";
 
 import styles from "./landing-page.module.css";
+import { PATHS } from "../app/routes";
 
 function DownloadBox() {
   return (
@@ -31,7 +32,7 @@ export function LandingPage() {
       >
         Doc
       </LinkBtn>
-      <LinkBtn theme="quaternary" href="/signin">
+      <LinkBtn theme="quaternary" href={PATHS.signIn}>
         <DjIcon className={styles["landing-page__dj-icon"]} />
         Create live stream
       </LinkBtn>

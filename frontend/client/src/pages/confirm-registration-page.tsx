@@ -11,6 +11,7 @@ import { Help } from "../features/ui/help/help-component";
 import { PATHS } from "../app/routes";
 import { useAppSelector } from "../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../features/current-user/current-user-slice";
+import { PiSmileySad } from "../features/ui/icons";
 
 import styles from "./confirm-registration-page.module.css";
 
@@ -52,23 +53,31 @@ export function ConfirmRegistrationPage(): React.ReactElement {
   }, [isMounted, confirmSignUpResponse]);
 
   return (
-    <div className={styles["confirm-registration-page"]}>
-      {isConfirmed === false && (
-        <React.Fragment>
-          <Message type="danger">{`Sorry, we couldn't verify your email :(`}</Message>
-          <Help />
-        </React.Fragment>
-      )}
+    <main className={styles["confirm-registration-page"]}>
+      <div className={styles["confirm-registration-page__box"]}>
+        {isConfirmed === false && (
+          <React.Fragment>
+            <PiSmileySad
+              fill="var(--color_danger)"
+              className={styles["confirm-registration-page__icon"]}
+            />
+            <span className={styles["confirm-registration-page__message"]}>
+              Sorry, we couldn't verify your email
+            </span>
+            <Help />
+          </React.Fragment>
+        )}
 
-      {isConfirmed === true && (
-        <Message type="success">
-          <div className={styles["circle circle_green page__circle"]}>
-            Done! Now, you can <NavLink to={PATHS.signIn}>log in</NavLink>.
-          </div>
-        </Message>
-      )}
+        {isConfirmed === true && (
+          <Message type="success">
+            <div className={styles["circle circle_green page__circle"]}>
+              Done! Now, you can <NavLink to={PATHS.signIn}>log in</NavLink>.
+            </div>
+          </Message>
+        )}
 
-      {confirmSignUpResponse.isLoading && <Loader />}
-    </div>
+        {confirmSignUpResponse.isLoading && <Loader />}
+      </div>
+    </main>
   );
 }

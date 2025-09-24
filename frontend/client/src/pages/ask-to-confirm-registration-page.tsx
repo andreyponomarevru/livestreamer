@@ -17,23 +17,25 @@ export function AskToConfirmRegistrationPage(
   }, []);
 
   return (
-    <div className={styles["ask-to-confirm-registration-page page_box"]}>
-      <h1 className={styles["ask-to-confirm-registration-page__heading"]}>
-        Almost done.
-        <br />
-        Check your mailbox
-      </h1>
+    <main className={styles["ask-to-confirm-registration-page"]}>
+      <div className={styles["ask-to-confirm-registration-page__box"]}>
+        <h1 className={styles["ask-to-confirm-registration-page__heading"]}>
+          Almost done.
+          <br />
+          Check your mailbox
+        </h1>
 
-      <p className={styles["confirm-registration-page__main"]}>
-        We have sent an email with a confirmation link to your email address. In
-        order to complete the registration process, please click the
-        confirmation link.
-      </p>
+        <p>
+          We have sent an email with a confirmation link to your email address.
+          In order to complete the registration process, please click the
+          confirmation link.
+        </p>
 
-      <p>
-        If you do not receive a confirmation email, please check your spam
-        folder.
-      </p>
-    </div>
+        <p>
+          If you do not receive a confirmation email, please check your spam
+          folder.
+        </p>
+      </div>
+    </main>
   );
 }

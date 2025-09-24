@@ -3,6 +3,7 @@
   flex-flow: column nowrap;
   row-gap: 1rem;
   width: 100%;
+  max-width: var(--max-width);
   height: 100%;
   padding: 4rem 0 2rem 0;
 

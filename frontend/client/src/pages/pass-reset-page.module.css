@@ -1,31 +1,32 @@
 .pass-reset-page {
   display: flex;
   flex-flow: column nowrap;
-
   align-content: stretch;
-  justify-content: stretch;
+  justify-content: center;
   align-items: center;
   width: 100%;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  height: 100%;
+  padding: 0 0.5rem;
 
-  &__heading {
-    display: flex;
-    justify-content: center;
+  background-color: white;
+}
 
-    color: white;
-    font-weight: 800;
-    font-size: var(--font-size_xl);
-  }
+.pass-reset-page__heading {
+  display: flex;
+  justify-content: center;
 
-  &_box {
-    display: flex;
-    align-self: center;
-  }
+  color: white;
+  font-weight: 800;
+  font-size: var(--font-size_xl);
+}
 
-  &_list {
-    display: grid;
-    align-content: flex-start;
-    padding-bottom: 1rem;
-  }
+.pass-reset-page_box {
+  display: flex;
+  align-self: center;
+}
+
+.pass-reset-page_list {
+  display: grid;
+  align-content: flex-start;
+  padding-bottom: 1rem;
 }

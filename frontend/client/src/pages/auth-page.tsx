@@ -1,6 +1,6 @@
 import React from "react";
 
-import { AuthBox } from "../features/current-user";
+import { AuthToggle } from "../features/current-user";
 import { useAppSelector } from "../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../features/current-user/current-user-slice";
 import { useNavigate } from "react-router";
@@ -17,8 +17,8 @@ export function AuthPage(): React.ReactElement | null {
   }, [user, navigate]);
 
   return user ? null : (
-    <div className={styles["auth-page"]}>
-      <AuthBox />
-    </div>
+    <main className={styles["auth-page"]}>
+      <AuthToggle />
+    </main>
   );
 }
