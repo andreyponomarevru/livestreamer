@@ -3,11 +3,11 @@ import React from "react";
 import { useForm } from "react-hook-form";
 
 import { inputRules, type InputTypes } from "../../../config/input-rules";
-import { Btn } from "../btn/btn";
-import { Loader } from "../loader/loader";
+import { Btn } from "../btn/btn-component";
+import { Loader } from "../loader/loader-component";
 import { useIsMounted } from "../../../hooks/use-is-mounted";
 import { useFetch } from "../../../hooks/use-fetch";
-import { FormError } from "../form-error/form-error";
+import { FormError } from "../form-error/form-error-component";
 
 export function TracklistForm() {
   const {
@@ -64,12 +64,8 @@ export function TracklistForm() {
           {...register("tracklist", inputRules.tracklist)}
         />
 
-        <Btn
-          theme="white"
-          name="Save Tracklist"
-          isLoading={uploadTracklistResponse.isLoading}
-        >
-          <Loader for="btn" color="black" />
+        <Btn theme="primary" isLoading={uploadTracklistResponse.isLoading}>
+          Save Tracklist <Loader />
         </Btn>
       </div>
       {/* Use 'any' as temporarily fix for 'react-hook-form' error. 

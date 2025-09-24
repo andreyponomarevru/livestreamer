@@ -1,0 +1,28 @@
+.box {
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: var(--spacing_sm);
+  min-width: 280px;
+  max-width: 320px;
+
+  border-radius: var(--border_radius_blocks-primary);
+  border: 1px solid var(--color_charcoal-20);
+  padding: var(--spacing_ml);
+}
+
+.box__header {
+  display: grid;
+  grid-auto-flow: column;
+
+  max-width: var(--content-max-width);
+  width: 100%;
+  text-align: center;
+
+  margin: 0 auto;
+  padding: 0 1rem;
+
+  font-size: var(--font-size_h4);
+  color: var(--color_charcoal-100);
+  font-weight: bold;
+  line-height: 1;
+}

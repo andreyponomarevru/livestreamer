@@ -1,0 +1,27 @@
+.message {
+  border-radius: var(--border_radius_block);
+  padding: var(--spacing_sm) var(--spacing_m);
+  border-radius: var(--border_radius_blocks-primary);
+
+  font-size: var(--font-size_root);
+}
+
+.message_warning {
+  color: var(--color_black);
+  background-color: var(--color_brown-10);
+}
+
+.message_success {
+  color: var(--color_success);
+  background-color: var(--color_green-10);
+}
+
+.message_info {
+  color: var(--color_info);
+}
+
+.message_danger {
+  color: var(--color_danger);
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size_root);
+}

@@ -1,6 +1,6 @@
-export function Help() {
+export function Help(props: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
-    <p className="help">
+    <p className={props.className}>
       Need help?{" "}
       <a href="mailto:info@andreyponomarev.ru" className="link">
         Contact us

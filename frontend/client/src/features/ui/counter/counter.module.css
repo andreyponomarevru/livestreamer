@@ -4,15 +4,15 @@
   column-gap: 0.4rem;
   align-items: center;
   color: white;
+}
 
-  &__icon {
-    pointer-events: none;
-  }
+.counter__icon {
+  pointer-events: none;
+}
 
-  &__number {
-  }
+.counter__number {
+}
 
-  &_disabled {
-    visibility: hidden;
-  }
+.counter_disabled {
+  visibility: hidden;
 }

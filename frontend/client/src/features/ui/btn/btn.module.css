@@ -152,14 +152,15 @@
 .btn_theme_quaternary:hover {
   color: white;
   background-color: var(--color_red-50);
+  border: none;
 }
 
 .btn_theme_quaternary:focus {
-  background-color: transparent;
+  background-color: var(--color_red-50);
   outline: none;
 }
 
 .btn_theme_quaternary:active {
   color: white;
-  background-color: transparent;
+  background-color: var(--color_red-50);
 }

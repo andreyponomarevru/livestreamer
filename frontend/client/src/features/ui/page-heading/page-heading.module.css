@@ -6,16 +6,16 @@
   justify-content: flex-start;
   align-items: center;
   width: 100%;
+}
 
-  &__icon {
-    pointer-events: none;
-  }
+.page-heading__icon {
+  pointer-events: none;
+}
 
-  &__heading {
-    grid-area: Heading;
+.page-heading__heading {
+  grid-area: Heading;
 
-    font-weight: bold;
-    color: white;
-    font-size: var(--font-size_lg);
-  }
+  font-weight: bold;
+  color: white;
+  font-size: var(--font-size_lg);
 }

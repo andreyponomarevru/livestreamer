@@ -2,9 +2,10 @@ import React from "react";
 
 import { usePlayer } from "../../stream/hooks/use-player";
 import { API_ROOT_URL } from "../../../config/env";
+import { FaCirclePlay, FaCirclePause } from "../icons";
 
 import icons from "../../../assets/icons.svg";
-import "./play-toggle-btn.scss";
+import styles from "./play-toggle-btn.module.css";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   isStreamOnline: boolean;
@@ -17,14 +18,20 @@ export function PlayToggleBtn(props: Props): React.ReactElement {
     <button
       id="playstream"
       disabled={!props.isStreamOnline}
-      className={`play-toggle-btn ${
-        props.isStreamOnline ? "" : "play-toggle-btn_disabled"
+      className={`${styles["play-toggle-btn"]} ${
+        props.isStreamOnline ? "" : styles["play-toggle-btn_disabled"]
       }`}
       onClick={togglePlay}
     >
-      <svg className="play-toggle-btn__icon default-icon">
-        <use href={`${icons}#${isPlaying ? "pause" : "play"}`} />
-      </svg>
+      {isPlaying ? (
+        <FaCirclePause
+          className={`${styles["play-toggle-btn__icon"]} default-icon`}
+        />
+      ) : (
+        <FaCirclePlay
+          className={`${styles["play-toggle-btn__icon"]} default-icon`}
+        />
+      )}
     </button>
   );
 }

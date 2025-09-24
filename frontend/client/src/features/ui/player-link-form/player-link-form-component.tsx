@@ -2,13 +2,13 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 
 import { inputRules, type InputTypes } from "../../../config/input-rules";
-import { Btn } from "../btn/btn";
-import { FormError } from "../form-error/form-error";
-import { Loader } from "../loader/loader";
+import { Btn } from "../btn/btn-component";
+import { FormError } from "../form-error/form-error-component";
+import { Loader } from "../loader/loader-component";
 import { useIsMounted } from "../../../hooks/use-is-mounted";
 import { useFetch } from "../../../hooks/use-fetch";
 
-function PlayerLinkForm() {
+export function PlayerLinkForm() {
   const {
     register,
     handleSubmit,
@@ -60,13 +60,12 @@ function PlayerLinkForm() {
           {...register("playerLink", inputRules.playerLink)}
         />
 
-        <Btn theme="white" name="Save Link">
-          <Loader for="btn" color="black" />
+        <Btn theme="primary">
+          Save Link
+          <Loader />
         </Btn>
       </div>
       {errors.playerLink && <FormError>{errors.playerLink.message}</FormError>}
     </form>
   );
 }
-
-export { PlayerLinkForm };
