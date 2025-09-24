@@ -8,7 +8,11 @@ import {
   selectCurrentUserProfile,
   useSignOutMutation,
 } from "../../../../current-user";
-import { HiOutlineLogout } from "../../../../ui/icons";
+import {
+  HiOutlineLogout,
+  FaCircleUser,
+  IoIosArrowForward,
+} from "../../../../ui/icons";
 import { PATHS } from "../../../../../app/routes";
 
 import styles from "./menu.module.css";
@@ -32,17 +36,35 @@ export function Menu(props: Props): React.ReactElement {
   if (user) {
     return (
       <ul
-        className={`${styles.menu} ${props.isOpen ? styles["menu_open"] : ""}`}
+        className={`${styles["menu"]} ${props.isOpen ? styles["menu_open"] : ""}`}
       >
+        <li className={styles["menu__item"]}>
+          <div className={styles["menu__user-box"]}>
+            {(user as any).avatar || (
+              <FaCircleUser className={styles["menu__avatar"]} />
+            )}
+            <div className={styles["menu__user-meta-box"]}>
+              <p className={styles["menu__username"]}>{user.username}</p>
+              <a
+                className={styles["menu__tip-link"]}
+                href={`/${user.username}`}
+              >
+                Open profile
+              </a>
+            </div>
+          </div>
+        </li>
+
         {!!user && (
-          <li>
+          <li className={styles["menu__item"]}>
             <NavLink
-              className={styles.menu__link}
+              className={styles["menu__link"]}
               end
               to={PATHS.private.settings}
               onClick={undefined /*item.onClick ? item.onClick : undefined*/}
             >
-              Settings
+              <span>Settings</span>
+              <IoIosArrowForward />
             </NavLink>
           </li>
         )}
@@ -52,9 +74,9 @@ export function Menu(props: Props): React.ReactElement {
             { resource: "all_user_accounts", action: "read" },
             user,
           ) && (
-            <li>
+            <li className={styles["menu__item"]}>
               <NavLink
-                className={styles.menu__link}
+                className={styles["menu__link"]}
                 end
                 to={PATHS.private.streams}
               >
@@ -64,9 +86,9 @@ export function Menu(props: Props): React.ReactElement {
           )}
 
         {!!user && (
-          <li>
+          <li className={styles["menu__item"]}>
             <NavLink
-              className={styles.menu__link}
+              className={styles["menu__link"]}
               end
               to={PATHS.private.adminDashboard}
               onClick={handleSignOut}
@@ -77,29 +99,15 @@ export function Menu(props: Props): React.ReactElement {
         )}
 
         {!!user && (
-          <li>
-            <NavLink className={styles.menu__link} end to={PATHS.signIn}>
-              <HiOutlineLogout />
-              Log Out
+          <li className={styles["menu__item"]}>
+            <NavLink className={styles["menu__link"]} end to={PATHS.signIn}>
+              <div>
+                <HiOutlineLogout className={styles["menu__icon"]} />
+                <span>Log Out</span>
+              </div>
             </NavLink>
           </li>
         )}
-
-        {/*item.hasPermission ? (
-          <li>
-            <NavLink
-              className={styles.menu__link}
-              end
-              to={item.to}
-              onClick={item.onClick ? item.onClick : undefined}
-            >
-              {item.icon}
-
-              {item.text}
-            </NavLink>
-          </li>
-        ) : null;
-*/}
       </ul>
     );
   } else {

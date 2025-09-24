@@ -8,6 +8,7 @@ import { selectCurrentUserProfile } from "../../../current-user";
 import { Logo } from "../logo";
 
 import styles from "./navbar.module.css";
+import { PATHS } from "../../../../app/routes";
 
 export function Navbar(): React.ReactElement {
   const location = useLocation();
@@ -28,16 +29,16 @@ export function Navbar(): React.ReactElement {
 
   return (
     <nav
-      className={`${styles.navbar} ${isDarkState ? styles.navbar_light : styles.navbar_dark}`}
+      className={`${styles["navbar"]} ${isDarkState ? styles["navbar_light"] : styles["navbar_dark"]}`}
     >
       {isDarkState ? (
-        <Link to="/" className={styles.navbar__logo}>
+        <Link to="/" className={styles["navbar__logo"]}>
           <Logo />
         </Link>
       ) : (
         <Link
-          to={user ? "/account" : "/signin"}
-          className={styles.navbar__user}
+          to={user ? PATHS.private.settings : PATHS.signIn}
+          className={styles["navbar__user"]}
         >
           <FaCircleUser
             color="white"
@@ -47,7 +48,7 @@ export function Navbar(): React.ReactElement {
         </Link>
       )}
 
-      <button onClick={toggleMenu} className={styles.navbar__btn}>
+      <button onClick={toggleMenu} className={styles["navbar__btn"]}>
         {isOpen ? (
           <RxCross1
             color={isDarkState ? "var(--color_charcoal-100)" : "white"}
