@@ -1,0 +1,57 @@
+.menu {
+  position: absolute;
+  top: 3rem;
+  right: 1rem;
+  z-index: var(--zindex-dropdown);
+
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  display: none;
+  list-style: none;
+
+  background-color: white;
+}
+
+.menu__link {
+  display: grid;
+  grid-template-areas: "Icon Text";
+  grid-auto-flow: column;
+  justify-content: flex-start;
+  column-gap: 1rem;
+  padding: 0.4rem 1rem 0.4rem 0;
+  align-items: center;
+
+  text-decoration: none;
+}
+
+.menu__link:hover {
+  background-color: var(--color_brand_gray-80);
+}
+
+.menu_open {
+  display: grid;
+  width: auto;
+  padding: var(--spacing_ml);
+
+  border-radius: var(--border_radius_blocks-primary);
+  box-shadow: 0 0 1rem var(--color_charcoal-20);
+  background-color: white;
+}
+.menu_open li {
+  font-size: var(--font-size_h4);
+}
+
+@media (max-width: 500px) {
+  .menu_open {
+    width: 100vw;
+    height: 100vh;
+    top: 3rem;
+    right: 0;
+    left: 0;
+  }
+}
+
+/* React Router v6 adds this class automatically to currently active route */
+.active {
+  font-style: italic;
+}
