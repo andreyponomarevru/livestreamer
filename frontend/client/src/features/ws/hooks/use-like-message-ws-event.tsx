@@ -3,13 +3,13 @@ import * as React from "react";
 import { useWebSocketEvents } from "./use-websocket-events";
 import { type ChatMsgLike } from "../../../types";
 
-function useLikeMessageWSEvent(
+export function useLikeMessageWSEvent(
   messageId: number,
-  setLikes: React.Dispatch<React.SetStateAction<Set<number>>>
+  setLikes: React.Dispatch<React.SetStateAction<Set<number>>>,
 ) {
   const likeEvent = useWebSocketEvents<ChatMsgLike | null>(
     "chat:liked_message",
-    null
+    null,
   );
   React.useEffect(() => {
     if (likeEvent && messageId === likeEvent.messageId) {
@@ -17,5 +17,3 @@ function useLikeMessageWSEvent(
     }
   }, [likeEvent, messageId, setLikes]);
 }
-
-export { useLikeMessageWSEvent };

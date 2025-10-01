@@ -1,0 +1,36 @@
+.share-stream-modal {
+  display: flex;
+  flex-flow: row nowrap;
+  width: 100%;
+
+  align-items: center;
+}
+
+.share-stream-modal__input {
+  border-radius: var(--border_radius_m) 0 0 var(--border_radius_m);
+}
+
+.share-stream-modal__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  padding: var(--spacing_xs);
+  margin: 0;
+  border: none;
+  background-color: var(--color_charcoal-10);
+  height: 2.6rem;
+  border-radius: 0 var(--border_radius_m) var(--border_radius_m) 0;
+}
+
+.share-stream-modal__btn:hover {
+  background-color: var(--color_charcoal-10);
+  border: none;
+  outline: none;
+}
+
+.share-stream-modal__btn-icon {
+  height: 100%;
+  width: auto;
+  fill: var(--color_charcoal-100);
+}

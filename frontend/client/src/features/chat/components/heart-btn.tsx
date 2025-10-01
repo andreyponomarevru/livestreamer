@@ -7,13 +7,13 @@ import { useAppSelector } from "../../../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../../current-user/current-user-slice";
 
 import icons from "./../../../assets/icons.svg";
-import "./heart-btn.scss";
+import styles from "./heart-btn.module.css";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   isStreamOnline: boolean;
 }
 
-function HeartBtn(props: Props): React.ReactElement {
+export function HeartBtn(props: Props): React.ReactElement {
   const isMounted = useIsMounted();
 
   const user = useAppSelector(selectCurrentUserProfile);
@@ -36,8 +36,8 @@ function HeartBtn(props: Props): React.ReactElement {
   return (
     <button
       disabled={!isBtnEnabled}
-      className={`heart-btn ${
-        isBtnEnabled && props.isStreamOnline ? "" : "heart-btn_disabled"
+      className={`${styles["heart-btn"]} ${
+        isBtnEnabled && props.isStreamOnline ? "" : styles["heart-btn_disabled"]
       } ${props.className || ""}`}
       onClick={
         isBtnEnabled && props.isStreamOnline ? handleBtnClick : undefined
@@ -46,7 +46,7 @@ function HeartBtn(props: Props): React.ReactElement {
       name="heart"
       value=""
     >
-      <svg className="heart-btn__icon default-icon">
+      <svg className={styles["heart-btn__icon default-icon"]}>
         <use href={`${icons}#heart`} />
         <animate
           begin="click"
@@ -60,5 +60,3 @@ function HeartBtn(props: Props): React.ReactElement {
     </button>
   );
 }
-
-export { HeartBtn };

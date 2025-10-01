@@ -11,7 +11,7 @@ import { useUnlikeMessageWSEvent } from "../../ws/hooks/use-unlike-message-ws-ev
 import { useAppSelector } from "../../../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../../current-user/current-user-slice";
 
-import "./chat-msg.scss";
+import styles from "./chat-msg.module.css";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   handleDeleteMessage: (msg: { messageId: number; userId: number }) => void;
@@ -28,27 +28,29 @@ export function ChatMsg(props: Props): React.ReactElement {
 
   const { likes, toggleLike, setLikes, isLiked } = useMessageLikeToggle(
     user,
-    props.message.likedByUserId
+    props.message.likedByUserId,
   );
 
   useLikeMessageWSEvent(props.message.id, setLikes);
   useUnlikeMessageWSEvent(props.message.id, setLikes);
 
   return (
-    <li className={`chat-msg ${props.className || ""}`}>
-      <div className="chat-msg__header">
-        <span className="chat-msg__meta">
-          <span className="chat-msg__username">{props.message.username}</span>
+    <li className={`${styles["chat-msg"]} ${props.className || ""}`}>
+      <div className={styles["chat-msg__header"]}>
+        <span className={styles["chat-msg__meta"]}>
+          <span className={styles["chat-msg__username"]}>
+            {props.message.username}
+          </span>
           <span>&#8226;</span>
-          <span className="chat-msg__timestamp">
+          <span className={styles["chat-msg__timestamp"]}>
             {new Date(props.message.createdAt).toLocaleTimeString()}
           </span>
         </span>
       </div>
 
-      <div className="chat-msg__body">{props.message.message}</div>
+      <div className={styles["chat-msg__body"]}>{props.message.message}</div>
 
-      <div className="chat-msg__buttons">
+      <div className={styles["chat-msg__buttons"]}>
         {hasPermissionToDelete && (
           <ChatIconBtn
             icon="trash-can"
@@ -60,10 +62,12 @@ export function ChatMsg(props: Props): React.ReactElement {
             }
           />
         )}
-        <div className="chat-msg__like-box">
+        <div className={styles["chat-msg__like-box"]}>
           <span
-            className={`chat-msg__like-counter ${
-              user && likes.has(user.id) ? "chat-msg__like-counter_liked" : ""
+            className={`${styles["chat-msg__like-counter"]} ${
+              user && likes.has(user.id)
+                ? styles["chat-msg__like-counter_liked"]
+                : ""
             }`}
           >
             {likes.size > 0 ? likes.size : null}

@@ -1,10 +1,9 @@
 import React from "react";
 
 import { Btn } from "../../../features/ui/btn";
-import { Loader } from "../../../features/ui/loader/loader";
+import { Loader } from "../../ui/loader/loader-component";
 
-import "../../../features/ui/btn/btn.scss";
-import "./schedule-form.scss";
+import styles from "./schedule-form.module.css";
 
 export function ScheduleForm(): React.ReactElement {
   const [startDate, setStartDate] = React.useState("");
@@ -52,15 +51,15 @@ export function ScheduleForm(): React.ReactElement {
   // set the min value of both inputs to current day/time
 
   return (
-    <form className="schedule-form">
-      <label htmlFor="broadcast-title"></label>
+    <form className={styles["schedule-form"]}>
+      <label className="form__label" htmlFor="broadcast-title"></label>
       <input
         id="broadcast-title"
         type="text"
         placeholder="Broadcast title"
         onChange={handleBroadcastTitleInput}
       />
-      <label htmlFor="broadcast-start">
+      <label className="form__label" htmlFor="broadcast-start">
         Choose a <em>start</em> time for your broadcast:
       </label>
       <input
@@ -80,12 +79,9 @@ export function ScheduleForm(): React.ReactElement {
         min="2020-06-07T00:00"
         onChange={handleDatetimeChange}
       />
-      <Btn
-        handleClick={(e) => handleScheduleBroadcast(e)}
-        theme="white"
-        name="Schedule Broadcast"
-      >
-        <Loader color="black" for="btn" />
+      <Btn handleClick={(e) => handleScheduleBroadcast(e)} theme="primary">
+        Schedule Broadcast
+        <Loader />
       </Btn>
     </form>
   );

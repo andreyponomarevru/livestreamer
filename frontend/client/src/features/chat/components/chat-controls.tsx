@@ -5,11 +5,10 @@ import { HeartBtn } from "./heart-btn";
 import { usePostNewMessageMutation } from "../chat-slice";
 import { useAppSelector } from "../../../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../../current-user";
-import { Message } from "../../ui/message";
+import { Message } from "../../ui/message/message-component";
+import { PATHS } from "../../../app/routes";
 
-import "./chat-controls.scss";
-import "../../ui/message/message.scss";
-
+import styles from "./chat-controls.module.css";
 import icons from "./../../../assets/icons.svg";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
@@ -17,7 +16,7 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
   isDisabled: boolean;
 }
 
-function ChatControls(props: Props): React.ReactElement {
+export function ChatControls(props: Props): React.ReactElement {
   const user = useAppSelector(selectCurrentUserProfile);
   const [msgInput, setMsgInput] = React.useState("");
 
@@ -52,14 +51,18 @@ function ChatControls(props: Props): React.ReactElement {
   }
 
   return (
-    <div className="chat-page__controls chat-page__controls_fixed">
+    <div
+      className={`${styles["chat-page__controls"]} ${
+        styles["chat-page__controls_fixed"]
+      }`}
+    >
       {user ? (
         <>
-          <form className="chat-controls" onSubmit={handleSubmit}>
-            <label htmlFor="chat-message" />
+          <form className={styles["chat-controls"]} onSubmit={handleSubmit}>
+            <label className="form__label" htmlFor="chat-message" />
             <input
               id="chat-message"
-              className="chat-controls__input"
+              className={styles["chat-controls__input"]}
               type="text"
               maxLength={500}
               minLength={1}
@@ -77,7 +80,9 @@ function ChatControls(props: Props): React.ReactElement {
               value=""
               disabled={isPostNewMsgLoading && props.isDisabled}
             >
-              <svg className="send-chat-msg-btn__icon default-icon">
+              <svg
+                className={`${styles["send-chat-msg-btn__icon"]} ${styles["default-icon"]}`}
+              >
                 <use href={`${icons}#arrow-right`} />
               </svg>
             </button>
@@ -86,7 +91,7 @@ function ChatControls(props: Props): React.ReactElement {
         </>
       ) : (
         <Message type="info">
-          <NavLink className="menu__link" end to="/signin">
+          <NavLink end to={PATHS.signIn}>
             Sign In to leave a message
           </NavLink>
         </Message>
@@ -94,5 +99,3 @@ function ChatControls(props: Props): React.ReactElement {
     </div>
   );
 }
-
-export { ChatControls };

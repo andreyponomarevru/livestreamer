@@ -5,7 +5,7 @@ import { PATHS } from "../app/routes";
 import { selectCurrentUserProfile } from "../features/current-user/current-user-slice";
 import { useAppSelector } from "./redux-ts-helpers";
 
-function useRedirectIfNotAuthenticated(): void {
+export function useRedirectIfNotAuthenticated(): void {
   const navigate = useNavigate();
   const user = useAppSelector(selectCurrentUserProfile);
 
@@ -14,5 +14,3 @@ function useRedirectIfNotAuthenticated(): void {
     else navigate(PATHS.root);
   }, [user, navigate]);
 }
-
-export { useRedirectIfNotAuthenticated };

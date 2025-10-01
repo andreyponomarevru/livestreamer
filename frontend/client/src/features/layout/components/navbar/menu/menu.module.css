@@ -1,25 +1,32 @@
 .menu {
-  position: absolute;
   top: 4rem;
-  right: 1rem;
-  z-index: var(--zindex-dropdown);
+  right: var(--spacing_xs);
   min-width: 290px;
-  display: none;
+}
+
+.menu__list {
   list-style: none;
-
-  background-color: white;
+  display: flex;
+  flex-flow: column nowrap;
 }
 
-.menu__item:not(:first-child) {
-  padding: 0 var(--spacing_xs);
+.menu__item {
+  padding: var(--spacing_m) 0;
+  margin: 0 var(--spacing_xs);
+  font-size: var(--font-size_h4);
 }
 
-.menu__item:nth-last-child(-n + 2) .menu__link {
+.menu__item:not(:last-child) {
+  border-bottom: 1px solid var(--color_charcoal-30);
+}
+
+.menu__extras {
   border-bottom: none;
-  padding-bottom: 0;
+  padding: var(--spacing_xs) var(--spacing_xs) 0 var(--spacing_xs);
+  font-size: var(--font-size_lg);
 }
 
-.menu__item:last-child .menu__link {
+.menu__item_small {
   font-size: var(--font-size_lg);
 }
 
@@ -28,13 +35,11 @@
   grid-template-areas: "Icon Text";
   align-items: center;
   justify-content: space-between;
-  column-gap: 1rem;
 
-  padding: var(--spacing_xs) 0;
-  border-bottom: 1px solid var(--color_charcoal-30);
   text-decoration: none;
   color: var(--color_charcoal-60);
-  line-height: 2.5;
+
+  line-height: 1;
 }
 
 .menu__link:visited {
@@ -59,7 +64,7 @@
   column-gap: var(--spacing_xs);
 
   padding: var(--spacing_xs);
-  border-radius: var(--border_radius_controls-primary);
+  border-radius: var(--border_radius_m);
   cursor: pointer;
 
   font-size: var(--font-size_root);
@@ -113,31 +118,78 @@
   padding-right: 1rem;
 }
 
+/* Opened state */
+
 .menu_open {
   display: block;
-  width: auto;
-  padding: var(--spacing_m);
 
-  border-radius: var(--border_radius_blocks-primary);
+  padding: var(--spacing_m);
+  border-radius: var(--border_radius_xxl);
   box-shadow: 0 0 1rem var(--color_charcoal-20);
   background-color: white;
-}
-.menu_open li {
-  font-size: var(--font-size_h4);
+  animation: fadeIn 0.2s forwards;
 }
 
 @media (max-width: 500px) {
   .menu_open {
-    width: 100vw;
+    width: 100%;
     height: 100vh;
-    top: 4rem;
+    top: var(--spacing_l);
     right: 0;
-    left: 0;
+
     box-shadow: none;
+    border-radius: 0;
+  }
+
+  /* 
+   * Submenu
+   */
+
+  .menu__submenu {
+    display: none;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
 /* React Router v6 adds this class automatically to currently active route */
 .active {
   font-style: italic;
+}
+
+/*
+ * Submenu 
+ */
+
+@media (max-width: 500px) {
+  .menu__submenu {
+    display: none;
+    list-style: none;
+    margin-top: var(--spacing_m);
+    /*opacity: 0;*/
+
+    z-index: calc(var(--zindex-dropdown) + 1);
+  }
+
+  .menu__submenu_open {
+    display: block;
+  }
+}
+
+.menu__submenu {
+  margin-top: var(--spacing_sm);
+  display: block;
+}
+
+.menu__submenu-item {
+  list-style-type: none;
+  font-size: var(--font-size_root);
+  padding: var(--spacing_xxs) var(--spacing_xxs) var(--spacing_xxs) 0;
 }

@@ -2,7 +2,7 @@ import * as React from "react";
 
 type Player = { isPlaying: boolean; togglePlay: () => void };
 
-function usePlayer(url: string): Player {
+export function usePlayer(url: string): Player {
   const [audio, setAudio] = React.useState<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = React.useState(false);
 
@@ -36,7 +36,5 @@ function usePlayer(url: string): Player {
 
   return { isPlaying, togglePlay };
 }
-
-export { usePlayer };
 
 //(audio && audio.readyState >= 3)

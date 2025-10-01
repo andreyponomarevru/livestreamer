@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../current-user/current-user-slice";
 import { useDeleteMessageMutation } from "./chat-slice";
 
-function useDeleteMessage() {
+export function useDeleteMessage() {
   const [deleteMessage, { isSuccess, isError }] = useDeleteMessageMutation();
 
   async function handleDeleteMessage(msg: {
@@ -14,11 +14,11 @@ function useDeleteMessage() {
   }) {
     const hasPermissionToDeleteAnyMsg = hasPermission(
       { resource: "any_chat_message", action: "delete" },
-      user
+      user,
     );
     const hasPermissionToDeleteOwnMsg = hasPermission(
       { resource: "user_own_chat_message", action: "delete" },
-      user
+      user,
     );
 
     if (hasPermissionToDeleteAnyMsg) {
@@ -46,5 +46,3 @@ function useDeleteMessage() {
 
   return handleDeleteMessage;
 }
-
-export { useDeleteMessage };

@@ -4,9 +4,9 @@ import { API_ROOT_URL } from "../../config/env";
 import { useFetch } from "../../hooks/use-fetch";
 import { type ChatMsg, type User } from "../../types";
 
-function useMessageLikeToggle(
+export function useMessageLikeToggle(
   user: User | null,
-  messageLikes: ChatMsg["likedByUserId"]
+  messageLikes: ChatMsg["likedByUserId"],
 ) {
   function isLiked(likes: Set<number>) {
     return !!user && likes.has(user.id);
@@ -43,5 +43,3 @@ function useMessageLikeToggle(
 
   return { likes, toggleLike, setLikes, isLiked };
 }
-
-export { useMessageLikeToggle };

@@ -1,0 +1,37 @@
+.ask-to-confirm-registration-page {
+  display: flex;
+  flex-flow: column nowrap;
+
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 0.5rem;
+
+  background-color: white;
+}
+
+.ask-to-confirm-registration-page__box {
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 1rem;
+  max-width: 320px;
+
+  text-align: center;
+
+  border: 1px solid var(--color_charcoal-20);
+  border-radius: var(--border_radius_xxl);
+  padding: var(--spacing_ml);
+}
+
+.ask-to-confirm-registration-page__heading {
+  font-size: var(--font-size_h4);
+  color: var(--color_success);
+  font-weight: 600;
+  line-height: var(--line-height_smg);
+}
+
+.ask-to-confirm-registration-page_box {
+  display: flex;
+  align-self: center;
+}

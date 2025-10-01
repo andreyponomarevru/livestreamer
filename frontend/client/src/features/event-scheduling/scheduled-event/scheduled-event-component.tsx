@@ -1,6 +1,6 @@
 import React from "react";
 
-import "./scheduled-event.scss";
+import styles from "./scheduled-event.module.css";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -10,10 +10,10 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 
 export function ScheduledEvent(props: Props): React.ReactElement {
   return (
-    <li className={`scheduled-event ${props.className || ""}`}>
-      <span className="scheduled-event__start">{props.startAt}</span>
+    <li className={`${styles["scheduled-event"]} ${props.className || ""}`}>
+      <span className={styles["scheduled-event__start"]}>{props.startAt}</span>
       <span>—</span>
-      <span className="scheduled-event__end">{props.endAt}</span>
+      <span className={styles["scheduled-event__end"]}>{props.endAt}</span>
     </li>
   );
 }

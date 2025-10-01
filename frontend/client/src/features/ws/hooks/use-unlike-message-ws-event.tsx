@@ -3,13 +3,13 @@ import * as React from "react";
 import { useWebSocketEvents } from "./use-websocket-events";
 import { type ChatMsgUnlike } from "../../../types";
 
-function useUnlikeMessageWSEvent(
+export function useUnlikeMessageWSEvent(
   messageId: number,
-  setLikes: React.Dispatch<React.SetStateAction<Set<number>>>
+  setLikes: React.Dispatch<React.SetStateAction<Set<number>>>,
 ) {
   const unlikeEvent = useWebSocketEvents<ChatMsgUnlike | null>(
     "chat:unliked_message",
-    null
+    null,
   );
   React.useEffect(() => {
     if (unlikeEvent && unlikeEvent.messageId === messageId) {
@@ -19,5 +19,3 @@ function useUnlikeMessageWSEvent(
 
   return unlikeEvent;
 }
-
-export { useUnlikeMessageWSEvent };

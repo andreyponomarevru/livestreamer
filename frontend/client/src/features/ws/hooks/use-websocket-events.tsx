@@ -4,9 +4,9 @@ import { WebSocketContext } from "../context";
 import { type WSMsgEvent } from "../../../types";
 import { useIsMounted } from "./../../../hooks/use-is-mounted";
 
-function useWebSocketEvents<State>(
+export function useWebSocketEvents<State>(
   event: WSMsgEvent,
-  initialState: State
+  initialState: State,
 ): State {
   const isMounted = useIsMounted();
   const ws = React.useContext(WebSocketContext);
@@ -28,5 +28,3 @@ function useWebSocketEvents<State>(
 
   return state;
 }
-
-export { useWebSocketEvents };

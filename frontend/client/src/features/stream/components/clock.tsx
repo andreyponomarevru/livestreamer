@@ -1,16 +1,20 @@
-import React, { ReactElement } from "react";
+import React from "react";
 
 import { useStreamTimer } from "../hooks/use-stream-timer";
 
-import "./clock.scss";
+import styles from "./clock.module.css";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   startAt: string;
   className?: string;
 }
 
-export function Clock(props: Props): ReactElement {
+export function Clock(props: Props) {
   const timePassed = useStreamTimer(props.startAt);
 
-  return <span className={`clock ${props.className}`}>{timePassed}</span>;
+  return (
+    <span className={`${styles["clock"]} ${props.className}`}>
+      {timePassed}
+    </span>
+  );
 }

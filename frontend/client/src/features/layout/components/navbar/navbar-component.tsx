@@ -10,6 +10,15 @@ import { Logo } from "../logo";
 import styles from "./navbar.module.css";
 import { PATHS } from "../../../../app/routes";
 
+const displayWhiteLocations = [
+  "/",
+  PATHS.private.settings.profile,
+  PATHS.private.settings.account,
+  PATHS.private.settings.notifications,
+  PATHS.private.adminDashboard,
+  PATHS.private.streams,
+];
+
 export function Navbar(): React.ReactElement {
   const location = useLocation();
   const user = useAppSelector(selectCurrentUserProfile);
@@ -25,44 +34,49 @@ export function Navbar(): React.ReactElement {
 
   const authedUser = "Chillout Aggregator";
 
-  const isDarkState = location.pathname === "/" || isOpen;
+  const isDarkState =
+    displayWhiteLocations.some((path) => path === location.pathname) || isOpen;
 
   return (
     <nav
       className={`${styles["navbar"]} ${isDarkState ? styles["navbar_light"] : styles["navbar_dark"]}`}
     >
-      {isDarkState ? (
-        <Link to="/" className={styles["navbar__logo"]}>
-          <Logo />
-        </Link>
-      ) : (
-        <Link
-          to={user ? PATHS.private.settings : PATHS.signIn}
-          className={styles["navbar__user"]}
-        >
-          <FaCircleUser
-            color="white"
-            className={styles["navbar__user-profile-icon"]}
-          />
-          {authedUser}
-        </Link>
-      )}
-
-      <button onClick={toggleMenu} className={styles["navbar__btn"]}>
-        {isOpen ? (
-          <RxCross1
-            color={isDarkState ? "var(--color_charcoal-100)" : "white"}
-            className={styles["navbar__menu-icon"]}
-          />
+      <div className={styles["navbar__wrapper"]}>
+        {isDarkState ? (
+          <Link to="/" className={styles["navbar__logo"]}>
+            <Logo />
+          </Link>
         ) : (
-          <RxHamburgerMenu
-            color={isDarkState ? "var(--color_charcoal-100)" : "white"}
-            className={styles["navbar__menu-icon"]}
-          />
+          <Link
+            to={user ? PATHS.private.settings : PATHS.signIn}
+            className={styles["navbar__user"]}
+          >
+            <FaCircleUser
+              color="white"
+              className={styles["navbar__user-profile-icon"]}
+            />
+            {authedUser}
+          </Link>
         )}
-      </button>
 
-      <Menu isOpen={isOpen} />
+        <nav className={styles["navbar__nested-nav"]}>
+          <button onClick={toggleMenu} className={styles["navbar__btn"]}>
+            {isOpen ? (
+              <RxCross1
+                color={isDarkState ? "var(--color_charcoal-100)" : "white"}
+                className={styles["navbar__menu-icon"]}
+              />
+            ) : (
+              <RxHamburgerMenu
+                color={isDarkState ? "var(--color_charcoal-100)" : "white"}
+                className={styles["navbar__menu-icon"]}
+              />
+            )}
+          </button>
+        </nav>
+
+        <Menu isOpen={isOpen} />
+      </div>
     </nav>
   );
 }

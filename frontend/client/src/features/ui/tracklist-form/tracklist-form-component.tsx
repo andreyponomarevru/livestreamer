@@ -55,7 +55,9 @@ export function TracklistForm() {
       onSubmit={handleSubmit(handleUploadTracklist, handleErrors)}
       onChange={handleChange}
     >
-      <label htmlFor="tracklist">Tracklist</label>
+      <label className="form__label" htmlFor="tracklist">
+        Tracklist
+      </label>
       <div className="archive-item-controls__grouped-btns">
         <input
           id="tracklist"

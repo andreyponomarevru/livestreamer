@@ -14,7 +14,7 @@ type Props = RouteProps & {
   children: React.ReactNode;
 };
 
-function ProtectedRoute(props: Props): React.ReactElement {
+export function ProtectedRoute(props: Props): React.ReactElement {
   const user = useAppSelector(selectCurrentUserProfile);
   const isAuthenticated = !!user;
 
@@ -39,5 +39,3 @@ function ProtectedRoute(props: Props): React.ReactElement {
 
   return <Navigate to={PATHS.root} />;
 }
-
-export { ProtectedRoute };

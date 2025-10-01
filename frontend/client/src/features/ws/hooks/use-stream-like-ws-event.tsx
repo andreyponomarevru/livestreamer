@@ -1,12 +1,10 @@
 import { useWebSocketEvents } from "./use-websocket-events";
 import { type SavedBroadcastLike } from "../../../types";
 
-function useStreamLikeWSEvent() {
+export function useStreamLikeWSEvent() {
   const streamLike = useWebSocketEvents<SavedBroadcastLike | null>(
     "stream:like",
-    null
+    null,
   );
   return streamLike;
 }
-
-export { useStreamLikeWSEvent };

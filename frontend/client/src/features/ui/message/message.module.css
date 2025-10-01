@@ -1,7 +1,7 @@
 .message {
-  border-radius: var(--border_radius_block);
+  border-radius: var(--border_radius_xxl);
   padding: var(--spacing_sm) var(--spacing_m);
-  border-radius: var(--border_radius_blocks-primary);
+  border-radius: var(--border_radius_xxl);
 
   font-size: var(--font-size_root);
 }

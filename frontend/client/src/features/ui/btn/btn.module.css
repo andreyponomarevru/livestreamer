@@ -13,7 +13,7 @@
   white-space: nowrap;
   font-weight: 600;
 
-  border-radius: var(--border_radius_controls-primary);
+  border-radius: var(--border_radius_m);
 
   transition:
     transform 0.2s ease,

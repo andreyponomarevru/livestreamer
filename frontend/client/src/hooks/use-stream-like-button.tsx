@@ -13,7 +13,7 @@ type StreamLikeButton = {
   setIsBtnEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function useStreamLikeButton(user: User | null): StreamLikeButton {
+export function useStreamLikeButton(user: User | null): StreamLikeButton {
   function handleBtnClick() {
     if (!user) {
       navigate(PATHS.signIn);
@@ -52,5 +52,3 @@ function useStreamLikeButton(user: User | null): StreamLikeButton {
 
   return { handleBtnClick, isBtnEnabled, setIsBtnEnabled };
 }
-
-export { useStreamLikeButton };

@@ -1,57 +1,68 @@
 import {
-  PagesAccount,
-  PagesArchive,
-  PagesAuth,
-  PagesDrafts,
-  PagesChat,
-  PagesSchedule,
+  ArchivePage,
+  AuthPage,
+  DraftsPage,
+  ChatPage,
   ForgotPassPage,
   AskToConfirmRegistrationPage,
   ConfirmRegistrationPage,
   PassResetPage,
-  PagesUsers,
+  UsersPage,
+  LandingPage,
+  NotificationsPage,
+  AccountPage,
+  ProfilePage,
 } from "../pages";
 import { ProtectedRoute } from "../features/protected-route/protected-route";
 
 export const PATHS = {
   root: "/",
+
+  signIn: "/signin",
+  register: "/register",
   confirmationRequired: "/confirmation-required",
   passwordReset: "/password-reset",
   forgotPassword: "/forgot-pass",
   confirmRegistration: "/confirm-registration",
-  events: "/events",
-  archive: "/archive",
-  signIn: "/signin",
-  register: "/register",
-  drafts: "/drafts",
-  account: "/account",
-  users: "/users",
+
+  public: {
+    streams: "/username/streams",
+    about: "/usernmae/about",
+    listen: "/username/listen",
+  },
+
+  private: {
+    settings: {
+      profile: "/settings/profile",
+      account: "/settings/account",
+      notifications: "/settings/notifications",
+    },
+
+    streams: "/streams",
+
+    adminDashboard: "/admin-dashboard",
+  },
 };
 
 export const ROUTES = [
-  { path: PATHS.root, element: <PagesChat /> },
+  { path: PATHS.root, element: <LandingPage /> },
+
+  { path: PATHS.public.listen, element: <ChatPage /> },
+  { path: PATHS.public.streams, element: <ArchivePage /> },
 
   {
     path: PATHS.confirmationRequired,
     element: <AskToConfirmRegistrationPage />,
   },
-
   { path: PATHS.passwordReset, element: <PassResetPage /> },
-
   { path: PATHS.forgotPassword, element: <ForgotPassPage /> },
 
   { path: PATHS.confirmRegistration, element: <ConfirmRegistrationPage /> },
-
-  { path: PATHS.events, element: <PagesSchedule /> },
-
-  { path: PATHS.archive, element: <PagesArchive /> },
-
-  { path: PATHS.signIn, element: <PagesAuth /> },
-
-  { path: PATHS.register, element: <PagesAuth /> },
+  { path: PATHS.signIn, element: <AuthPage /> },
+  { path: PATHS.register, element: <AuthPage /> },
 
   {
-    path: PATHS.drafts,
+    path: PATHS.private.streams,
     element: (
       <ProtectedRoute
         requiresPermission={{
@@ -59,22 +70,40 @@ export const ROUTES = [
           action: "read",
         }}
       >
-        <PagesDrafts />
+        <DraftsPage />
       </ProtectedRoute>
     ),
   },
 
   {
-    path: PATHS.account,
+    path: PATHS.private.settings.account,
     element: (
       <ProtectedRoute>
-        <PagesAccount />
+        <AccountPage />
       </ProtectedRoute>
     ),
   },
 
   {
-    path: PATHS.users,
+    path: PATHS.private.settings.profile,
+    element: (
+      <ProtectedRoute>
+        <ProfilePage />
+      </ProtectedRoute>
+    ),
+  },
+
+  {
+    path: PATHS.private.settings.notifications,
+    element: (
+      <ProtectedRoute>
+        <NotificationsPage />
+      </ProtectedRoute>
+    ),
+  },
+
+  {
+    path: PATHS.private.adminDashboard,
     element: (
       <ProtectedRoute
         requiresPermission={{
@@ -82,7 +111,7 @@ export const ROUTES = [
           action: "read",
         }}
       >
-        <PagesUsers />
+        <UsersPage />
       </ProtectedRoute>
     ),
   },

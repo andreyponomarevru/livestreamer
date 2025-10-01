@@ -50,7 +50,7 @@ export function PlayerLinkForm() {
       onSubmit={handleSubmit(handleSavePlayerLink, handleErrors)}
       onChange={handleChange}
     >
-      <label htmlFor="player-link" />
+      <label className="form__label" htmlFor="player-link" />
       <div className="archive-item-controls__grouped-btns">
         <input
           id="player-link"
