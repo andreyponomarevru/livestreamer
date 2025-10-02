@@ -5,18 +5,24 @@ import { Calendar, DjIcon } from "../../features/ui/icons";
 import { Loader } from "../../features/ui/loader/loader-component";
 import { Message } from "../../features/ui/message/message-component";
 import { Btn, LinkBtn } from "../../features/ui/btn";
-import { PATHS } from "../../app/routes";
-import { StreamCard } from "../../features/current-user/streams";
-import { CreateStreamForm } from "../../features/current-user/streams/create-stream-form";
-import { ShareStreamModal } from "../../features/current-user/streams";
+import { PATHS } from "../../config/constants";
+import { StreamCard } from "../../features/current-user_private/streams";
+import { CreateStreamForm } from "../../features/current-user_private/streams/create-stream-form";
+import { ShareStreamModal } from "../../features/current-user_private/streams";
+import { hasPermission } from "../../utils";
+import { Warning } from "../../features/current-user_private/streams";
 
 import styles from "./streams-page.module.css";
 
 function useQuery(arg: any) {}
 
+// ex-Drafts page
+
 export function DraftsPage(
   props: React.HTMLAttributes<HTMLDivElement>,
 ): React.ReactElement {
+  const user = { username: undefined };
+
   const drafts = useQuery({
     queryKey: ["drafts"],
     queryFn: async () => {
@@ -50,16 +56,28 @@ export function DraftsPage(
       <div className="page-box page-box_streams">
         <div className={styles["streams-page__header-box"]}>
           <header className={styles["streams-page__header"]}>
-            <h4>My Streams</h4>
+            {/* TODO: get username from path */}
+            <h4>
+              {user?.username === PATHS.public.streams
+                ? "My Streams"
+                : "Streams"}
+            </h4>
             <div>
               <span className={styles["streams-page__counter"]}>3</span>
             </div>
           </header>
-          <LinkBtn theme="quaternary" href={PATHS.signIn}>
-            <DjIcon className={styles["landing-page__dj-icon"]} />
-            Start live stream
-          </LinkBtn>
+          {hasPermission(
+            { resource: "scheduled_broadcast", action: "create" },
+            user as any,
+          ) && (
+            <LinkBtn theme="quaternary" href={PATHS.signIn}>
+              <DjIcon className={styles["landing-page__dj-icon"]} />
+              Start live stream
+            </LinkBtn>
+          )}
         </div>
+
+        <Warning />
 
         <header
           className={`${styles["streams-page__header"]} ${styles["stream-page__header_padded"]}`}
@@ -113,14 +131,28 @@ export function DraftsPage(
 }
 
 function EmptyList() {
+  const user = true;
+
+  const canCreate = hasPermission(
+    { resource: "scheduled_broadcast", action: "create" },
+    user as any,
+  );
+
   return (
     <div className={styles["streams-page__empty-list"]}>
       <Calendar className={styles["streams-page__empty-icon"]} />
-      No streams scheduled
-      <LinkBtn theme="quaternary" href={PATHS.signIn}>
-        <DjIcon className={styles["landing-page__dj-icon"]} />
-        Start live stream
-      </LinkBtn>
+
+      {canCreate ? (
+        <>
+          <p>No streams scheduled</p>
+          <LinkBtn theme="quaternary" href={PATHS.signIn}>
+            <DjIcon className={styles["landing-page__dj-icon"]} />
+            Start live stream
+          </LinkBtn>
+        </>
+      ) : (
+        <p>Chilllout Aggregator does not have any streams yet</p>
+      )}
     </div>
   );
 }

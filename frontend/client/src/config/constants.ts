@@ -21,3 +21,33 @@ export const PERMISSIONS = [
   "delete",
   "update_partially",
 ] as const;
+
+export const PATHS = {
+  root: "/",
+
+  signIn: "/signin",
+  register: "/register",
+  confirmationRequired: "/confirmation-required",
+  passwordReset: "/password-reset",
+  forgotPassword: "/forgot-pass",
+  confirmRegistration: "/confirm-registration",
+
+  public: {
+    root: "/username",
+    streams: "/username/streams",
+    about: "/username/about",
+    listen: "/username/listen",
+  },
+
+  private: {
+    settings: {
+      profile: "/settings/profile",
+      account: "/settings/account",
+      notifications: "/settings/notifications",
+    },
+
+    streams: "/streams",
+
+    adminDashboard: "/admin-dashboard",
+  },
+};

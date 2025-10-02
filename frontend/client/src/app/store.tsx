@@ -1,9 +1,9 @@
 import * as RTK from "@reduxjs/toolkit";
 import { listenerMiddleware } from "./listener-middleware";
 import { apiSplitSlice } from "../features/api";
-import { currentUserReducer } from "../features/current-user/current-user-slice";
-import { streamReducer } from "../features/stream";
-import { chatReducer } from "../features/chat/chat-slice";
+import { currentUserReducer } from "../features/current-user_private/current-user-slice";
+import { streamReducer } from "../features/current-user_public/stream";
+import { chatReducer } from "../features/current-user_public/chat/chat-slice";
 
 export const store = RTK.configureStore({
   reducer: {

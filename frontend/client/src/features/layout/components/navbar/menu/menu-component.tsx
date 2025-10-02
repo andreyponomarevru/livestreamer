@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 
 import { hasPermission } from "../../../../../utils";
 import { useAppSelector } from "../../../../../hooks/redux-ts-helpers";
@@ -7,7 +7,7 @@ import {
   AuthToggle,
   selectCurrentUserProfile,
   useSignOutMutation,
-} from "../../../../current-user";
+} from "../../../../current-user_private";
 import {
   HiOutlineLogout,
   FaCircleUser,
@@ -15,7 +15,7 @@ import {
   FaUnlock,
   IoNotifications,
 } from "../../../../ui/icons";
-import { PATHS } from "../../../../../app/routes";
+import { PATHS } from "../../../../../config/constants";
 
 import styles from "./menu.module.css";
 

@@ -21,6 +21,7 @@
   justify-self: center;
   align-self: center;
   align-items: center;
+  text-align: center;
 
   color: var(--color_charcoal-50);
   padding: var(--spacing_l) 0;

@@ -60,6 +60,7 @@
 .btn_theme_primary:hover {
   color: white;
   background-color: var(--color_charcoal-70);
+  border: 1px solid transparent;
 }
 
 .btn_theme_primary:focus {
@@ -91,7 +92,7 @@
 .btn_theme_secondary:hover {
   color: var(--color_charcoal-100);
   background-color: var(--color_charcoal-10);
-  border-color: var(--color_charcoal-100);
+  border: 1px solid var(--color_charcoal-100);
 }
 
 .btn_theme_secondary:focus {
@@ -123,6 +124,7 @@
 .btn_theme_tertiary:hover {
   color: var(--color_charcoal-60);
   background-color: transparent;
+  border: 1px solid transparent;
 }
 
 .btn_theme_tertiary:focus {
@@ -152,7 +154,7 @@
 .btn_theme_quaternary:hover {
   color: white;
   background-color: var(--color_red-50);
-  border: none;
+  border: 1px solid transparent;
 }
 
 .btn_theme_quaternary:focus {

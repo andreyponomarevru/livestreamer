@@ -1,14 +1,14 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router";
 
 import { FaCircleUser, RxHamburgerMenu, RxCross1 } from "../../../ui/icons";
 import { Menu } from "./menu/menu-component";
 import { useAppSelector } from "../../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../../current-user";
+import { selectCurrentUserProfile } from "../../../current-user_private";
 import { Logo } from "../logo";
 
 import styles from "./navbar.module.css";
-import { PATHS } from "../../../../app/routes";
+import { PATHS } from "../../../../config/constants";
 
 const displayWhiteLocations = [
   "/",

@@ -1,7 +1,7 @@
 import { BsFillChatDotsFill } from "react-icons/bs";
 import { LinkBtn } from "../../features/ui/btn";
 import { FaCalendar, FaLinux, FaShare, DjIcon } from "../../features/ui/icons";
-import { PATHS } from "../../app/routes";
+import { PATHS } from "../../config/constants";
 
 import styles from "./landing-page.module.css";
 

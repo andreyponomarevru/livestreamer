@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { NotificationsForm } from "../../../features/current-user";
+import { NotificationsForm } from "../../../features/current-user_private";
 
 import styles from "./notifications-page.module.css";
 

@@ -1,16 +1,16 @@
 import * as React from "react";
 import { useNavigate } from "react-router";
 
-import { ProfileForm } from "../../../features/current-user";
+import { ProfileForm } from "../../../features/current-user_private";
 import { API_ROOT_URL } from "../../../config/env";
 import { Message } from "../../../features/ui/message/message-component";
 import { Btn } from "../../../features/ui/btn";
 import { useIsMounted } from "../../../hooks/use-is-mounted";
 import { useFetch } from "../../../hooks/use-fetch";
 import { Loader } from "../../../features/ui/loader/loader-component";
-import { PATHS } from "../../../app/routes";
+import { PATHS } from "../../../config/constants";
 import { useAppSelector } from "../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../../features/current-user";
+import { selectCurrentUserProfile } from "../../../features/current-user_private";
 
 import styles from "./profile-page.module.css";
 

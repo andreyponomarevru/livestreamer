@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { AccountForm } from "../../../features/current-user/settings/components/account-form-component";
+import { AccountForm } from "../../../features/current-user_private/settings/components/account-form-component";
 
 import styles from "./account-page.module.css";
 

@@ -322,27 +322,28 @@ button:focus-visible {
  */
 
 .link {
-  color: var(--color_blue-60);
-  text-decoration: none;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: var(--spacing_xs);
 }
 
 .link:visited {
-  color: var(--color_blue-60);
+  color: inherit;
 }
 
 .link:hover {
-  color: var(--color_blue-60);
+  color: inherit;
   text-decoration: none;
 }
 
 .link:focus {
-  color: var(--color_blue-60);
+  color: inherit;
   text-decoration: none;
   outline: none;
 }
 
 .link:active {
-  color: var(--color_blue-40);
+  color: inherit;
 }
 
 /* 
@@ -551,9 +552,13 @@ button:focus-visible {
  * Typography
  */
 
-.small-text {
+.text-sm {
   font-size: var(--font-size_sm);
   letter-spacing: 0.02rem;
+}
+
+.text-l {
+  font-size: var(--font-size_lg);
 }
 
 /*

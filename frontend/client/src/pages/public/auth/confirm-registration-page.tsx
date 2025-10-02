@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router";
 
 import { useQuery } from "../../../hooks/use-query";
 import { Message } from "../../../features/ui/message/message-component";
@@ -8,9 +8,9 @@ import { Loader } from "../../../features/ui/loader/loader-component";
 import { useIsMounted } from "../../../hooks/use-is-mounted";
 import { useFetch } from "../../../hooks/use-fetch";
 import { Help } from "../../../features/ui/help/help-component";
-import { PATHS } from "../../../app/routes";
+import { PATHS } from "../../../config/constants";
 import { useAppSelector } from "../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../../features/current-user/current-user-slice";
+import { selectCurrentUserProfile } from "../../../features/current-user_private/current-user-slice";
 import { PiSmileySad } from "../../../features/ui/icons";
 
 import styles from "./confirm-registration-page.module.css";

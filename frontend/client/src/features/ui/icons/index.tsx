@@ -25,3 +25,4 @@ export { FiMoreHorizontal } from "react-icons/fi";
 export { IoMdHeart } from "react-icons/io";
 export { MdEdit } from "react-icons/md";
 export { BiSolidTrashAlt } from "react-icons/bi";
+export { PiBroadcastFill } from "react-icons/pi";

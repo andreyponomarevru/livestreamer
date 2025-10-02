@@ -1,10 +1,10 @@
 import * as React from "react";
-import { Navigate, type RouteProps } from "react-router-dom";
+import { Navigate, type RouteProps } from "react-router";
 
-import { PATHS } from "../../app/routes";
+import { PATHS } from "../../config/constants";
 import { RESOURCES, PERMISSIONS } from "../../config/constants";
 import { useAppSelector } from "../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../current-user/current-user-slice";
+import { selectCurrentUserProfile } from "../current-user_private/current-user-slice";
 
 type Props = RouteProps & {
   requiresPermission?: {

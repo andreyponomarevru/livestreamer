@@ -1,10 +1,10 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
-import { PasswordRecovery } from "../../../features/current-user";
-import { PATHS } from "../../../app/routes";
+import { PasswordRecovery } from "../../../features/current-user_private";
+import { PATHS } from "../../../config/constants";
 import { useAppSelector } from "../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../../features/current-user/current-user-slice";
+import { selectCurrentUserProfile } from "../../../features/current-user_private/current-user-slice";
 
 import styles from "./forgot-pass-page.module.css";
 

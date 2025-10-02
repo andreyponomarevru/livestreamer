@@ -1,5 +1,6 @@
+import { type RouteObject } from "react-router";
 import {
-  ArchivePage,
+  StreamsPage,
   AuthPage,
   DraftsPage,
   ChatPage,
@@ -12,43 +13,35 @@ import {
   NotificationsPage,
   AccountPage,
   ProfilePage,
+  AboutPage,
 } from "../pages";
 import { ProtectedRoute } from "../features/protected-route/protected-route";
+import { PATHS } from "../config/constants";
+import { Page404 } from "../pages/public/404-page";
+import { Layout } from "../features/current-user_public/layout/layout";
 
-export const PATHS = {
-  root: "/",
+export const ROUTES: RouteObject[] = [
+  { index: true, path: PATHS.root, element: <LandingPage /> },
 
-  signIn: "/signin",
-  register: "/register",
-  confirmationRequired: "/confirmation-required",
-  passwordReset: "/password-reset",
-  forgotPassword: "/forgot-pass",
-  confirmRegistration: "/confirm-registration",
-
-  public: {
-    streams: "/username/streams",
-    about: "/usernmae/about",
-    listen: "/username/listen",
+  {
+    element: <Layout />,
+    errorElement: <Page404 />,
+    children: [
+      {
+        index: true,
+        path: PATHS.public.listen,
+        element: <ChatPage />,
+      },
+      {
+        path: PATHS.public.streams,
+        element: <StreamsPage />,
+      },
+      {
+        path: PATHS.public.about,
+        element: <AboutPage />,
+      },
+    ],
   },
-
-  private: {
-    settings: {
-      profile: "/settings/profile",
-      account: "/settings/account",
-      notifications: "/settings/notifications",
-    },
-
-    streams: "/streams",
-
-    adminDashboard: "/admin-dashboard",
-  },
-};
-
-export const ROUTES = [
-  { path: PATHS.root, element: <LandingPage /> },
-
-  { path: PATHS.public.listen, element: <ChatPage /> },
-  { path: PATHS.public.streams, element: <ArchivePage /> },
 
   {
     path: PATHS.confirmationRequired,

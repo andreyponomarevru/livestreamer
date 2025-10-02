@@ -1,0 +1,5 @@
+.layout {
+  display: flex;
+  flex-flow: column nowrap;
+  max-height: 100vh;
+}

@@ -1,0 +1,26 @@
+.stream-status-badge {
+  display: flex;
+  flex-flow: row nowrap;
+  column-gap: var(--spacing_xs);
+
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  padding: 0.2rem var(--spacing_xs);
+  border-radius: var(--spacing_xs);
+  font-size: var(--font-size_sm);
+}
+
+.stream-status-badge_online {
+  background: var(--color_red-40);
+}
+
+.stream-status-badge_offline {
+  background-color: var(--color_black-40);
+}
+
+.stream-status-badge__icon {
+  height: 1.5rem;
+  width: auto;
+}
