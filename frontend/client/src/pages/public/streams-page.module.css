@@ -1,7 +1,0 @@
-.streams-page {
-  background-color: var(--color_charcoal-10);
-
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-}

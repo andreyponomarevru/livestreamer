@@ -4,7 +4,7 @@ import { NavLink } from "react-router";
 import { HeartBtn } from "./heart-btn";
 import { usePostNewMessageMutation } from "../chat-slice";
 import { useAppSelector } from "../../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../../current-user_private";
+import { selectCurrentUserProfile } from "../../../user-profile_protected";
 import { Message } from "../../../ui/message/message-component";
 import { PATHS } from "../../../../config/constants";
 

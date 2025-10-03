@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
 
-import { Btn } from "../../ui/btn";
-import { FaCamera } from "../../ui/icons";
-import { inputRules, type InputTypes } from "../../../config/input-rules";
-import { Loader } from "../../ui/loader/loader-component";
+import { Btn } from "../ui/btn";
+import { FaCamera } from "../ui/icons";
+import { inputRules, type InputTypes } from "../../config/input-rules";
+import { Loader } from "../ui/loader/loader-component";
 
 import styles from "./create-stream-form.module.css";
 
@@ -32,7 +32,7 @@ export function CreateStreamForm() {
 
   return (
     <form
-      className={`form form_layout_col ${styles["create-stream-form"]} page-box`}
+      className={`form form_layout_col ${styles["create-stream-form"]} page__box`}
       onSubmit={handleSubmit(handleSaveChanges, handleFormErrors)}
       onChange={handleChange}
     >

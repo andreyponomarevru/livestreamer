@@ -4,7 +4,7 @@ import { useIsMounted } from "../../../../hooks/use-is-mounted";
 import { LIKE_TIMEOUT_MS } from "../../../../config/env";
 import { useStreamLikeButton } from "../../../../hooks/use-stream-like-button";
 import { useAppSelector } from "../../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../../current-user_private/current-user-slice";
+import { selectCurrentUserProfile } from "../../../user-profile_protected/current-user-slice";
 
 import icons from "./../../../../assets/icons.svg";
 import styles from "./heart-btn.module.css";

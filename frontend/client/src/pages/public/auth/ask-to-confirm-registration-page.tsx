@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 
 import { PATHS } from "../../../config/constants";
 import { useAppSelector } from "../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../../features/current-user_private/current-user-slice";
+import { selectCurrentUserProfile } from "../../../features/user-profile_protected/current-user-slice";
 
 import styles from "./ask-to-confirm-registration-page.module.css";
 

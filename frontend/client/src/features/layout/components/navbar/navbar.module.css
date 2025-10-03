@@ -6,6 +6,7 @@
   right: 0;
   display: flex;
   justify-content: center;
+  height: var(--navbar-h);
 
   border-radius: 0;
   padding: var(--spacing_xs) 0;
@@ -22,6 +23,12 @@
   align-items: center;
   justify-self: center;
   justify-content: space-between;
+  padding: 0;
+}
+@media (max-width: 620px) {
+  .navbar__wrapper {
+    padding: 0 var(--spacing_xs) 0 var(--spacing_sm);
+  }
 }
 
 .navbar_dark {
@@ -38,7 +45,6 @@
   display: flex;
   column-gap: 0.5rem;
   color: white;
-  padding-left: 12px;
 }
 
 .navbar__btn {

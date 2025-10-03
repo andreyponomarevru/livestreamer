@@ -1,7 +1,7 @@
 import { NavLink } from "react-router";
 
-import { ImHeadphones, FaCircleInfo, FaStream } from "../ui/icons";
-import { PATHS } from "../../config/constants";
+import { ImHeadphones, FaCircleInfo, FaStream } from "../../ui/icons";
+import { PATHS } from "../../../config/constants";
 
 import styles from "./navbar.module.css";
 
@@ -11,9 +11,9 @@ const menu = [
   { to: PATHS.public.about, text: "About", icon: <FaCircleInfo /> },
 ];
 
-export function Navbar() {
+export function Navbar(props: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={styles["navbar"]}>
+    <nav className={`${styles["navbar"]} ${props.className || ""}`}>
       {...menu.map(({ to, text, icon }) => {
         return (
           <NavLink
@@ -29,6 +29,6 @@ export function Navbar() {
           </NavLink>
         );
       })}
-    </div>
+    </nav>
   );
 }

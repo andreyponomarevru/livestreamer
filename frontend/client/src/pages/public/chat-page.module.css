@@ -1,4 +1,4 @@
-.chat-page {
+/*.chat-page {
   background-color: var(--color_charcoal-10);
   border-radius: var(--border_radius_xxl);
 }
@@ -21,7 +21,7 @@
   overflow-y: scroll;
   bottom: 3.1rem;
   background-color: white;
-}
+}*/
 
 /*
 .chat-page__controls {

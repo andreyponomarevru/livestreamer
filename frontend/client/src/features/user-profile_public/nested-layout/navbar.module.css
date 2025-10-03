@@ -1,12 +1,20 @@
 .navbar {
   display: inline-flex;
-  justify-content: ceneter;
-  align-items: center;
   column-gap: var(--spacing_xs);
 
   padding: var(--spacing_xs) var(--spacing_sm);
+  align-items: flex-start;
+  width: 100%;
   background-color: var(--color_charcoal-100);
   border-radius: var(--border_radius_xxl) var(--border_radius_xxl) 0 0;
+}
+@media (max-width: 620px) {
+  .navbar {
+    padding-top: var(--spacing_xs);
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-radius: 0;
+  }
 }
 
 .navbar__link {
@@ -18,7 +26,10 @@
   border-radius: 0.8rem;
   transition: background-color 0.15s linear;
   background-color: none;
-  padding: var(--spacing_xs) var(--spacing_sm);
+}
+.navbar__link:not(:first-child),
+.navbar__link:not(:last-child) {
+  padding: 0.3rem 0.7rem;
 }
 .navbar__link:link {
   color: white;

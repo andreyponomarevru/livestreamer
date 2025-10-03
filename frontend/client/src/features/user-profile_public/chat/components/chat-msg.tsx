@@ -9,7 +9,7 @@ import { useMessageLikeToggle } from "../use-message-like-toggle";
 import { useLikeMessageWSEvent } from "../../../ws/hooks/use-like-message-ws-event";
 import { useUnlikeMessageWSEvent } from "../../../ws/hooks/use-unlike-message-ws-event";
 import { useAppSelector } from "../../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../../current-user_private/current-user-slice";
+import { selectCurrentUserProfile } from "../../../user-profile_protected/current-user-slice";
 
 import styles from "./chat-msg.module.css";
 

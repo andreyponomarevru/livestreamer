@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router";
 import { FaCircleUser, RxHamburgerMenu, RxCross1 } from "../../../ui/icons";
 import { Menu } from "./menu/menu-component";
 import { useAppSelector } from "../../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../../current-user_private";
+import { selectCurrentUserProfile } from "../../../user-profile_protected";
 import { Logo } from "../logo";
 
 import styles from "./navbar.module.css";

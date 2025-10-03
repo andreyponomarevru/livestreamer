@@ -1,4 +1,5 @@
-import { Btn } from "../../ui/btn";
+import { Btn } from "../ui/btn";
+
 import styles from "./warning.module.css";
 
 export function Warning() {

@@ -121,6 +121,8 @@
    * Misc
    */
 
+  --navbar-h: 3.5rem;
+
   --border_radius_m: 9px;
   --border_radius_xxl: 20px;
 
@@ -259,62 +261,90 @@ button:focus-visible {
   width: 100%;
 
   margin: 0 auto;
-
   font-family: var(--font-stack_sans);
   color: var(--color_text-primary);
   line-height: 1.5;
 }
 
-.page {
+/*
+ * Page
+ */
+
+/* Signed-in page */
+
+.page-box {
   display: flex;
   flex-flow: column nowrap;
   row-gap: var(--spacing_ml);
   align-items: center;
   width: 100%;
   height: 100%;
+
+  background-color: var(--color_charcoal-10);
 }
 
-.page-box {
+.page {
   display: flex;
   flex-flow: column nowrap;
   width: 100%;
   max-width: var(--max-width_m);
 
   border-radius: var(--border_radius_xxl);
-  margin: var(--spacing_xxl) 0 var(--spacing_m) 0;
-  padding: var(--spacing_xs) var(--spacing_sm) var(--spacing_sm)
-    var(--spacing_sm);
   background-color: white;
 }
 @media (max-width: 620px) {
-  .page-box {
+  .page {
     border-radius: 0 0 var(--border_radius_xxl) var(--border_radius_xxl);
+  }
+}
+
+.page__heading {
+  padding-bottom: var(--spacing_m);
+}
+
+.padded-box {
+  padding: var(--spacing_xs) var(--spacing_sm) var(--spacing_sm)
+    var(--spacing_sm);
+}
+
+/* */
+
+.page_padded-top {
+  margin: var(--spacing_xl) 0 var(--spacing_m) 0;
+  padding: var(--spacing_xs) var(--spacing_sm) var(--spacing_sm)
+    var(--spacing_sm);
+}
+@media (max-width: 620px) {
+  .page_padded-top {
     margin: var(--spacing_l) 0 var(--spacing_m) 0;
     padding: var(--spacing_m) 12px var(--spacing_sm) 12px;
   }
 }
 
-.page-box_streams {
-  display: flex;
-  flex-flow: column nowrap;
-  width: 100%;
-  max-width: var(--max-width_m);
+/* */
 
-  border-radius: var(--border_radius_xxl);
-  margin: var(--spacing_xxl) 0 var(--spacing_m) 0;
+.page_padded-top-and-no-content-padding {
+  margin: var(--spacing_xl) 0 var(--spacing_m) 0;
   padding: var(--spacing_xs) 0 var(--spacing_sm) 0;
-  background-color: white;
 }
 @media (max-width: 620px) {
-  .page-box_streams {
-    border-radius: 0;
+  .page_padded-top-and-no-content-padding {
     margin: var(--spacing_l) 0 var(--spacing_m) 0;
     padding: var(--spacing_m) 0 var(--spacing_sm) 0;
   }
 }
 
-.page-box__heading {
-  padding-bottom: var(--spacing_m);
+/* */
+
+.page_no-content-padding {
+  margin: 0 0 var(--spacing_m) 0;
+  padding: var(--spacing_xs) 0 var(--spacing_sm) 0;
+}
+@media (max-width: 620px) {
+  .page_no-content-padding {
+    margin: 0 0 var(--spacing_m) 0;
+    padding: var(--spacing_m) 0 var(--spacing_sm) 0;
+  }
 }
 
 /* 

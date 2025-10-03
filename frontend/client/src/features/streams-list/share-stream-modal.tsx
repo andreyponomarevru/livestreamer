@@ -1,6 +1,6 @@
 import styles from "./share-stream-modal.module.css";
 
-import { PiCopyFill } from "../../ui/icons";
+import { PiCopyFill } from "../ui/icons";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   url: string;

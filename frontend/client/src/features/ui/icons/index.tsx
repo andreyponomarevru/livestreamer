@@ -21,7 +21,7 @@ export { HiOutlineLogout } from "react-icons/hi";
 export { PiSmileySad, PiLinkSimpleBold, PiCopyFill } from "react-icons/pi";
 export { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
 export { IoNotifications } from "react-icons/io5";
-export { FiMoreHorizontal } from "react-icons/fi";
+export { FiMoreHorizontal, FiGlobe } from "react-icons/fi";
 export { IoMdHeart } from "react-icons/io";
 export { MdEdit } from "react-icons/md";
 export { BiSolidTrashAlt } from "react-icons/bi";

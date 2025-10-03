@@ -1,8 +1,6 @@
 import { type RouteObject } from "react-router";
 import {
-  StreamsPage,
   AuthPage,
-  DraftsPage,
   ChatPage,
   ForgotPassPage,
   AskToConfirmRegistrationPage,
@@ -14,17 +12,19 @@ import {
   AccountPage,
   ProfilePage,
   AboutPage,
+  StreamsDashboardPage,
+  PublicStreamsPage,
 } from "../pages";
 import { ProtectedRoute } from "../features/protected-route/protected-route";
 import { PATHS } from "../config/constants";
 import { Page404 } from "../pages/public/404-page";
-import { Layout } from "../features/current-user_public/layout/layout";
+import { NestedLayout } from "../features/user-profile_public/nested-layout/nested-layout";
 
 export const ROUTES: RouteObject[] = [
   { index: true, path: PATHS.root, element: <LandingPage /> },
 
   {
-    element: <Layout />,
+    element: <NestedLayout />,
     errorElement: <Page404 />,
     children: [
       {
@@ -34,7 +34,7 @@ export const ROUTES: RouteObject[] = [
       },
       {
         path: PATHS.public.streams,
-        element: <StreamsPage />,
+        element: <PublicStreamsPage />,
       },
       {
         path: PATHS.public.about,
@@ -63,7 +63,7 @@ export const ROUTES: RouteObject[] = [
           action: "read",
         }}
       >
-        <DraftsPage />
+        <StreamsDashboardPage />
       </ProtectedRoute>
     ),
   },

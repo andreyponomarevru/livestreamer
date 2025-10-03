@@ -1,7 +1,6 @@
 import * as React from "react";
-import { Outlet as CurrentPageContent } from "react-router";
 
-import { ChatControls, ChatMsg } from "../../features/current-user_public/chat";
+import { ChatControls, ChatMsg } from "../../features/user-profile_public/chat";
 import { useCreateMessageWSEvent } from "../../features/ws/hooks/use-create-message-ws-event";
 import { useDeleteMessageWSEvent } from "../../features/ws/hooks/use-delete-message-ws-event";
 import { sortMessages } from "../../utils";
@@ -9,11 +8,10 @@ import {
   useDeleteMessageMutation,
   useGetChatHistoryQuery,
   usePostNewMessageMutation,
-} from "../../features/current-user_public/chat/chat-slice";
+} from "../../features/user-profile_public/chat/chat-slice";
 import { Loader } from "../../features/ui/loader/loader-component";
 import { useStreamStateWSEvent } from "../../features/ws/hooks/use-stream-state-ws-event";
-import { StreamBar } from "../../features/current-user_public/stream";
-import { Navbar } from "../../features/current-user_public";
+import { StreamBar } from "../../features/user-profile_public/stream";
 
 import styles from "./chat-page.module.css";
 

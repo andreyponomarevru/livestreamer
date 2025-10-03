@@ -9,10 +9,10 @@ import {
   FaShare,
   MdEdit,
   BiSolidTrashAlt,
-} from "../../ui/icons";
+} from "../ui/icons";
 
 import styles from "./stream-card.module.css";
-import { StreamStatusBadge } from "../../ui/stream-status-badge/stream-status-badge";
+import { StreamStatusBadge } from "../ui/stream-status-badge/stream-status-badge";
 
 interface Props extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   meta?: {
