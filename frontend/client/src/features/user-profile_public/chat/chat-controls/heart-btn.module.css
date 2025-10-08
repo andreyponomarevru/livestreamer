@@ -1,14 +1,15 @@
 .heart-btn {
   display: flex;
-  /*justify-content: center;*/
   align-items: center;
 
   border: none;
-  /* padding: 0.3rem 0.5rem 0.2rem 0.5rem;*/
+  padding: 0.3rem var(--spacing_sm) 0.2rem var(--spacing_sm);
   text-decoration: none;
   cursor: pointer;
   background-color: transparent;
   /*transition: background-color 1s ease-out;*/
+  height: 100%;
+  align-self: flex-start;
 }
 
 .heart-btn_disabled {
@@ -30,11 +31,11 @@
 }
 
 .heart-btn__icon {
-  width: 2em;
+  width: auto;
   height: 2rem;
+
   padding: 0;
   margin: 0;
-
   background: none;
   fill: #aa0500;
 }

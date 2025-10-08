@@ -7,6 +7,7 @@ import { useAppSelector } from "../../../../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../../../user-profile_protected";
 import { Message } from "../../../ui/message/message-component";
 import { PATHS } from "../../../../config/constants";
+import { IoSend } from "../../../ui/icons";
 
 import styles from "./chat-controls.module.css";
 import icons from "./../../../../assets/icons.svg";
@@ -50,52 +51,44 @@ export function ChatControls(props: Props): React.ReactElement {
     input?.blur();
   }
 
-  return (
-    <div
-      className={`${styles["chat-page__controls"]} ${
-        styles["chat-page__controls_fixed"]
-      }`}
-    >
-      {user ? (
-        <>
-          <form className={styles["chat-controls"]} onSubmit={handleSubmit}>
-            <label className="form__label" htmlFor="chat-message" />
-            <input
-              id="chat-message"
-              className={styles["chat-controls__input"]}
-              type="text"
-              maxLength={500}
-              minLength={1}
-              name="chat-message"
-              autoComplete="off"
-              placeholder="Type a message here..."
-              value={msgInput}
-              onChange={handleChange}
-              disabled={props.isDisabled}
+  return user ? (
+    <div className={`${styles["chat-controls"]} ${props.className || ""}`}>
+      <HeartBtn isStreamOnline={props.isStreamOnline} />
+      <form className={styles["chat-controls__form"]} onSubmit={handleSubmit}>
+        <label className="form__label" htmlFor="chat-message" />
+        <input
+          id="chat-message"
+          className={styles["chat-controls__input"]}
+          type="text"
+          maxLength={500}
+          minLength={1}
+          name="chat-message"
+          autoComplete="off"
+          placeholder="Type a message here..."
+          value={msgInput}
+          onChange={handleChange}
+          disabled={props.isDisabled}
+        />
+        {
+          <button
+            className={styles["chat-controls__send-btn"]}
+            type="submit"
+            name="chat-message"
+            value=""
+            disabled={isPostNewMsgLoading && props.isDisabled}
+          >
+            <IoSend
+              className={`${styles["chat-controls__send-btn-icon"]} ${styles["default-icon"]}`}
             />
-            <button
-              className={`send-chat-msg-btn ${props.className || ""}`}
-              type="submit"
-              name="chat-message"
-              value=""
-              disabled={isPostNewMsgLoading && props.isDisabled}
-            >
-              <svg
-                className={`${styles["send-chat-msg-btn__icon"]} ${styles["default-icon"]}`}
-              >
-                <use href={`${icons}#arrow-right`} />
-              </svg>
-            </button>
-          </form>
-          <HeartBtn isStreamOnline={props.isStreamOnline} />
-        </>
-      ) : (
-        <Message type="info">
-          <NavLink end to={PATHS.signIn}>
-            Sign In to leave a message
-          </NavLink>
-        </Message>
-      )}
+          </button>
+        }
+      </form>
     </div>
+  ) : (
+    <Message type="info">
+      <NavLink end to={PATHS.signIn}>
+        Sign In to leave a message
+      </NavLink>
+    </Message>
   );
 }

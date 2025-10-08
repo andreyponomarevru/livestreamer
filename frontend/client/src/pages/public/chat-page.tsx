@@ -12,6 +12,7 @@ import {
 import { Loader } from "../../features/ui/loader/loader-component";
 import { useStreamStateWSEvent } from "../../features/ws/hooks/use-stream-state-ws-event";
 import { StreamBar } from "../../features/user-profile_public/stream";
+import { Navbar } from "../../features/user-profile_public/chat/navbar";
 
 import styles from "./chat-page.module.css";
 
@@ -47,19 +48,20 @@ export function ChatPage(): React.ReactElement {
   useDeleteMessageWSEvent(deleteMessage);
 
   return (
-    <div className={styles["chat-page"]}>
+    <>
       <StreamBar
         streamState={streamState}
         className={styles["chat-page__stream"]}
       />
+      <Navbar className={styles["chat-page__nav"]} />
 
-      <div className={styles["chat-page__chat"]}>
+      <ul className={styles["chat-page__chat"]}>
         {isGetChatHistoryLoading && <Loader />}
         {isGetChatHistoryError && (
           <div>Oops! Something went wrong. Please try again later.</div>
         )}
         {isGetChatHistorySuccess && (
-          <ul className={styles["chat-page__messages-list"]}>
+          <>
             {sortedMessages?.map((msg) => (
               <ChatMsg
                 message={msg}
@@ -68,14 +70,15 @@ export function ChatPage(): React.ReactElement {
               />
             ))}
             <li className={styles["scroll-to"]} ref={messagesEndRef} />
-          </ul>
+          </>
         )}
+      </ul>
 
-        <ChatControls
-          isDisabled={isGetChatHistoryFetching}
-          isStreamOnline={streamState.isOnline}
-        />
-      </div>
-    </div>
+      <ChatControls
+        isDisabled={isGetChatHistoryFetching}
+        isStreamOnline={streamState.isOnline}
+        className={styles["chat-page__controls"]}
+      />
+    </>
   );
 }

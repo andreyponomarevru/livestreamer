@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ChatIconBtn } from "./chat-icon-btn";
+import { ChatIconBtn } from "../chat-controls/chat-icon-btn";
 import { type ChatMsg } from "../../../../types";
 import { hasPermission } from "../../../../utils";
 import { useNavigate } from "react-router";
