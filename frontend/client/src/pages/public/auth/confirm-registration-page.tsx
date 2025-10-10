@@ -10,7 +10,7 @@ import { useFetch } from "../../../hooks/use-fetch";
 import { Help } from "../../../features/ui/help/help-component";
 import { PATHS } from "../../../config/constants";
 import { useAppSelector } from "../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../../features/user-profile_protected/current-user-slice";
+import { selectCurrentUserProfile } from "../../../features/auth";
 import { PiSmileySad } from "../../../features/ui/icons";
 
 import styles from "./confirm-registration-page.module.css";

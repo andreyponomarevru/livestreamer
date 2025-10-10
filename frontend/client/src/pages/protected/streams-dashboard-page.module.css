@@ -1,0 +1,8 @@
+.streams-dashboard-page {
+  padding: var(--spacing_xs) 0 var(--spacing_sm) 0;
+}
+@media (max-width: 620px) {
+  .streams-dashboard-page {
+    padding: var(--spacing_m) 0 var(--spacing_sm) 0;
+  }
+}

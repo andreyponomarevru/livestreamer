@@ -7,7 +7,7 @@ import {
   AuthToggle,
   selectCurrentUserProfile,
   useSignOutMutation,
-} from "../../../../user-profile_protected";
+} from "../../../../auth";
 import {
   HiOutlineLogout,
   FaCircleUser,

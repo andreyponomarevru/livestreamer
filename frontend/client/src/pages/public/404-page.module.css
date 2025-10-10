@@ -1,14 +1,16 @@
 .page-404 {
   display: flex;
   flex-flow: column nowrap;
+
   margin: 0 auto;
-  font-size: var(--font-size_h1);
-  font-weight: bold;
   align-items: center;
   width: fit-content;
   padding: 1rem 1rem;
-  line-height: 1;
   border-radius: var(--border_radius_xxl);
   background-color: var(--color_red-10);
+
+  font-size: var(--font-size_h1);
+  font-weight: bold;
+  line-height: 1;
   color: var(--color_red-50);
 }

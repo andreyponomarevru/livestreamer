@@ -1,0 +1,37 @@
+.users-list {
+  display: flex;
+  flex-flow: column nowrap;
+  column-gap: var(--space_sm);
+
+  list-style-type: none;
+
+  height: 100vh;
+  border-radius: var(--border);
+  background-color: white;
+}
+
+.users-list__row {
+  overflow: hidden;
+
+  display: flex;
+  flex-flow: row nowrap;
+  column-gap: var(--spacing_xs);
+  align-items: center;
+
+  padding: 0.3rem var(--spacing_sm);
+
+  font-size: var(--font-size_sm);
+  font-weight: 600;
+  letter-spacing: 0.03rem;
+}
+
+.users-list__row:nth-child(odd) {
+  background-color: var(--color_red-10);
+}
+
+.users-list__avatar {
+  height: 1.5rem;
+  width: auto;
+
+  fill: var(--color_charcoal-30);
+}

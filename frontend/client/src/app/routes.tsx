@@ -13,33 +13,29 @@ import {
   ProfilePage,
   AboutPage,
   StreamsDashboardPage,
-  PublicStreamsPage,
+  StreamsPage,
 } from "../pages";
 import { ProtectedRoute } from "../features/protected-route/protected-route";
 import { PATHS } from "../config/constants";
 import { Page404 } from "../pages/public/404-page";
-import { NestedLayout } from "../features/user-profile_public/nested-layout/nested-layout";
+import { ChatNestedLayout } from "../features/nested-layout/chat-nested-layout";
+import { RegularNestedLayout } from "../features/nested-layout/regular-nested-layout";
 
 export const ROUTES: RouteObject[] = [
   { index: true, path: PATHS.root, element: <LandingPage /> },
 
   {
-    element: <NestedLayout />,
+    element: <ChatNestedLayout />,
+    errorElement: <Page404 />,
+    children: [{ path: PATHS.public.listen, element: <ChatPage /> }],
+  },
+
+  {
+    element: <RegularNestedLayout />,
     errorElement: <Page404 />,
     children: [
-      {
-        index: true,
-        path: PATHS.public.listen,
-        element: <ChatPage />,
-      },
-      {
-        path: PATHS.public.streams,
-        element: <PublicStreamsPage />,
-      },
-      {
-        path: PATHS.public.about,
-        element: <AboutPage />,
-      },
+      { path: PATHS.public.streams, element: <StreamsPage /> },
+      { path: PATHS.public.about, element: <AboutPage /> },
     ],
   },
 

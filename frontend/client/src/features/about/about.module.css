@@ -1,0 +1,20 @@
+.about {
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: var(--spacing_sm);
+
+  width: 100%;
+  background-color: white;
+}
+
+.about__links {
+  display: flex;
+  flex-flow: row wrap;
+  column-gap: var(--spacing_xs);
+  align-items: center;
+}
+
+.about__icon {
+  height: 1.2rem;
+  width: auto;
+}

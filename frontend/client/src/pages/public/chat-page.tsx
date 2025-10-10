@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ChatControls, ChatMsg } from "../../features/user-profile_public/chat";
+import { ChatControls, MsgsList } from "../../features/chat";
 import { useCreateMessageWSEvent } from "../../features/ws/hooks/use-create-message-ws-event";
 import { useDeleteMessageWSEvent } from "../../features/ws/hooks/use-delete-message-ws-event";
 import { sortMessages } from "../../utils";
@@ -8,15 +8,20 @@ import {
   useDeleteMessageMutation,
   useGetChatHistoryQuery,
   usePostNewMessageMutation,
-} from "../../features/user-profile_public/chat/chat-slice";
-import { Loader } from "../../features/ui/loader/loader-component";
+} from "../../features/chat/chat-slice";
 import { useStreamStateWSEvent } from "../../features/ws/hooks/use-stream-state-ws-event";
-import { StreamBar } from "../../features/user-profile_public/stream";
-import { Navbar } from "../../features/user-profile_public/chat/navbar";
+import { StreamBar } from "../../features/stream";
+import { Navbar } from "../../features/chat/navbar";
 
 import styles from "./chat-page.module.css";
+import { LinkBtn } from "../../features/ui/btn";
+import { CrowdIcon } from "../../features/ui/icons";
+import { PATHS } from "../../config/constants";
+import { UsersList } from "../../features/chat/users-list/users-list";
 
 export function ChatPage(): React.ReactElement {
+  const user = null; // TODO: get from Redux
+
   const streamState = useStreamStateWSEvent(); // TODO: get from Redux
   const [postMessage] = usePostNewMessageMutation();
   const [deleteMessage] = useDeleteMessageMutation();
@@ -53,32 +58,45 @@ export function ChatPage(): React.ReactElement {
         streamState={streamState}
         className={styles["chat-page__stream"]}
       />
+
       <Navbar className={styles["chat-page__nav"]} />
 
-      <ul className={styles["chat-page__chat"]}>
-        {isGetChatHistoryLoading && <Loader />}
-        {isGetChatHistoryError && (
-          <div>Oops! Something went wrong. Please try again later.</div>
-        )}
-        {isGetChatHistorySuccess && (
-          <>
-            {sortedMessages?.map((msg) => (
-              <ChatMsg
-                message={msg}
-                key={msg.id}
-                handleDeleteMessage={deleteMessage}
-              />
-            ))}
-            <li className={styles["scroll-to"]} ref={messagesEndRef} />
-          </>
-        )}
-      </ul>
+      {/*
+        <UsersList
+          className={styles["chat-page__main-content"]}
+          users={[
+            { username: "TestA" },
+            { username: "TestB" },
+            { username: "TestC" },
+            { username: "TestD" },
+          ]}
+        />*/}
 
-      <ChatControls
-        isDisabled={isGetChatHistoryFetching}
-        isStreamOnline={streamState.isOnline}
-        className={styles["chat-page__controls"]}
+      <MsgsList
+        className={styles["chat-page__main-content"]}
+        isLoading={isGetChatHistoryLoading}
+        isError={isGetChatHistoryError}
+        isSuccess={isGetChatHistorySuccess}
+        messages={sortedMessages}
+        handleDeleteMessage={deleteMessage}
       />
+
+      {!user ? (
+        <ChatControls
+          className={styles["chat-page__controls"]}
+          isDisabled={isGetChatHistoryFetching}
+          isStreamOnline={streamState.isOnline}
+        />
+      ) : (
+        <LinkBtn
+          theme="quaternary"
+          className={styles["chat-page__join-chat-btn"]}
+          href={PATHS.signIn}
+        >
+          <CrowdIcon className={styles["chat-page__join-chat-btn-icon"]} /> Join
+          the chat now
+        </LinkBtn>
+      )}
     </>
   );
 }

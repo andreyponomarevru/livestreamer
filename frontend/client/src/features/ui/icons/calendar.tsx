@@ -1,6 +1,6 @@
 import styles from "./icons.module.css";
 
-export function Calendar(props: React.HTMLAttributes<SVGAElement>) {
+export function CalendarIcon(props: React.HTMLAttributes<SVGAElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

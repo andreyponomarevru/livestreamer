@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router";
 
-import { ProfileForm } from "../../../features/user-profile_protected";
+import { ProfileForm } from "../../../features/settings";
 import { API_ROOT_URL } from "../../../config/env";
 import { Message } from "../../../features/ui/message/message-component";
 import { Btn } from "../../../features/ui/btn";
@@ -10,9 +10,7 @@ import { useFetch } from "../../../hooks/use-fetch";
 import { Loader } from "../../../features/ui/loader/loader-component";
 import { PATHS } from "../../../config/constants";
 import { useAppSelector } from "../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../../features/user-profile_protected";
-
-import styles from "./profile-page.module.css";
+import { selectCurrentUserProfile } from "../../../features/auth";
 
 export function ProfilePage(): React.ReactElement {
   function deleteAccount() {
@@ -31,11 +29,9 @@ export function ProfilePage(): React.ReactElement {
   }, [isMounted, deleteUserResponse]);
 
   return (
-    <main className={`${styles["profile-page"]} page-box`}>
-      <div className="page page_padded-top">
-        <h4 className="page__heading">Profile Settings</h4>
-        <ProfileForm />
-      </div>
+    <main className="page page_margin-top page_padded-top">
+      <h4 className="page__heading">Profile Settings</h4>
+      <ProfileForm />
     </main>
   );
 }

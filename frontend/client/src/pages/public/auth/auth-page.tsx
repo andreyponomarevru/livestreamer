@@ -1,9 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router";
 
-import { AuthToggle } from "../../../features/user-profile_protected";
+import { AuthToggle } from "../../../features/auth";
 import { useAppSelector } from "../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../../features/user-profile_protected/current-user-slice";
+import { selectCurrentUserProfile } from "../../../features/auth";
 import { PATHS } from "../../../config/constants";
 
 import styles from "./auth-page.module.css";

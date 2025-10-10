@@ -2,7 +2,7 @@ import React from "react";
 import { RouterProvider, createBrowserRouter } from "react-router";
 
 import { ErrorBoundary } from "../features/ui/error-boundary/error-boundary";
-import { StreamLikeCountProvider } from "../features/user-profile_public/stream";
+import { StreamLikeCountProvider } from "../features/stream";
 import { MainLayout } from "../features/layout";
 import { Page404 } from "../pages/public/404-page";
 import { ROUTES } from "./routes";

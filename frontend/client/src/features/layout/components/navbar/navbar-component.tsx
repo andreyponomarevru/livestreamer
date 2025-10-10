@@ -1,10 +1,10 @@
 import React from "react";
 import { Link, useLocation } from "react-router";
 
-import { FaCircleUser, RxHamburgerMenu, RxCross1 } from "../../../ui/icons";
+import { FaCircleUser, RxHamburgerMenu, IoClose } from "../../../ui/icons";
 import { Menu } from "./menu/menu-component";
 import { useAppSelector } from "../../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../../user-profile_protected";
+import { selectCurrentUserProfile } from "../../../auth";
 import { Logo } from "../logo";
 
 import styles from "./navbar.module.css";
@@ -48,7 +48,7 @@ export function Navbar(): React.ReactElement {
           </Link>
         ) : (
           <Link
-            to={user ? PATHS.private.settings : PATHS.signIn}
+            to={user ? PATHS.private.settings.profile : PATHS.signIn}
             className={styles["navbar__user"]}
           >
             <FaCircleUser
@@ -62,7 +62,7 @@ export function Navbar(): React.ReactElement {
         <nav className={styles["navbar__nested-nav"]}>
           <button onClick={toggleMenu} className={styles["navbar__btn"]}>
             {isOpen ? (
-              <RxCross1
+              <IoClose
                 color={isDarkState ? "var(--color_charcoal-100)" : "white"}
                 className={styles["navbar__menu-icon"]}
               />

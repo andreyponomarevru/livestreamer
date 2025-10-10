@@ -1,6 +1,6 @@
 import React from "react";
 
-import { PassResetForm } from "../../../features/user-profile_protected";
+import { PassResetForm } from "../../../features/auth";
 
 import styles from "./pass-reset-page.module.css";
 

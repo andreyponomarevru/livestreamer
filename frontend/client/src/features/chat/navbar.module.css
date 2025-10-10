@@ -1,0 +1,118 @@
+.nav {
+  display: grid;
+  grid-template-areas: "tabs devider closeBtn";
+  grid-template-columns: 1fr 1px auto;
+  justify-content: space-between;
+  column-gap: var(--spacing_xs);
+
+  width: 100%;
+  border-radius: var(--border_radius_xxl) var(--border_radius_xxl) 0 0;
+  background-color: white;
+  padding: 0.4rem var(--spacing_xs) 0.4rem var(--spacing_sm);
+}
+
+.nav__tabs {
+  display: flex;
+  flex-flow: row nowrap;
+  column-gap: var(--spacing_m);
+}
+
+/* Tab */
+
+.nav__tab {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  column-gap: var(--spacing_xs);
+
+  background-color: white;
+  border-radius: 0.8rem;
+
+  font-size: var(--font-size_sm);
+  letter-spacing: 0.2px;
+  color: var(--color_charcoal-40);
+  font-weight: 600;
+
+  transition: color 0.2s;
+}
+.nav__tab .nav__icon {
+  transition: fill 0.2s;
+}
+.nav__tab:hover {
+  cursor: pointer;
+
+  color: var(--color_charcoal-50);
+}
+.nav__tab:hover .nav__icon {
+  fill: var(--color_charcoal-50);
+}
+
+/* Active tab */
+
+.nav__tab_active {
+  box-shadow: none;
+  border-radius: 0;
+
+  color: var(--color_charcoal-60);
+}
+.nav__tab_active .nav__icon {
+  fill: var(--color_charcoal-60);
+}
+
+/* */
+
+.nav__tab-content-1 {
+  display: flex;
+  flex-flow: row nowrap;
+  column-gap: var(--spacing_xs);
+  align-items: center;
+  justify-content: center;
+}
+
+.nav__tab-content-2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 0.6rem;
+}
+
+.nav__devider {
+  align-self: center;
+
+  width: 1px;
+  height: 80%;
+  background-color: var(--color_charcoal-20);
+}
+
+.nav__icon {
+  height: 1.2rem;
+  width: auto;
+  fill: var(--color_charcoal-30);
+  background-color: transparent;
+}
+
+.nav__close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--color_charcoal-60);
+
+  background-color: transparent;
+  margin: 0;
+  padding: 0.2rem 0.4rem 0.2rem 0.4rem;
+  margin: 0 0 0.2rem 0;
+  border: none;
+
+  transition: background-color 0.2s;
+}
+.nav__close-btn:hover {
+  outline: none;
+  border: none;
+  background-color: var(--color_charcoal-10);
+}
+.nav__close-btn:active {
+  border: none;
+  outline: none;
+}

@@ -1,9 +1,9 @@
 import * as React from "react";
 
-import { UserDetails } from "../../features/user-profile_protected/moderation/users/components/user-details-component";
+import { UserDetails } from "../../features/moderation/users/components/user-details-component";
 import { Loader } from "../../features/ui/loader/loader-component";
 import { Message } from "../../features/ui/message/message-component";
-import { useGetUsersQuery } from "../../features/user-profile_protected/moderation/users/users-slice";
+import { useGetUsersQuery } from "../../features/moderation/users/users-slice";
 
 import styles from "./users-page.module.css";
 

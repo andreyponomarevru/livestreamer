@@ -1,3 +1,5 @@
+import * as React from "react";
+
 import { BsFillChatDotsFill } from "react-icons/bs";
 import { LinkBtn } from "../../features/ui/btn";
 import { FaCalendar, FaLinux, FaShare, DjIcon } from "../../features/ui/icons";
@@ -5,41 +7,14 @@ import { PATHS } from "../../config/constants";
 
 import styles from "./landing-page.module.css";
 
-function DownloadBox() {
-  return (
-    <section className={styles["download-box"]}>
-      <h5>Download</h5>
-      <div>
-        <a
-          href="https://github.com/andreyponomarevru/livestreamer/tree/main/streaming-client"
-          className={styles["download-box__item"]}
-        >
-          <FaLinux className={styles["download-box__icon"]} />
-          Linux
-        </a>
-      </div>
-    </section>
-  );
-}
-
-function Btns() {
-  return (
-    <nav className={styles["landing-page__nav"]}>
-      <LinkBtn
-        theme="secondary"
-        href="https://github.com/andreyponomarevru/livestreamer"
-      >
-        Doc
-      </LinkBtn>
-      <LinkBtn theme="quaternary" href={PATHS.signIn}>
-        <DjIcon className={styles["landing-page__dj-icon"]} />
-        Create live stream
-      </LinkBtn>
-    </nav>
-  );
-}
-
 export function LandingPage() {
+  React.useEffect(() => {
+    document.body.classList.remove("layout__body_bg_solid");
+    return () => {
+      document.body.classList.add("layout__body_bg_solid");
+    };
+  });
+
   return (
     <main className={styles["landing-page"]}>
       <Btns />
@@ -112,5 +87,39 @@ export function LandingPage() {
 
       <Btns />
     </main>
+  );
+}
+
+function DownloadBox() {
+  return (
+    <section className={styles["download-box"]}>
+      <h5>Download</h5>
+      <div>
+        <a
+          href="https://github.com/andreyponomarevru/livestreamer/tree/main/streaming-client"
+          className={styles["download-box__item"]}
+        >
+          <FaLinux className={styles["download-box__icon"]} />
+          Linux
+        </a>
+      </div>
+    </section>
+  );
+}
+
+function Btns() {
+  return (
+    <nav className={styles["landing-page__nav"]}>
+      <LinkBtn
+        theme="secondary"
+        href="https://github.com/andreyponomarevru/livestreamer"
+      >
+        Doc
+      </LinkBtn>
+      <LinkBtn theme="quaternary" href={PATHS.signIn}>
+        <DjIcon className={styles["landing-page__dj-icon"]} />
+        Create live stream
+      </LinkBtn>
+    </nav>
   );
 }

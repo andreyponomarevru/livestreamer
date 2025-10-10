@@ -1,6 +1,6 @@
 import React from "react";
 
-import { usePlayer } from "../../user-profile_public/stream";
+import { usePlayer } from "../../stream";
 import { API_ROOT_URL } from "../../../config/env";
 import { FaCirclePlay, FaCirclePause } from "../icons";
 

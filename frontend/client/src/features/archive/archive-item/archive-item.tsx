@@ -5,7 +5,7 @@ import { FaPencilAlt } from "react-icons/fa";
 import { ArchiveItemControls } from "../archive-item-controls/archive-item-controls";
 import { hasPermission } from "../../../utils";
 import { useAppSelector } from "../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../user-profile_protected/current-user-slice";
+import { selectCurrentUserProfile } from "../../admin-panel/current-user-slice";
 
 import styles from "./archive-item.module.css";
 

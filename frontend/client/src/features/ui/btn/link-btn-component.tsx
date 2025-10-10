@@ -12,7 +12,7 @@ export function LinkBtn(props: Props) {
     ? styles[`btn_theme_${props.theme || "primary"}_disabled`]
     : "";
 
-  const className = `${styles.btn} ${themeClass} ${disabledClass} ${props.className || ""}`;
+  const className = `${styles["btn"]} ${themeClass} ${disabledClass} ${props.className || ""}`;
 
   return (
     <a href={props.href || "#"} className={className}>

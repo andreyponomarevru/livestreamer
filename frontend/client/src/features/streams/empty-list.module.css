@@ -1,0 +1,20 @@
+.empty-list {
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: var(--spacing_sm);
+  max-width: 15rem;
+  justify-self: center;
+  align-self: center;
+  align-items: center;
+  text-align: center;
+
+  color: var(--color_charcoal-50);
+  padding: var(--spacing_l) 0;
+}
+
+.empty-list__icon {
+  height: auto;
+  width: 8rem;
+  fill: var(--color_charcoal-30);
+  align-items: center;
+}
