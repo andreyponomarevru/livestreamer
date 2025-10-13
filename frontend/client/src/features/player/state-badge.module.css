@@ -1,0 +1,48 @@
+.state-badge {
+  display: flex;
+  flex-flow: row nowrap;
+  column-gap: var(--spacing_xs);
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  line-height: 2;
+  text-wrap: nowrap;
+  font-size: var(--font-size_sm);
+
+  border-radius: 0.5rem;
+  padding: 0 var(--spacing_xs) 0.2rem var(--spacing_xs);
+}
+
+.state-badge__icon {
+  height: 1.4rem;
+  max-height: 100%;
+  width: auto;
+
+  fill: white;
+}
+
+.state-badge_status_on {
+  background-color:;
+
+  animation: glow 0.5s ease-in-out infinite alternate;
+}
+
+.state-badge_status_off {
+  background-color: var(--color_black-40);
+}
+
+/* Glowing dot */
+
+@keyframes glow {
+  from {
+    background-color: var(--color_red-40);
+  }
+
+  to {
+    background-color: var(--color_red-60);
+  }
+}
