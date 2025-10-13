@@ -10,8 +10,8 @@
 }
 
 .play-toggle-btn__icon {
-  height: 27px;
-  width: 20px;
+  height: 100%;
+  width: 100%;
 
   fill: white;
 }

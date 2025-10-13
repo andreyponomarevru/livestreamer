@@ -1,6 +1,6 @@
 import React from "react";
 
-import { usePlayer } from "../../stream";
+import { usePlayer } from "../../player";
 import { API_ROOT_URL } from "../../../config/env";
 import { FaCirclePlay, FaCirclePause } from "../icons";
 
@@ -20,7 +20,7 @@ export function PlayToggleBtn(props: Props): React.ReactElement {
       disabled={!props.isStreamOnline}
       className={`${styles["play-toggle-btn"]} ${
         props.isStreamOnline ? "" : styles["play-toggle-btn_disabled"]
-      }`}
+      } ${props.className}`}
       onClick={togglePlay}
     >
       {isPlaying ? (

@@ -4,6 +4,7 @@ export * from "./calendar";
 export * from "./heart";
 export * from "./message";
 export * from "./message-stroke";
+export * from "./share-stroke";
 export * from "./crowd";
 
 export { ImHeadphones } from "react-icons/im";
@@ -27,5 +28,5 @@ export { FiMoreHorizontal, FiGlobe } from "react-icons/fi";
 export { IoMdHeart } from "react-icons/io";
 export { MdEdit } from "react-icons/md";
 export { BiSolidTrashAlt } from "react-icons/bi";
-export { PiBroadcastFill } from "react-icons/pi";
+export { PiBroadcastFill, PiHandsClappingFill } from "react-icons/pi";
 export { AiFillLike } from "react-icons/ai";
