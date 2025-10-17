@@ -1,20 +1,26 @@
-.empty-list {
+.empty-placeholder {
   display: flex;
   flex-flow: column nowrap;
   row-gap: var(--spacing_sm);
-  max-width: 15rem;
   justify-self: center;
   align-self: center;
   align-items: center;
-  text-align: center;
 
-  color: var(--color_charcoal-50);
+  width: 100%;
   padding: var(--spacing_l) 0;
+
+  text-align: center;
+  color: var(--color_charcoal-50);
 }
 
-.empty-list__icon {
+.empty-placeholder__icon {
   height: auto;
   width: 8rem;
+
   fill: var(--color_charcoal-30);
-  align-items: center;
+}
+
+.empty-placeholder__text-l {
+  font-size: var(--font-size_lg);
+  font-weight: 600;
 }

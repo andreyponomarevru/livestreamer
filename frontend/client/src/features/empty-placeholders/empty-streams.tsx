@@ -1,17 +1,19 @@
 import { DjIcon, CalendarIcon } from "../ui/icons";
 import { LinkBtn } from "../ui/btn";
 import { PATHS } from "../../config/constants";
+import { EmptyPlaceholder } from "./empty-placeholder";
 
-import styles from "./empty-list.module.css";
+import styles from "./empty-placeholder.module.css";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   canScheduleBroadcast: boolean;
+  username?: string;
 }
 
-export function EmptyList(props: Props) {
+export function EmptyStreams(props: Props) {
   return (
-    <div className={styles["empty-list"]}>
-      <CalendarIcon className={styles["empty-list__icon"]} />
+    <EmptyPlaceholder>
+      <CalendarIcon className={styles["empty-placeholder__icon"]} />
 
       {props.canScheduleBroadcast ? (
         <>
@@ -22,8 +24,8 @@ export function EmptyList(props: Props) {
           </LinkBtn>
         </>
       ) : (
-        <p>Chilllout Aggregator does not have any streams yet</p>
+        <p>{props.username || "Unknown"} does not have any streams yet</p>
       )}
-    </div>
+    </EmptyPlaceholder>
   );
 }
