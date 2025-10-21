@@ -1,0 +1,69 @@
+.child-layout-2 {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+
+  background-color: var(--color_charcoal-10);
+  width: 100%;
+  height: 100%;
+}
+
+.child-layout-2__content {
+  position: relative;
+  /* to cut the not rounded corners of nested containers : */
+  overflow: hidden;
+
+  width: 100%;
+  max-width: var(--max-width_m);
+  border-radius: var(--border_radius_xxl);
+  margin-top: var(--spacing_xl);
+}
+@media (max-width: 620px) {
+  .child-layout-2__content {
+    margin-top: var(--spacing_xxl);
+    border-radius: 0;
+  }
+}
+
+.child-layout-2__body {
+  overflow: hidden;
+  position: relative;
+
+  border-radius: var(--border_radius_xxl);
+
+  transform: translate(0, -1.9rem);
+}
+@media (max-width: 620px) {
+  .child-layout-2__body {
+    margin-bottom: 0.5rem;
+    border-radius: var(--border_radius_xxl) var(--border_radius_xxl) 0 0;
+
+    transform: translate(0, +0.5rem);
+  }
+}
+
+/* */
+
+.background-image {
+  overflow: hidden;
+  position: fixed;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+
+  filter: blur(10px);
+  transform: scale(1.04);
+
+  height: 100vh;
+  background-image:
+    linear-gradient(to top, transparent, black 100%),
+    linear-gradient(to bottom, transparent, black 100%),
+    url("https://www.wildlifeworldwide.com/images/discover/europe_norway_tromso_northern_lights_square.jpg");
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-repeat: repeat-y repeat-y;
+}

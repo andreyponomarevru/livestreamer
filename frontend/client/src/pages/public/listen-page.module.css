@@ -1,0 +1,57 @@
+.listen-page {
+  position: relative;
+  /*overflow: hidden;*/
+}
+
+.listen-page__player {
+}
+
+.listen-page_chat_open {
+  overflow-y: hidden;
+
+  /* 
+   * prevent scrollbar for the entire page :
+   * 
+   * -1rem to simulate bottom padding
+   * -5rem is the height of the player
+   */
+  max-height: calc(100vh - var(--spacing_xl) - 5rem);
+  /* keep stretched to the bottom even if the container is empty : */
+  height: calc(100vh - var(--spacing_xl) - 5rem);
+
+  background-color: transparent;
+  background-color: purple;
+
+  visibility: hidden;
+}
+@media (max-width: 620px) {
+  .listen-page_chat_open {
+    max-height: calc(100vh - var(--spacing_xxl) - 0.5rem);
+    height: calc(100vh - var(--spacing_xxl) - 0.5rem);
+  }
+}
+
+.listen-page__mini-player-and-chat-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100%;
+
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.listen-page__mini-player {
+  flex-shrink: 0;
+}
+
+.listen-page__chat-box {
+  z-index: 10;
+
+  /* compensate the empty space left by 'transform: translate' : */
+  margin-bottom: -2.5rem;
+
+  transform: translate(0, -2.5rem);
+}
