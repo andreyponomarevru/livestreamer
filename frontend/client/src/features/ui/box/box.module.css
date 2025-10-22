@@ -16,11 +16,10 @@
 
   max-width: var(--content-max-width);
   width: 100%;
-  text-align: center;
-
   margin: 0 auto;
   padding: 0 1rem;
 
+  text-align: center;
   font-size: var(--font-size_h4);
   color: var(--color_charcoal-100);
   font-weight: bold;
