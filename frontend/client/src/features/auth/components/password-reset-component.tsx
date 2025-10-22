@@ -67,7 +67,7 @@ export function PassResetForm(
   return (
     <Box heading="Password Reset">
       <form
-        className={`form ${props.className || ""}`}
+        className={`form form_layout_col ${props.className || ""}`}
         onSubmit={handleSubmit(handlePasswordReset, handleErrors)}
       >
         {newPasswordResponse.isLoading && <Loader />}
