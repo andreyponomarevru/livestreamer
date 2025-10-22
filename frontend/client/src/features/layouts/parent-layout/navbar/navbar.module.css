@@ -91,3 +91,19 @@
     height: 75%;
   }
 }
+
+.navbar__menu {
+  margin: var(--spacing_m);
+}
+
+@media (max-width: 500px) {
+  .navbar__popup {
+    width: 100%;
+    height: 100vh;
+    top: var(--spacing_l);
+    right: 0;
+
+    box-shadow: none;
+    border-radius: 0;
+  }
+}

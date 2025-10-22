@@ -4,9 +4,10 @@ import { Link, useLocation } from "react-router";
 import { FaCircleUser, RxHamburgerMenu, IoClose } from "../../../ui/icons";
 import { Menu } from "./menu-component";
 import { useAppSelector } from "../../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile } from "../../../auth";
+import { AuthToggle, selectCurrentUserProfile } from "../../../auth";
 import { Logo } from "./logo";
 import { PATHS } from "../../../../config/constants";
+import { Popup } from "../../../ui/popup/popup-component";
 
 import styles from "./navbar.module.css";
 
@@ -25,13 +26,13 @@ export function Navbar(
   const location = useLocation();
   const user = useAppSelector(selectCurrentUserProfile);
 
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isPopupMenuOpen, setIsPopupMenuOpen] = React.useState(false);
   function toggleMenu() {
-    setIsOpen((isOpen) => !isOpen);
+    setIsPopupMenuOpen((isOpen) => !isOpen);
   }
 
   React.useEffect(() => {
-    setIsOpen(false);
+    setIsPopupMenuOpen(false);
   }, [location]);
 
   const authedUser = "Chillout Aggregator";
@@ -64,7 +65,7 @@ export function Navbar(
 
         <nav className={styles["navbar__nested-nav"]}>
           <button onClick={toggleMenu} className={styles["navbar__btn"]}>
-            {isOpen ? (
+            {isPopupMenuOpen ? (
               <IoClose
                 color={isDarkState ? "var(--color_charcoal-100)" : "white"}
                 className={styles["navbar__menu-icon"]}
@@ -78,7 +79,13 @@ export function Navbar(
           </button>
         </nav>
 
-        <Menu isOpen={isOpen} />
+        <Popup isOpen={isPopupMenuOpen} className={styles["navbar__popup"]}>
+          {user ? (
+            <Menu user={user} className={styles["navbar__menu"]} />
+          ) : (
+            <AuthToggle />
+          )}
+        </Popup>
       </div>
     </nav>
   );

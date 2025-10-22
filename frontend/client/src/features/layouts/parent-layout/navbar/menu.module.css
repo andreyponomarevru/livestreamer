@@ -1,29 +1,31 @@
 .menu {
-  top: 4rem;
-  right: var(--spacing_xs);
-
-  min-width: 290px;
-}
-
-.menu__list {
-  list-style: none;
   display: flex;
   flex-flow: column nowrap;
+  align-items: stretch;
+  row-gap: var(--spacing_sm);
+
+  min-width: 290px;
+  list-style-type: none;
+
+  color: var(--color_charcoal-60);
+}
+
+.menu__submenu {
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: var(--spacing_xs);
+
+  margin-top: var(--spacing_xs);
+  list-style: none;
 }
 
 .menu__item {
-  padding: var(--spacing_m) 0;
-  margin: 0 var(--spacing_xs);
   font-size: var(--font-size_h4);
-}
-
-.menu__item:not(:last-child) {
-  border-bottom: 1px solid var(--color_charcoal-30);
 }
 
 .menu__extras {
   border-bottom: none;
-  padding: var(--spacing_xs) var(--spacing_xs) 0 var(--spacing_xs);
+
   font-size: var(--font-size_lg);
 }
 
@@ -67,6 +69,8 @@
   padding: var(--spacing_xs);
   border-radius: var(--border_radius_m);
   cursor: pointer;
+  margin: 0 -0.5rem;
+  width: calc(100% + 1rem);
 
   font-size: var(--font-size_root);
 }
@@ -121,80 +125,11 @@
   padding-right: 1rem;
 }
 
-/* Opened state */
-
-.menu_open {
-  display: flex;
-  flex-flow: column nowrap;
-
-  padding: var(--spacing_m);
-  border-radius: var(--border_radius_xxl);
-  box-shadow: 0 0 1rem var(--color_charcoal-20);
-  background-color: white;
-
-  animation: fadeIn 0.2s forwards;
-}
-
-@media (max-width: 500px) {
-  .menu_open {
-    width: 100%;
-    height: 100vh;
-    top: var(--spacing_l);
-    right: 0;
-
-    box-shadow: none;
-    border-radius: 0;
-  }
-
-  /* 
-   * Submenu
-   */
-
-  .menu__submenu {
-    display: none;
-  }
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* React Router v6 adds this class automatically to currently active route */
-.active {
-  font-style: italic;
-}
-
 /*
  * Submenu 
  */
 
-@media (max-width: 500px) {
-  .menu__submenu {
-    display: none;
-    list-style: none;
-    margin-top: var(--spacing_m);
-    /*opacity: 0;*/
-
-    z-index: calc(var(--zindex-dropdown) + 1);
-  }
-
-  .menu__submenu_open {
-    display: block;
-  }
-}
-
-.menu__submenu {
-  margin-top: var(--spacing_sm);
-  display: block;
-}
-
 .menu__submenu-item {
   list-style-type: none;
   font-size: var(--font-size_root);
-  padding: var(--spacing_xxs) var(--spacing_xxs) var(--spacing_xxs) 0;
 }
