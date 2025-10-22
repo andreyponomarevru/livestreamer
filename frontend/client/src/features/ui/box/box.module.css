@@ -2,11 +2,11 @@
   display: flex;
   flex-flow: column nowrap;
   row-gap: var(--spacing_sm);
+
   min-width: 280px;
   max-width: 320px;
-
   border-radius: var(--border_radius_xxl);
-  border: 1px solid var(--color_charcoal-20);
+  background-color: white;
   padding: var(--spacing_ml);
 }
 
