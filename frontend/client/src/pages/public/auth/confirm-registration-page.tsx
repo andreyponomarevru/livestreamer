@@ -2,7 +2,6 @@ import * as React from "react";
 import { NavLink, useNavigate } from "react-router";
 
 import { useQuery } from "../../../hooks/use-query";
-import { Message } from "../../../features/ui/message/message-component";
 import { API_ROOT_URL } from "../../../config/env";
 import { Loader } from "../../../features/ui/loader/loader-component";
 import { useIsMounted } from "../../../hooks/use-is-mounted";
@@ -11,7 +10,7 @@ import { Help } from "../../../features/ui/help/help-component";
 import { PATHS } from "../../../config/constants";
 import { useAppSelector } from "../../../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../../../features/auth";
-import { PiSmileySad } from "../../../features/ui/icons";
+import { PiSmileySad, PiSmiley } from "../../../features/ui/icons";
 
 import styles from "./confirm-registration-page.module.css";
 
@@ -56,24 +55,37 @@ export function ConfirmRegistrationPage(): React.ReactElement {
     <main className={styles["confirm-registration-page"]}>
       <div className={styles["confirm-registration-page__box"]}>
         {isConfirmed === false && (
-          <React.Fragment>
+          <>
             <PiSmileySad
               fill="var(--color_danger)"
               className={styles["confirm-registration-page__icon"]}
             />
-            <span className={styles["confirm-registration-page__message"]}>
+            <span className={styles["confirm-registration-page__err-message"]}>
               Sorry, we couldn't verify your email
             </span>
             <Help />
-          </React.Fragment>
+          </>
         )}
 
-        {isConfirmed === true && (
-          <Message type="success">
-            <div className={styles["circle circle_green page__circle"]}>
-              Done! Now, you can <NavLink to={PATHS.signIn}>log in</NavLink>.
+        {isConfirmed !== true && (
+          <>
+            <PiSmiley
+              fill="var(--color_success)"
+              className={styles["confirm-registration-page__icon"]}
+            />
+            <div
+              className={styles["confirm-registration-page__success-message"]}
+            >
+              <p>Done!</p>
+              <p>
+                Now, you can
+                <NavLink to={PATHS.signIn} className="link">
+                  log in
+                </NavLink>
+                .
+              </p>
             </div>
-          </Message>
+          </>
         )}
 
         {confirmSignUpResponse.isLoading && <Loader />}

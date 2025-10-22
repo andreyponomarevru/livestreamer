@@ -3,21 +3,19 @@
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-
-  background-color: white;
 }
 
 .confirm-registration-page__box {
   display: flex;
   flex-flow: column nowrap;
-  max-width: 320px;
   row-gap: 1rem;
   justify-content: center;
   align-items: center;
+
+  max-width: 320px;
+  background-color: white;
+  border-radius: var(--border_radius_xxl);
+  padding: var(--spacing_ml);
 }
 
 .confirm-registration-page__icon {
@@ -25,8 +23,14 @@
   width: auto;
 }
 
-.confirm-registration-page__message {
+.confirm-registration-page__err-message {
   font-size: var(--font-size_xl);
   color: var(--color_danger);
+  text-align: center;
+}
+
+.confirm-registration-page__success-message {
+  font-size: var(--font-size_xl);
+  color: var(--color_success);
   text-align: center;
 }
