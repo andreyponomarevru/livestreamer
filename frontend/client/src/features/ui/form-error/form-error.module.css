@@ -1,9 +1,9 @@
 .form-error {
   display: flex;
-  border-radius: var(--border_radius_btn);
-  text-align: left;
-  padding: 0 0.7rem 0 0.7rem;
-  font-size: var(--font-size_sm);
 
+  border-radius: var(--border_radius_btn);
   margin-top: 0.2rem;
+
+  font-size: var(--font-size_sm);
+  color: var(--color_red-40);
 }
