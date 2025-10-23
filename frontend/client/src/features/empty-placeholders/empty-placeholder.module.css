@@ -21,6 +21,6 @@
 }
 
 .empty-placeholder__text-l {
-  font-size: var(--font-size_lg);
+  font-size: var(--font-size_l);
   font-weight: 600;
 }

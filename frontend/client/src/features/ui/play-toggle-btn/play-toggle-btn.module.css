@@ -1,12 +1,14 @@
 .play-toggle-btn {
   display: flex;
   align-items: center;
+
   height: 100%;
   border: none;
-  cursor: pointer;
   background-color: transparent;
   padding: 0;
   margin: 0;
+
+  cursor: pointer;
 }
 
 .play-toggle-btn__icon {
@@ -14,8 +16,12 @@
   width: 100%;
 
   fill: white;
+
+  transition:
+    fill 0.2s ease,
+    background-color 0.2s ease;
 }
 
-.play-toggle-btn_disabled {
-  display: none;
+.play-toggle-btn_disabled .play-toggle-btn__icon {
+  fill: var(--color_charcoal-60);
 }

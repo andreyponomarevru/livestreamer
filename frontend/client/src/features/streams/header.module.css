@@ -16,8 +16,9 @@
 
   padding: 0 0.7rem;
   border-radius: var(--border_radius_xxl);
+  background-color: var(--color_charcoal-40);
+
   color: white;
   font-weight: 600;
-  font-size: var(--font-size_lg);
-  background-color: var(--color_charcoal-40);
+  font-size: var(--font-size_l);
 }

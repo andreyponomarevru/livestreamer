@@ -19,7 +19,6 @@ export function AuthToggle() {
   return (
     <div className={styles["auth-toggle"]}>
       <header className={styles["auth-toggle__header"]}>
-        <div className={styles["auth-toggle__header-link-wrapper"]}></div>
         <span
           className={`${styles["auth-toggle__header-link"]} ${activeSignInClassName}`}
           onClick={() => setIsCompVisible(true)}

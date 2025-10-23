@@ -1,7 +1,7 @@
 import { type RouteObject } from "react-router";
 import {
   AuthPage,
-  ChatPage,
+  ListenPage,
   ForgotPassPage,
   AskToConfirmRegistrationPage,
   ConfirmRegistrationPage,
@@ -18,90 +18,99 @@ import {
 import { ProtectedRoute } from "../features/protected-route/protected-route";
 import { PATHS } from "../config/constants";
 import { Page404 } from "../pages/public/404-page";
-import { ChatNestedLayout } from "../features/nested-layout/chat-nested-layout";
-import { RegularNestedLayout } from "../features/nested-layout/regular-nested-layout";
+import { ParentLayout, ChildLayout1, ChildLayout2 } from "../features/layouts";
 
 export const ROUTES: RouteObject[] = [
-  { index: true, path: PATHS.root, element: <LandingPage /> },
-
   {
-    element: <ChatNestedLayout />,
-    errorElement: <Page404 />,
-    children: [{ path: PATHS.public.listen, element: <ChatPage /> }],
-  },
-
-  {
-    element: <RegularNestedLayout />,
+    element: <ParentLayout />,
     errorElement: <Page404 />,
     children: [
-      { path: PATHS.public.streams, element: <StreamsPage /> },
-      { path: PATHS.public.about, element: <AboutPage /> },
+      {
+        element: <ChildLayout1 />,
+        errorElement: <Page404 />,
+        children: [
+          { index: true, path: PATHS.root, element: <LandingPage /> },
+
+          {
+            path: PATHS.private.streams,
+            element: (
+              <ProtectedRoute
+                requiresPermission={{
+                  resource: "broadcast_draft",
+                  action: "read",
+                }}
+              >
+                <StreamsDashboardPage />
+              </ProtectedRoute>
+            ),
+          },
+
+          {
+            path: PATHS.private.settings.account,
+            element: (
+              <ProtectedRoute>
+                <AccountPage />
+              </ProtectedRoute>
+            ),
+          },
+
+          {
+            path: PATHS.private.settings.profile,
+            element: (
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            ),
+          },
+
+          {
+            path: PATHS.private.settings.notifications,
+            element: (
+              <ProtectedRoute>
+                <NotificationsPage />
+              </ProtectedRoute>
+            ),
+          },
+
+          {
+            path: PATHS.private.adminDashboard,
+            element: (
+              <ProtectedRoute
+                requiresPermission={{
+                  resource: "all_user_accounts",
+                  action: "read",
+                }}
+              >
+                <UsersPage />
+              </ProtectedRoute>
+            ),
+          },
+
+          {
+            path: PATHS.confirmationRequired,
+            element: <AskToConfirmRegistrationPage />,
+          },
+          { path: PATHS.passwordReset, element: <PassResetPage /> },
+          { path: PATHS.forgotPassword, element: <ForgotPassPage /> },
+
+          {
+            path: PATHS.confirmRegistration,
+            element: <ConfirmRegistrationPage />,
+          },
+          { path: PATHS.signIn, element: <AuthPage /> },
+          { path: PATHS.register, element: <AuthPage /> },
+        ],
+      },
+
+      {
+        element: <ChildLayout2 />,
+        errorElement: <Page404 />,
+        children: [
+          { path: PATHS.public.about, element: <AboutPage /> },
+          { index: true, path: PATHS.public.streams, element: <StreamsPage /> },
+          { path: PATHS.public.listen, element: <ListenPage /> },
+        ],
+      },
     ],
-  },
-
-  {
-    path: PATHS.confirmationRequired,
-    element: <AskToConfirmRegistrationPage />,
-  },
-  { path: PATHS.passwordReset, element: <PassResetPage /> },
-  { path: PATHS.forgotPassword, element: <ForgotPassPage /> },
-
-  { path: PATHS.confirmRegistration, element: <ConfirmRegistrationPage /> },
-  { path: PATHS.signIn, element: <AuthPage /> },
-  { path: PATHS.register, element: <AuthPage /> },
-
-  {
-    path: PATHS.private.streams,
-    element: (
-      <ProtectedRoute
-        requiresPermission={{
-          resource: "broadcast_draft",
-          action: "read",
-        }}
-      >
-        <StreamsDashboardPage />
-      </ProtectedRoute>
-    ),
-  },
-
-  {
-    path: PATHS.private.settings.account,
-    element: (
-      <ProtectedRoute>
-        <AccountPage />
-      </ProtectedRoute>
-    ),
-  },
-
-  {
-    path: PATHS.private.settings.profile,
-    element: (
-      <ProtectedRoute>
-        <ProfilePage />
-      </ProtectedRoute>
-    ),
-  },
-
-  {
-    path: PATHS.private.settings.notifications,
-    element: (
-      <ProtectedRoute>
-        <NotificationsPage />
-      </ProtectedRoute>
-    ),
-  },
-
-  {
-    path: PATHS.private.adminDashboard,
-    element: (
-      <ProtectedRoute
-        requiresPermission={{
-          resource: "all_user_accounts",
-          action: "read",
-        }}
-      >
-        <UsersPage />
-      </ProtectedRoute>
-    ),
   },
 ];

@@ -3,36 +3,19 @@ import * as React from "react";
 import { type BroadcastDraft } from "../../types";
 import { API_ROOT_URL } from "../../config/env";
 import { DjIcon } from "../../features/ui/icons";
-import { Loader } from "../../features/ui/loader/loader-component";
-import { Message } from "../../features/ui/message/message-component";
-import { Btn, LinkBtn } from "../../features/ui/btn";
 import { PATHS } from "../../config/constants";
 import {
   StreamCard,
   CreateStreamForm,
   ShareStreamModal,
   Warning,
-  EmptyList,
   Header,
   Subheader,
 } from "../../features/streams";
 import { hasPermission } from "../../utils";
-
-import styles from "./streams-dashboard-page.module.css";
-
-// ex-Drafts page
-/*
-export function StreamsDashboardPage(
-  props: React.HTMLAttributes<HTMLDivElement>,
-): React.ReactElement {
-  return (
-    <main
-      className={`page page_margin-top ${styles["streams-dashboard-page"]}`}
-    >
-      <StreamDash />
-    </main>
-  );
-}*/
+import { EmptyStreams } from "../../features/empty-placeholders";
+import { LinkBtn } from "../../features/ui/btn";
+import { Page } from "../../features/ui/page/page-component";
 
 // ex-Drafts page
 
@@ -41,7 +24,7 @@ function useQuery(arg: any) {}
 export function StreamsDashboardPage(
   props: React.HTMLAttributes<HTMLDivElement>,
 ): React.ReactElement {
-  const user = { username: undefined };
+  const user = { username: "Chilllout Aggregator" };
 
   const drafts = useQuery({
     queryKey: ["drafts"],
@@ -70,7 +53,7 @@ export function StreamsDashboardPage(
   }
 
   return (
-    <main className="page page_margin-top page_padded-top">
+    <Page>
       <Header
         isViewingOwnPage={user?.username === PATHS.public.streams}
         streamsCount={3}
@@ -101,7 +84,8 @@ export function StreamsDashboardPage(
       <StreamCard meta={{ date: Date.now() - 100000 }} />
 
       {/* TODO: if there are no streams */}
-      <EmptyList
+      <EmptyStreams
+        username={user.username}
         canScheduleBroadcast={hasPermission(
           { resource: "scheduled_broadcast", action: "create" },
           user as any,
@@ -131,7 +115,7 @@ export function StreamsDashboardPage(
       )*/}
 
       <CreateStreamForm />
-    </main>
+    </Page>
   );
 }
 

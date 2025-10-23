@@ -102,11 +102,7 @@ export function RegisterForm(
         {errors.password && <FormError>{errors.password.message}</FormError>}
       </div>
 
-      <Btn
-        isLoading={registerResponse.isLoading}
-        className="rm__btns"
-        theme="quaternary"
-      >
+      <Btn isLoading={registerResponse.isLoading} theme="quaternary">
         Create Account
         {registerResponse.isLoading && <Loader />}
       </Btn>

@@ -6,8 +6,8 @@
   width: 100%;
   max-width: var(--max-width_m);
   height: 100%;
-  padding: var(--spacing_xxl) var(--spacing_xs) var(--spacing_xl)
-    var(--spacing_xs);
+  padding: var(--spacing_xs) var(--spacing_sm) var(--spacing_sm)
+    var(--spacing_sm);
   background-color: white;
 }
 
@@ -44,6 +44,7 @@
 .landing-page__icon {
   width: auto;
   height: 2.7rem;
+
   fill: var(--color_charcoal-100);
 }
 

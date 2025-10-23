@@ -20,20 +20,22 @@
 
 .loader_for_page {
   position: absolute;
-  margin: auto auto;
-  position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
+
   align-self: center;
   display: block;
+
+  margin: auto auto;
   padding: 3rem;
 }
 
 .loader_for_btn {
-  margin-top: 0.15rem;
-  margin-left: 0.8rem;
   align-items: center;
   justify-items: center;
+
+  margin-top: 0.15rem;
+  margin-left: 0.8rem;
 }

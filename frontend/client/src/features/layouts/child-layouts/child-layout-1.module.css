@@ -7,28 +7,3 @@
   width: 100%;
   height: 100%;
 }
-
-.child-layout-1__content {
-  position: relative;
-  /* to cut the not rounded corners of nested containers : */
-  overflow: hidden;
-
-  display: grid;
-  grid-template: auto 1fr;
-
-  width: 100%;
-  max-width: var(--max-width_m);
-  border-radius: var(--border_radius_xxl);
-  background-color: white;
-  margin: var(--spacing_xl) 0 var(--spacing_m) 0;
-  padding: var(--spacing_xs) var(--spacing_sm) var(--spacing_sm)
-    var(--spacing_sm);
-}
-@media (max-width: 620px) {
-  .child-layout-1__content {
-    height: calc(100% - var(--navbar-h));
-    border-radius: 0 0 var(--border_radius_xxl) var(--border_radius_xxl);
-    margin: var(--spacing_l) 0 var(--spacing_m) 0;
-    padding: var(--spacing_m) 12px var(--spacing_sm) 12px;
-  }
-}

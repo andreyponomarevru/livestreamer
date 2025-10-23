@@ -6,7 +6,7 @@ export function Warning() {
   return (
     <div className={styles["warning"]}>
       <div className={styles["warning__message"]}>
-        <p className="text-l">
+        <p className="text-size-l">
           The{" "}
           <a
             className="link"

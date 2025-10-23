@@ -1,7 +1,6 @@
 import React from "react";
 
 import { PlayerLinkForm } from "../../ui/player-link-form/player-link-form-component";
-import { TracklistForm } from "../../ui/tracklist-form/tracklist-form-component";
 import { Btn } from "../../../features/ui/btn";
 import { Loader } from "../../ui/loader/loader-component";
 
@@ -23,7 +22,6 @@ export function ArchiveItemControls(
         <Loader />
       </Btn>
 
-      <TracklistForm />
       <PlayerLinkForm />
       <Btn theme="primary" isLoading={false}>
         Delete Broadcast

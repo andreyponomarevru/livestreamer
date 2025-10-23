@@ -20,17 +20,17 @@
 }
 
 .menu__item {
-  font-size: var(--font-size_h4);
+  font-size: var(--font-size_xl);
 }
 
 .menu__extras {
   border-bottom: none;
 
-  font-size: var(--font-size_lg);
+  font-size: var(--font-size_l);
 }
 
 .menu__item_small {
-  font-size: var(--font-size_lg);
+  font-size: var(--font-size_l);
 }
 
 .menu__link {

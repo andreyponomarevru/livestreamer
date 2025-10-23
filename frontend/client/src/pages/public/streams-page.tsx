@@ -12,11 +12,13 @@ import {
   CreateStreamForm,
   ShareStreamModal,
   Warning,
-  EmptyList,
   Header,
   Subheader,
 } from "../../features/streams";
 import { hasPermission } from "../../utils";
+import { EmptyStreams } from "../../features/empty-placeholders";
+
+import styles from "./streams-page.module.css";
 
 // ex-Drafts page
 
@@ -54,7 +56,7 @@ export function StreamsPage(
   }
 
   return (
-    <>
+    <div className={styles["streams-page"]}>
       <Header
         isViewingOwnPage={user?.username === PATHS.public.streams}
         streamsCount={3}
@@ -85,7 +87,7 @@ export function StreamsPage(
       <StreamCard meta={{ date: Date.now() - 100000 }} />
 
       {/* TODO: if there are no streams */}
-      <EmptyList
+      <EmptyStreams
         canScheduleBroadcast={hasPermission(
           { resource: "scheduled_broadcast", action: "create" },
           user as any,
@@ -115,7 +117,7 @@ export function StreamsPage(
       )*/}
 
       <CreateStreamForm />
-    </>
+    </div>
   );
 }
 

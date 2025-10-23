@@ -4,19 +4,18 @@ import { UserDetails } from "../../features/moderation/users/components/user-det
 import { Loader } from "../../features/ui/loader/loader-component";
 import { Message } from "../../features/ui/message/message-component";
 import { useGetUsersQuery } from "../../features/moderation/users/users-slice";
-
-import styles from "./users-page.module.css";
+import { Page } from "../../features/ui/page/page-component";
 
 export function UsersPage(): React.ReactElement {
   const { data: users, isLoading, isError, error } = useGetUsersQuery();
 
   return (
-    <div className={styles["users-page"]}>
-      <h4>Users</h4>
+    <Page>
+      <h4 className="text-size-xl padding-bottom-m">Users</h4>
 
       {isLoading && <Loader />}
-      {isError && <Message type="danger">{String(error)}</Message>}
+      {isError && <Message type="warning">{String(error)}</Message>}
       {users?.map((user) => <UserDetails {...user} key={user.id} />)}
-    </div>
+    </Page>
   );
 }

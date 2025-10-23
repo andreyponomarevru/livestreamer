@@ -1,2 +1,1 @@
-export * from "./messages-list";
-export * from "./chat-controls";
+export * from "./components";

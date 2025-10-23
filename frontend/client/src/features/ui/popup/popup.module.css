@@ -11,6 +11,7 @@
 
 .popup_open {
   display: block;
+
   border-radius: var(--border_radius_xxl);
   box-shadow: 0 0 1rem var(--color_charcoal-20);
   background-color: white;

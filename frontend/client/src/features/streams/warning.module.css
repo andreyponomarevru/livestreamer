@@ -12,6 +12,7 @@
   border-radius: var(--border_radius_m);
   border: 1px solid var(--color_red-20);
   padding: var(--spacing_sm);
+
   color: var(--color_danger);
 }
 

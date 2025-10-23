@@ -44,7 +44,7 @@
 
 .stream-card__title {
   font-weight: 600;
-  font-size: var(--font-size_lg);
+  font-size: var(--font-size_l);
   line-height: 1.6;
 }
 
@@ -149,23 +149,15 @@
  */
 
 .stream-card__menu {
-  position: absolute;
-  display: none;
-}
-
-.stream-card__menu_open {
-  position: absolute;
   display: flex;
   flex-flow: column nowrap;
-  top: 3rem;
-  right: 0;
-  list-style-type: none;
-  width: auto;
-  text-wrap: nowrap;
 
+  width: auto;
   padding: var(--spacing_xs);
-  background-color: white;
   box-shadow: 0 0 1rem var(--color_charcoal-20);
+
+  list-style-type: none;
+  text-wrap: nowrap;
 }
 
 .stream-card__menu-row {
@@ -184,5 +176,6 @@
 .stream-card__menu-icon {
   height: 1.5rem;
   width: auto;
+
   fill: var(--color_charcoal-100);
 }

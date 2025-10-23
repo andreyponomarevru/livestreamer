@@ -5,26 +5,28 @@
 .user-meta__btn {
   display: flex;
   justify-content: space-between;
+
   width: 100%;
   background-color: transparent;
-  color: var(--color_gray-light);
   border: none;
   border-bottom: 1px solid var(--color_gray_darken);
   padding: 0.8rem 0.8rem;
-  text-align: left;
 
-  .user-meta__btn:hover,
-  .user-meta__btn:focus,
-  .user-meta__btn:active {
-    background-color: var(--color_gray-darkest);
-  }
+  color: var(--color_gray-light);
+  text-align: left;
+}
+
+.user-meta__btn .user-meta__btn:hover,
+.user-meta__btn .user-meta__btn:focus,
+.user-meta__btn .user-meta__btn:active {
+  background-color: var(--color_gray-darkest);
 }
 
 .user-meta__details {
   display: grid;
   row-gap: 0.5rem;
-  padding: 0.8rem 0.8rem;
 
+  padding: 0.8rem 0.8rem;
   border-bottom: 1px solid var(--color_gray_darken);
 }
 

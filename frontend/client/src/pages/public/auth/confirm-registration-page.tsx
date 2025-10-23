@@ -11,6 +11,7 @@ import { PATHS } from "../../../config/constants";
 import { useAppSelector } from "../../../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../../../features/auth";
 import { PiSmileySad, PiSmiley } from "../../../features/ui/icons";
+import { Box } from "../../../features/ui/box/box-component";
 
 import styles from "./confirm-registration-page.module.css";
 
@@ -52,44 +53,40 @@ export function ConfirmRegistrationPage(): React.ReactElement {
   }, [isMounted, confirmSignUpResponse]);
 
   return (
-    <main className={styles["confirm-registration-page"]}>
-      <div className={styles["confirm-registration-page__box"]}>
-        {isConfirmed === false && (
-          <>
-            <PiSmileySad
-              fill="var(--color_danger)"
-              className={styles["confirm-registration-page__icon"]}
-            />
-            <span className={styles["confirm-registration-page__err-message"]}>
-              Sorry, we couldn't verify your email
-            </span>
-            <Help />
-          </>
-        )}
+    <Box>
+      {isConfirmed === false && (
+        <>
+          <PiSmileySad
+            fill="var(--color_danger)"
+            className={styles["confirm-registration-page__icon"]}
+          />
+          <span className="text-size-xl text-color-warning">
+            Sorry, we couldn't verify your email
+          </span>
+          <Help />
+        </>
+      )}
 
-        {isConfirmed !== true && (
-          <>
-            <PiSmiley
-              fill="var(--color_success)"
-              className={styles["confirm-registration-page__icon"]}
-            />
-            <div
-              className={styles["confirm-registration-page__success-message"]}
-            >
-              <p>Done!</p>
-              <p>
-                Now, you can
-                <NavLink to={PATHS.signIn} className="link">
-                  log in
-                </NavLink>
-                .
-              </p>
-            </div>
-          </>
-        )}
+      {isConfirmed === true && (
+        <>
+          <PiSmiley
+            fill="var(--color_success)"
+            className={styles["confirm-registration-page__icon"]}
+          />
+          <div className="text-size-xl text-color-success">
+            <p>Done!</p>
+            <p>
+              Now, you can{" "}
+              <NavLink to={PATHS.signIn} className="link">
+                log in
+              </NavLink>
+              .
+            </p>
+          </div>
+        </>
+      )}
 
-        {confirmSignUpResponse.isLoading && <Loader />}
-      </div>
-    </main>
+      {confirmSignUpResponse.isLoading && <Loader />}
+    </Box>
   );
 }

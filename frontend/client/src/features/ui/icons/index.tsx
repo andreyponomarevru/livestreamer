@@ -21,12 +21,19 @@ export {
 export { IoClose } from "react-icons/io5";
 export { RxHamburgerMenu } from "react-icons/rx";
 export { HiOutlineLogout } from "react-icons/hi";
-export { PiSmileySad, PiLinkSimpleBold, PiCopyFill } from "react-icons/pi";
+export {
+  PiSmileySad,
+  PiLinkSimpleBold,
+  PiCopyFill,
+  PiBroadcastFill,
+  PiHandsClappingFill,
+  PiSmiley,
+} from "react-icons/pi";
 export { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
 export { IoNotifications, IoSend } from "react-icons/io5";
 export { FiMoreHorizontal, FiGlobe } from "react-icons/fi";
 export { IoMdHeart } from "react-icons/io";
 export { MdEdit } from "react-icons/md";
 export { BiSolidTrashAlt } from "react-icons/bi";
-export { PiBroadcastFill, PiHandsClappingFill } from "react-icons/pi";
+
 export { AiFillLike } from "react-icons/ai";

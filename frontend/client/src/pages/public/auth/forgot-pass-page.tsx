@@ -1,12 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router";
 
-import { PasswordRecovery } from "../../../features/auth";
+import { PasswordRecoveryForm } from "../../../features/auth";
 import { PATHS } from "../../../config/constants";
 import { useAppSelector } from "../../../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../../../features/auth";
-
-import styles from "./forgot-pass-page.module.css";
 
 export function ForgotPassPage(): React.ReactElement {
   const navigate = useNavigate();
@@ -16,9 +14,5 @@ export function ForgotPassPage(): React.ReactElement {
     if (user) navigate(PATHS.root);
   });
 
-  return (
-    <main className={styles["forgot-pass-page"]}>
-      <PasswordRecovery />
-    </main>
-  );
+  return <PasswordRecoveryForm />;
 }

@@ -1,35 +1,6 @@
-.ask-to-confirm-registration-page {
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  justify-content: center;
-
-  width: 100%;
-  height: 100%;
-  padding: 0 0.5rem;
-}
-
-.ask-to-confirm-registration-page__box {
-  display: flex;
-  flex-flow: column nowrap;
-  row-gap: 1rem;
-
-  text-align: center;
-
-  max-width: 320px;
-  background-color: white;
-  border-radius: var(--border_radius_xxl);
-  padding: var(--spacing_ml);
-}
-
-.ask-to-confirm-registration-page__heading {
-  font-size: var(--font-size_h4);
+.ask-to-confirm-registration-page-heading {
+  font-size: var(--font-size_xl);
   color: var(--color_success);
   font-weight: 600;
   line-height: var(--line-height_smg);
-}
-
-.ask-to-confirm-registration-page_box {
-  display: flex;
-  align-self: center;
 }

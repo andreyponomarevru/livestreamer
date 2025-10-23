@@ -1,7 +1,11 @@
 .box {
   display: flex;
   flex-flow: column nowrap;
+  justify-self: center;
+  align-self: center;
   row-gap: var(--spacing_sm);
+
+  text-align: center;
 
   min-width: 280px;
   max-width: 320px;
@@ -20,8 +24,8 @@
   padding: 0 1rem;
 
   text-align: center;
-  font-size: var(--font-size_h4);
+  font-size: var(--font-size_xl);
   color: var(--color_charcoal-100);
-  font-weight: bold;
+  font-weight: 600;
   line-height: 1;
 }

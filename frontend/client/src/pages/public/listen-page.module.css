@@ -38,6 +38,7 @@
   right: 0;
   top: 0;
   height: 100%;
+  z-index: 10;
 
   display: flex;
   flex-flow: column nowrap;
@@ -48,7 +49,7 @@
 }
 
 .listen-page__chat-box {
-  z-index: 10;
+  flex-grow: 1;
 
   /* compensate the empty space left by 'transform: translate' : */
   margin-bottom: -2.5rem;

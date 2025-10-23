@@ -93,7 +93,7 @@
 }
 
 .navbar__menu {
-  margin: var(--spacing_m);
+  margin: var(--spacing_sm) var(--spacing_m) var(--spacing_m) var(--spacing_m);
 }
 
 @media (max-width: 500px) {

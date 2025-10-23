@@ -4,7 +4,6 @@
     "Meta1"
     "Heading"
     "Meta2"
-    /*"Description"*/
     "Controls";
   row-gap: 0.5rem;
   padding: 1rem;
@@ -62,7 +61,7 @@
 .archive-item__heading {
   grid-area: Heading;
 
-  font-size: var(--font-size_h4);
+  font-size: var(--font-size_xl);
   color: white;
 }
 

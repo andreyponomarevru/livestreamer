@@ -2,15 +2,11 @@ import React from "react";
 import { RouterProvider, createBrowserRouter } from "react-router";
 
 import { ErrorBoundary } from "../features/ui/error-boundary/error-boundary";
-import { StreamLikeCountProvider } from "../features/stream";
-import { MainLayout } from "../features/layout";
-import { Page404 } from "../pages/public/404-page";
+import { StreamLikeCountProvider } from "../features/player";
 import { ROUTES } from "./routes";
 
 export function App(): React.ReactElement | null {
-  const router = createBrowserRouter([
-    { element: <MainLayout />, errorElement: <Page404 />, children: ROUTES },
-  ]);
+  const router = createBrowserRouter(ROUTES);
 
   return (
     <ErrorBoundary>

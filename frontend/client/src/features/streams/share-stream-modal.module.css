@@ -1,9 +1,9 @@
 .share-stream-modal {
   display: flex;
   flex-flow: row nowrap;
-  width: 100%;
-
   align-items: center;
+
+  width: 100%;
 }
 
 .share-stream-modal__input {
@@ -14,6 +14,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   background-color: transparent;
   padding: var(--spacing_xs);
   margin: 0;
@@ -32,5 +33,6 @@
 .share-stream-modal__btn-icon {
   height: 100%;
   width: auto;
+
   fill: var(--color_charcoal-100);
 }

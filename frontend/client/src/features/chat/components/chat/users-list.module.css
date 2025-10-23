@@ -1,0 +1,32 @@
+.users-list {
+  overflow: auto;
+
+  display: flex;
+  flex-flow: column nowrap;
+  column-gap: var(--space_sm);
+  row-gap: var(--spacing_xs);
+
+  list-style-type: none;
+
+  padding: 0 var(--spacing_sm) var(--spacing_sm) var(--spacing_sm);
+  border-radius: 0 0 var(--border_radius_xxl) var(--border_radius_xxl);
+  background-color: white;
+}
+
+.users-list__row {
+  display: flex;
+  flex-flow: row nowrap;
+  column-gap: var(--spacing_xs);
+  align-items: center;
+
+  font-size: var(--font-size_sm);
+  font-weight: 600;
+  letter-spacing: 0.03rem;
+}
+
+.users-list__avatar {
+  height: 1.5rem;
+  width: auto;
+
+  fill: var(--color_charcoal-30);
+}

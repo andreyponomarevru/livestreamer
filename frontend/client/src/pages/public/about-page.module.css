@@ -1,0 +1,7 @@
+.about-page {
+  color: var(--color_charcoal-100);
+
+  padding: var(--spacing_xs) var(--spacing_sm) var(--spacing_m)
+    var(--spacing_sm);
+  background-color: white;
+}

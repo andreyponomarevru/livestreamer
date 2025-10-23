@@ -13,6 +13,7 @@ import {
 
 import styles from "./stream-card.module.css";
 import { StreamStatusBadge } from "../ui/stream-status-badge/stream-status-badge";
+import { Popup } from "../ui/popup/popup-component";
 
 interface Props extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   meta?: {
@@ -66,7 +67,7 @@ export function StreamCard(props: Props) {
 
       <div className={styles["stream-card__details-box"]}>
         <div className={styles["stream-card__details"]}>
-          <span className="text-sm">
+          <span className="text-size-sm">
             {date}
             <span className={styles["stream-card__devider"]}>·</span>
             {duration}
@@ -106,26 +107,28 @@ export function StreamCard(props: Props) {
             <FiMoreHorizontal className={styles["stream-card__btn-icon"]} />
           </button>
 
-          <ul
-            className={`${styles["stream-card__menu"]} popup ${isMenuOpen ? `${styles["stream-card__menu_open"]} popup_open` : ""}`}
-          >
-            <li className={styles["stream-card__menu-row"]}>
-              <PiLinkSimpleBold className={styles["stream-card__menu-icon"]} />
-              Copy link
-            </li>
-            <li className={styles["stream-card__menu-row"]}>
-              <FaShare className={styles["stream-card__menu-icon"]} />
-              Share
-            </li>
-            <li className={styles["stream-card__menu-row"]}>
-              <MdEdit className={styles["stream-card__menu-icon"]} />
-              Edit
-            </li>
-            <li className={styles["stream-card__menu-row"]}>
-              <BiSolidTrashAlt className={styles["stream-card__menu-icon"]} />
-              Delete
-            </li>
-          </ul>
+          <Popup isOpen={isMenuOpen}>
+            <ul className={styles["stream-card__menu"]}>
+              <li className={styles["stream-card__menu-row"]}>
+                <PiLinkSimpleBold
+                  className={styles["stream-card__menu-icon"]}
+                />
+                Copy link
+              </li>
+              <li className={styles["stream-card__menu-row"]}>
+                <FaShare className={styles["stream-card__menu-icon"]} />
+                Share
+              </li>
+              <li className={styles["stream-card__menu-row"]}>
+                <MdEdit className={styles["stream-card__menu-icon"]} />
+                Edit
+              </li>
+              <li className={styles["stream-card__menu-row"]}>
+                <BiSolidTrashAlt className={styles["stream-card__menu-icon"]} />
+                Delete
+              </li>
+            </ul>
+          </Popup>
         </nav>
       </div>
     </a>
