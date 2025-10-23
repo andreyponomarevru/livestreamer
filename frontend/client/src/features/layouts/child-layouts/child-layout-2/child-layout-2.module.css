@@ -21,6 +21,7 @@
 @media (max-width: 620px) {
   .child-layout-2__content {
     margin-top: var(--spacing_xxl);
+
     border-radius: 0;
   }
 }

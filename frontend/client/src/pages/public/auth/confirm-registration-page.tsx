@@ -13,8 +13,6 @@ import { selectCurrentUserProfile } from "../../../features/auth";
 import { PiSmileySad, PiSmiley } from "../../../features/ui/icons";
 import { Box } from "../../../features/ui/box/box-component";
 
-import styles from "./confirm-registration-page.module.css";
-
 export function ConfirmRegistrationPage(): React.ReactElement {
   const navigate = useNavigate();
   const user = useAppSelector(selectCurrentUserProfile);
@@ -56,10 +54,7 @@ export function ConfirmRegistrationPage(): React.ReactElement {
     <Box>
       {isConfirmed === false && (
         <>
-          <PiSmileySad
-            fill="var(--color_danger)"
-            className={styles["confirm-registration-page__icon"]}
-          />
+          <PiSmileySad fill="var(--color_danger)" className="icon-size-m" />
           <span className="text-size-xl text-color-warning">
             Sorry, we couldn't verify your email
           </span>
@@ -69,10 +64,7 @@ export function ConfirmRegistrationPage(): React.ReactElement {
 
       {isConfirmed === true && (
         <>
-          <PiSmiley
-            fill="var(--color_success)"
-            className={styles["confirm-registration-page__icon"]}
-          />
+          <PiSmiley fill="var(--color_success)" className="icon-size-m" />
           <div className="text-size-xl text-color-success">
             <p>Done!</p>
             <p>

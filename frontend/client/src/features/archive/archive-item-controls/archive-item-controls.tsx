@@ -1,6 +1,5 @@
 import React from "react";
 
-import { PlayerLinkForm } from "../../ui/player-link-form/player-link-form-component";
 import { Btn } from "../../../features/ui/btn";
 import { Loader } from "../../ui/loader/loader-component";
 
@@ -22,7 +21,6 @@ export function ArchiveItemControls(
         <Loader />
       </Btn>
 
-      <PlayerLinkForm />
       <Btn theme="primary" isLoading={false}>
         Delete Broadcast
         <Loader />
