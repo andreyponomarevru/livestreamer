@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { API_ROOT_URL } from "../config/env";
 import { PATHS } from "../config/constants";
 import { useFetch } from "./use-fetch";
-import { useStreamLikeCount } from "../features/stream";
+import { useStreamLikeCount } from "../features/player";
 import { type User } from "../types";
 
 type StreamLikeButton = {
