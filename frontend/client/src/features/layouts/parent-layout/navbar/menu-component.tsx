@@ -9,7 +9,6 @@ import {
   FaCircleUser,
   FaUser,
   FaUnlock,
-  IoNotifications,
 } from "../../../ui/icons";
 import { PATHS } from "../../../../config/constants";
 
@@ -134,19 +133,6 @@ function SettingsSubmenu(props: React.HTMLAttributes<HTMLUListElement>) {
           <div>
             <FaUnlock className={styles["menu__icon"]} />
             <span>Account</span>
-          </div>
-        </NavLink>
-      </li>
-
-      <li className={styles["menu__submenu-item"]}>
-        <NavLink
-          className={styles["menu__link"]}
-          end
-          to={PATHS.private.settings.notifications}
-        >
-          <div>
-            <IoNotifications className={styles["menu__icon"]} />
-            <span>Notifications</span>
           </div>
         </NavLink>
       </li>

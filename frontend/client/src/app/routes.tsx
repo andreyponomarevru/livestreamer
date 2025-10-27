@@ -8,7 +8,6 @@ import {
   PassResetPage,
   UsersPage,
   LandingPage,
-  NotificationsPage,
   AccountPage,
   ProfilePage,
   AboutPage,
@@ -27,7 +26,6 @@ export const ROUTES: RouteObject[] = [
     children: [
       {
         element: <ChildLayout1 />,
-        errorElement: <Page404 />,
         children: [
           { index: true, path: PATHS.root, element: <LandingPage /> },
 
@@ -64,15 +62,6 @@ export const ROUTES: RouteObject[] = [
           },
 
           {
-            path: PATHS.private.settings.notifications,
-            element: (
-              <ProtectedRoute>
-                <NotificationsPage />
-              </ProtectedRoute>
-            ),
-          },
-
-          {
             path: PATHS.private.adminDashboard,
             element: (
               <ProtectedRoute
@@ -104,7 +93,6 @@ export const ROUTES: RouteObject[] = [
 
       {
         element: <ChildLayout2 />,
-        errorElement: <Page404 />,
         children: [
           { path: PATHS.public.about, element: <AboutPage /> },
           { index: true, path: PATHS.public.streams, element: <StreamsPage /> },

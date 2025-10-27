@@ -43,7 +43,6 @@ export const PATHS = {
     settings: {
       profile: "/settings/profile",
       account: "/settings/account",
-      notifications: "/settings/notifications",
     },
 
     streams: "/streams",

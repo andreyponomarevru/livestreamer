@@ -6,5 +6,4 @@ export * from "./public/streams-page";
 export * from "./protected/streams-dashboard-page";
 export * from "./protected/users-page";
 export * from "./protected/account-page";
-export * from "./protected/notifications-page";
 export * from "./protected/profile-page";
