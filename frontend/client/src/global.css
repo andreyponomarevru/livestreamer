@@ -520,6 +520,7 @@ button:focus-visible {
 .text-size-xl {
   font-family: var(--font-stack_sans);
   font-size: var(--font-size_xl);
+  line-height: var(--line-height_xl);
 }
 
 .text-size-xxl {
@@ -546,4 +547,13 @@ button:focus-visible {
 
 .text-weight-semibold {
   font-weight: 600;
+}
+
+/* 
+ * Icons
+ */
+
+.icon-size-m {
+  height: 3rem;
+  width: auto;
 }
