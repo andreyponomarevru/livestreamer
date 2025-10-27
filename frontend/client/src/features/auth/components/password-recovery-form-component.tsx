@@ -5,7 +5,6 @@ import { Box } from "../../ui/box/box-component";
 import { inputRules, type InputTypes } from "../../../config/input-rules";
 import { API_ROOT_URL } from "../../../config/env";
 import { Message } from "../../ui/message/message-component";
-import { useIsMounted } from "../../../hooks/use-is-mounted";
 import { useFetch } from "../../../hooks/use-fetch";
 import { Loader } from "../../ui/loader/loader-component";
 import { Help } from "../../ui/help/help-component";
@@ -45,17 +44,16 @@ export function PasswordRecoveryForm(
     clearErrors,
     setError,
   } = useForm<InputTypes>({ mode: "onBlur" });
-  const isMounted = useIsMounted();
   const { state: passwordResetResponse, fetchNow: sendPasswordResetRequest } =
     useFetch<null>();
   React.useEffect(() => {
-    if (isMounted && passwordResetResponse.error) {
+    if (passwordResetResponse.error) {
       setError("email", {
         type: "string",
         message: String(passwordResetResponse.error),
       });
     }
-  }, [isMounted, passwordResetResponse]);
+  }, [passwordResetResponse]);
 
   return (
     <Box heading="Forgot Password">

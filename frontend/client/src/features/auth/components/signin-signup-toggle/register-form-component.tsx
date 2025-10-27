@@ -5,7 +5,6 @@ import { useNavigate } from "react-router";
 import { inputRules, type InputTypes } from "../../../../config/input-rules";
 import { API_ROOT_URL } from "../../../../config/env";
 import { type RegisterForm } from "../../../../types";
-import { useIsMounted } from "../../../../hooks/use-is-mounted";
 import { useFetch } from "../../../../hooks/use-fetch";
 import { Loader } from "../../../ui/loader/loader-component";
 import { Btn } from "../../../ui/btn";
@@ -47,18 +46,17 @@ export function RegisterForm(
     clearErrors,
   } = useForm<InputTypes>({ mode: "onBlur" });
   const navigate = useNavigate();
-  const isMounted = useIsMounted();
   const { state: registerResponse, fetchNow: sendRegisterRequest } = useFetch();
   React.useEffect(() => {
-    if (isMounted && registerResponse.response) {
+    if (registerResponse.response) {
       navigate(PATHS.confirmationRequired);
-    } else if (isMounted && registerResponse.error) {
+    } else if (registerResponse.error) {
       setError("username", {
         type: "string",
         message: String(registerResponse.error),
       });
     }
-  }, [isMounted, registerResponse]);
+  }, [registerResponse]);
 
   return (
     <form

@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import { useIsMounted } from "../../../../hooks/use-is-mounted";
 import { LIKE_TIMEOUT_MS } from "../../../../config/env";
 import { useStreamLikeButton } from "../../../../hooks/use-stream-like-button";
 import { useAppSelector } from "../../../../hooks/redux-ts-helpers";
@@ -13,24 +12,22 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function HeartBtn(props: Props): React.ReactElement {
-  const isMounted = useIsMounted();
-
   const user = useAppSelector(selectCurrentUserProfile);
   const { handleBtnClick, setIsBtnEnabled, isBtnEnabled } =
     useStreamLikeButton(user);
   React.useEffect(() => {
-    if (isMounted) setIsBtnEnabled(props.isStreamOnline);
-  }, [props.isStreamOnline, isMounted]);
+    setIsBtnEnabled(props.isStreamOnline);
+  }, [props.isStreamOnline]);
 
   React.useEffect(() => {
     let timerId: NodeJS.Timeout;
-    if (isMounted && !isBtnEnabled && props.isStreamOnline) {
+    if (!isBtnEnabled && props.isStreamOnline) {
       timerId = setTimeout(() => setIsBtnEnabled(true), LIKE_TIMEOUT_MS);
     }
     return () => {
       clearTimeout(timerId);
     };
-  }, [isBtnEnabled, isMounted]);
+  }, [isBtnEnabled]);
 
   return (
     <button

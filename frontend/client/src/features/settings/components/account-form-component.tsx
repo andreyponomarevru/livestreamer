@@ -7,7 +7,6 @@ import { useFetch } from "../../../hooks/use-fetch";
 import { API_ROOT_URL } from "../../../config/env";
 import { type APIResponseSuccess, type User } from "../../../types";
 import { Btn } from "../../ui/btn/btn-component";
-import { useIsMounted } from "../../../hooks/use-is-mounted";
 import { Loader } from "../../ui/loader/loader-component";
 import { FormError } from "../../ui/form-error/form-error-component";
 import { PATHS } from "../../../config/constants";
@@ -40,7 +39,6 @@ export function AccountForm(): React.ReactElement {
   }
 
   const user = useAppSelector(selectCurrentUserProfile);
-  const isMounted = useIsMounted();
   const navigate = useNavigate();
   const {
     register,
@@ -55,25 +53,25 @@ export function AccountForm(): React.ReactElement {
   });
 
   React.useEffect(() => {
-    if (isMounted && user) {
+    if (user) {
       setValue("username", user.username, { shouldValidate: false });
     }
-  }, [isMounted, user]);
+  }, [user]);
 
   const { state: updatedUserResponse, fetchNow: sendUpdatedUserRequest } =
     useFetch<APIResponseSuccess<User>>();
   React.useEffect(() => {
-    if (isMounted && updatedUserResponse.response?.body) {
+    if (updatedUserResponse.response?.body) {
       //const user: User = updatedUserResponse.response.body.results;
       //auth.setUser(user);
       navigate(PATHS.root);
-    } else if (isMounted && updatedUserResponse.error) {
+    } else if (updatedUserResponse.error) {
       setError("username", {
         type: "string",
         message: String(updatedUserResponse.error),
       });
     }
-  }, [isMounted, updatedUserResponse]);
+  }, [updatedUserResponse]);
 
   /* Delete account */
   function deleteAccount() {
@@ -83,10 +81,10 @@ export function AccountForm(): React.ReactElement {
   const { state: deleteUserResponse, fetchNow: sendDeleteUserRequest } =
     useFetch();
   React.useEffect(() => {
-    if (isMounted && deleteUserResponse.response) {
+    if (deleteUserResponse.response) {
       navigate(PATHS.root);
     }
-  }, [isMounted, deleteUserResponse]);
+  }, [deleteUserResponse]);
 
   return (
     <form

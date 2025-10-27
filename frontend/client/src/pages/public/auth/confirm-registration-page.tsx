@@ -4,7 +4,6 @@ import { NavLink, useNavigate } from "react-router";
 import { useQuery } from "../../../hooks/use-query";
 import { API_ROOT_URL } from "../../../config/env";
 import { Loader } from "../../../features/ui/loader/loader-component";
-import { useIsMounted } from "../../../hooks/use-is-mounted";
 import { useFetch } from "../../../hooks/use-fetch";
 import { Help } from "../../../features/ui/help/help-component";
 import { PATHS } from "../../../config/constants";
@@ -23,12 +22,10 @@ export function ConfirmRegistrationPage(): React.ReactElement {
   const query = useQuery();
   const token = query.get("token");
 
-  const isMounted = useIsMounted();
-
   const { state: confirmSignUpResponse, fetchNow: sendTokenRequest } =
     useFetch();
   React.useEffect(() => {
-    if (isMounted && token) {
+    if (token) {
       console.log("[confirmSignUp] Sending confirmation request...");
 
       sendTokenRequest(`${API_ROOT_URL}/verification?token=${token}`, {
@@ -39,16 +36,16 @@ export function ConfirmRegistrationPage(): React.ReactElement {
         },
       });
     }
-  }, [isMounted, token]);
+  }, [token]);
 
   const [isConfirmed, setIsConfirmed] = React.useState<boolean | null>(null);
   React.useEffect(() => {
-    if (isMounted && confirmSignUpResponse.response) {
+    if (confirmSignUpResponse.response) {
       setIsConfirmed(true);
-    } else if (isMounted && confirmSignUpResponse.error) {
+    } else if (confirmSignUpResponse.error) {
       setIsConfirmed(false);
     }
-  }, [isMounted, confirmSignUpResponse]);
+  }, [confirmSignUpResponse]);
 
   return (
     <Box>

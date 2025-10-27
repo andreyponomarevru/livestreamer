@@ -128,7 +128,6 @@ import { type APIResponseSuccess, type Broadcast } from "../../types";
 import { useFetch } from "../../hooks/use-fetch";
 import { API_ROOT_URL } from "../../config/env";
 import { Loader } from "../../features/ui/loader/loader-component";
-import { useIsMounted } from "../../hooks/use-is-mounted";
 import { Message } from "../../features/ui/message/message-component";
 import { useAppSelector } from "../../hooks/redux-ts-helpers";
 import { selectCurrentUserProfile } from "../../features/current-user_private";
@@ -138,7 +137,6 @@ import { hasPermission } from "../../utils";
 import styles from "./streams-page.module.css";
 
 export function StreamsPage(): React.ReactElement {
-  const isMounted = useIsMounted();
 
   const { state: broadcasts, fetchNow: sendGetBroadcastsRequest } =
     useFetch<APIResponseSuccess<Broadcast[]>>();
@@ -168,15 +166,13 @@ export function StreamsPage(): React.ReactElement {
     useFetch<APIResponseSuccess<TScheduledBroadcast[]>>();
 
   React.useEffect(() => {
-    if (isMounted) {
-      sendBroadcastsRequest(`${API_ROOT_URL}/schedule`, {
-        method: "GET",
-        headers: {
-          "content-type": "application/json",
-          accept: "application/json",
-        },
-      });
-    }
+    sendBroadcastsRequest(`${API_ROOT_URL}/schedule`, {
+      method: "GET",
+      headers: {
+        "content-type": "application/json",
+        accept: "application/json",
+      },
+    });
   }, [isMounted]);
 
   //

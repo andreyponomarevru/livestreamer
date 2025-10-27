@@ -6,7 +6,6 @@ import { ProfileForm } from "../../features/settings";
 import { API_ROOT_URL } from "../../config/env";
 import { Message } from "../../features/ui/message/message-component";
 import { Btn } from "../../features/ui/btn";
-import { useIsMounted } from "../../hooks/use-is-mounted";
 import { useFetch } from "../../hooks/use-fetch";
 import { Loader } from "../../features/ui/loader/loader-component";
 import { PATHS } from "../../config/constants";
@@ -20,14 +19,14 @@ export function ProfilePage(): React.ReactElement {
 
   const navigate = useNavigate();
   const user = useAppSelector(selectCurrentUserProfile);
-  const isMounted = useIsMounted();
+
   const { state: deleteUserResponse, fetchNow: sendDeleteUserRequest } =
     useFetch();
   React.useEffect(() => {
-    if (isMounted && deleteUserResponse.response) {
+    if (deleteUserResponse.response) {
       navigate(PATHS.root);
     }
-  }, [isMounted, deleteUserResponse]);
+  }, [deleteUserResponse]);
 
   return (
     <Page>
