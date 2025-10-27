@@ -6,22 +6,20 @@ import { RegisterForm } from "./register-form-component";
 import styles from "./auth-toggle.module.css";
 
 export function AuthToggle() {
-  const [isCompVisible, setIsCompVisible] = React.useState(true);
+  const [activeIndex, setActiveIndex] = React.useState(0);
 
-  const activeSignInClassName = isCompVisible
-    ? styles["auth-toggle__header-link_active"]
-    : "";
+  const activeSignInClassName =
+    activeIndex === 0 ? styles["auth-toggle__header-link_active"] : "";
 
-  const activeSignUpClassName = !isCompVisible
-    ? styles["auth-toggle__header-link_active"]
-    : "";
+  const activeSignUpClassName =
+    activeIndex === 1 ? styles["auth-toggle__header-link_active"] : "";
 
   return (
     <div className={styles["auth-toggle"]}>
       <header className={styles["auth-toggle__header"]}>
         <span
           className={`${styles["auth-toggle__header-link"]} ${activeSignInClassName}`}
-          onClick={() => setIsCompVisible(true)}
+          onClick={() => setActiveIndex(0)}
         >
           <span className={styles["auth-toggle__header-link-text"]}>Login</span>
           <span className={styles["auth-toggle__header-link-bg"]}></span>
@@ -29,16 +27,17 @@ export function AuthToggle() {
 
         <span
           className={`${styles["auth-toggle__header-link"]} ${activeSignUpClassName}`}
-          onClick={() => setIsCompVisible(false)}
+          onClick={() => setActiveIndex(1)}
         >
           <span className={styles["auth-toggle__header-link-text"]}>Join</span>
           <span className={styles["auth-toggle__header-link-bg"]}></span>
         </span>
       </header>
 
-      {isCompVisible ? (
+      {activeIndex === 0 && (
         <SignInForm className={styles["auth-toggle__box"]} />
-      ) : (
+      )}
+      {activeIndex === 1 && (
         <RegisterForm className={styles["auth-toggle__box"]} />
       )}
     </div>
