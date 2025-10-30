@@ -36,11 +36,10 @@ export function Chat(props: Props) {
     isFetching: isGetChatHistoryFetching,
   } = useGetChatHistoryQuery();
 
-  const sortedMessages = React.useMemo(() => {
-    const sortedMessages = paginatedMsgs?.messages.slice();
-    sortedMessages?.sort(sortMessages);
-    return sortedMessages;
-  }, [paginatedMsgs]);
+  const sortedMessages = React.useMemo(
+    () => paginatedMsgs?.messages.slice().sort(sortMessages),
+    [paginatedMsgs],
+  );
 
   //
 
