@@ -1,0 +1,6 @@
+.account-form__btns {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  gap: var(--spacing_sm);
+}
