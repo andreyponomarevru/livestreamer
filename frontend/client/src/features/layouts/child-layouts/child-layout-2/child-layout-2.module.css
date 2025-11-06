@@ -29,6 +29,7 @@
 .child-layout-2__body {
   overflow: hidden;
   position: relative;
+  z-index: calc(var(--zindex-fixed) + 1);
 
   border-radius: var(--border_radius_xxl);
 
