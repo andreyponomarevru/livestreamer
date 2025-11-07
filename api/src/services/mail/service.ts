@@ -96,14 +96,13 @@ export const mailService = {
       email,
       token,
     }: ResetPasswordTokenEMail): Mail.Options {
-      // Link to react app, not to the API
-      const submitNewPasswordLink = `${SUBMIT_NEW_PASSWORD_LINK}?token=${token}`;
+      const submitNewPassReactAppLink = `${SUBMIT_NEW_PASSWORD_LINK}?token=${token}`;
 
       const options: SendMailOptions = {
         from: MAIL_FROM_EMAIL,
         to: email,
         subject: "Reset Password",
-        html: `<p>To reset your password, click <a href="${submitNewPasswordLink}">here</a>.</p>`,
+        html: `<p>To reset your password, click <a href="${submitNewPassReactAppLink}">here</a>.</p>`,
         replyTo: MAIL_FROM_EMAIL,
       };
 
