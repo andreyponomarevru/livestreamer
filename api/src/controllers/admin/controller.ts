@@ -20,7 +20,7 @@ export const adminController = {
       await chatService.destroyMsg({
         userUUID: req.session.authenticatedUser!.uuid,
         userId: req.query.user_id as number,
-        id: req.params.messageId as number,
+        messageId: req.params.messageId as number,
       });
       res.status(204).end();
     } catch (err) {
