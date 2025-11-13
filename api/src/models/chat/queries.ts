@@ -52,7 +52,7 @@ export const chatRepo = {
   },
 
   destroyMsg: async function (msg: ChatMsgId): Promise<{
-    id: number;
+    messageId: number;
     userId: number;
   } | void> {
     const sql =
@@ -64,13 +64,13 @@ export const chatRepo = {
         chat_message_id = $2\
       RETURNING \
         chat_message_id";
-    const values = [msg.userId, msg.id];
+    const values = [msg.userId, msg.messageId];
     const pool = await dbConnection.open();
     const res = await pool.query<{ chat_message_id: number }>(sql, values);
 
     // If user tries to delete nonexistent message, don't return anything
     if (res.rowCount !== null && res.rowCount > 0) {
-      return { userId: msg.userId, id: msg.id };
+      return { userId: msg.userId, messageId: msg.messageId };
     }
   },
 
@@ -151,7 +151,7 @@ export const chatRepo = {
   },
 
   createMsgLike: async function (msg: {
-    id: number;
+    messageId: number;
     userId: number;
   }): Promise<ChatMsgLike> {
     const insertSql =
@@ -161,20 +161,20 @@ export const chatRepo = {
         ($1, $2) \
       ON CONFLICT \
         DO NOTHING";
-    const insertValues = [msg.userId, msg.id];
+    const insertValues = [msg.userId, msg.messageId];
     const pool = await dbConnection.open();
     await pool.query(insertSql, insertValues);
 
     const selectSql =
       "SELECT * FROM view_chat_message_likes WHERE chat_message_id = $1";
-    const selectValues = [msg.id];
+    const selectValues = [msg.messageId];
     const res = await pool.query<CreateMsgLikeDBResponse>(
       selectSql,
       selectValues,
     );
 
     return {
-      messageId: msg.id,
+      messageId: msg.messageId,
       likedByUserId: msg.userId,
       likedByUserIds: res.rows[0].liked_by_user_id,
     };
@@ -190,13 +190,13 @@ export const chatRepo = {
         appuser_id = $1 \
       AND \
         chat_message_id = $2";
-    const deleteValues = [msg.userId, msg.id];
+    const deleteValues = [msg.userId, msg.messageId];
     const pool = await dbConnection.open();
     await pool.query(deleteSql, deleteValues);
 
     const selectSql =
       "SELECT * FROM view_chat_message_likes WHERE chat_message_id = $1";
-    const selectValues = [msg.id];
+    const selectValues = [msg.messageId];
     const res = await pool.query<CreateMsgLikeDBResponse>(
       selectSql,
       selectValues,
@@ -205,7 +205,7 @@ export const chatRepo = {
     // If user tries to delete the like of nonexistent message, don't return anything
     if (res.rowCount !== null && res.rowCount > 0) {
       return {
-        messageId: msg.id,
+        messageId: msg.messageId,
         unlikedByUserId: msg.userId,
         likedByUserIds: res.rows[0].liked_by_user_id,
       };

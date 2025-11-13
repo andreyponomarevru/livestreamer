@@ -35,7 +35,7 @@ export const chatController = {
       await chatService.destroyMsg({
         userUUID: req.session.authenticatedUser!.uuid!,
         userId: req.session.authenticatedUser!.id,
-        id: req.params.id!,
+        messageId: req.params.id!,
       });
       res.status(204).end();
     } catch (err) {
@@ -52,7 +52,7 @@ export const chatController = {
       await chatService.likeMsg({
         userUUID: req.session.authenticatedUser!.uuid!,
         userId: req.session.authenticatedUser!.id,
-        id: req.params.id!,
+        messageId: req.params.id!,
       });
       res.status(204).end();
     } catch (err) {
@@ -95,7 +95,7 @@ export const chatController = {
   ): Promise<void> {
     try {
       await chatService.unlikeMsg({
-        id: req.params.id!,
+        messageId: req.params.id!,
         userUUID: req.session.authenticatedUser!.uuid!,
         userId: req.session.authenticatedUser!.id,
       });
