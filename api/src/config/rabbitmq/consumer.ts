@@ -1,6 +1,6 @@
 import amqpClient, {
-  type Connection,
   type Channel,
+  type ChannelModel,
   type ConsumeMessage,
 } from "amqplib";
 import EventEmitter from "events";
@@ -10,7 +10,7 @@ import { AMQP_SERVER_CONFIG, QUEUES } from "./config";
 class MessageQueueEmitter extends EventEmitter {}
 export const messageQueueEmitter = new MessageQueueEmitter();
 
-let connection: Connection | null = null;
+let connection: ChannelModel | null = null;
 let channel: Channel | null = null;
 
 export const rabbitMQConsumer = {

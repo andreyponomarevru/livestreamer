@@ -1,5 +1,5 @@
 import { createClient } from "redis";
-import RedisStore from "connect-redis";
+import { RedisStore } from "connect-redis";
 import { logger } from "./logger";
 import {
   AUTH_COOKIE_SECRET,

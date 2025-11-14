@@ -1,4 +1,4 @@
-import amqpClient, { type Connection, type Channel } from "amqplib";
+import amqpClient, { type ChannelModel, type Channel } from "amqplib";
 import { logger } from "../logger";
 import { AMQP_SERVER_CONFIG } from "./config";
 
@@ -9,7 +9,7 @@ type RabbitMQMessage = {
   content: Buffer;
 };
 
-let connection: Connection | null = null;
+let connection: ChannelModel | null = null;
 let pubChannel: Channel | null = null;
 
 export const rabbitMQPublisher = {
