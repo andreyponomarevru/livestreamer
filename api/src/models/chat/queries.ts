@@ -42,7 +42,8 @@ export const chatRepo = {
     ]);
 
     return {
-      id: newMsg.rows[0].chat_message_id,
+      messageId: newMsg.rows[0].chat_message_id,
+      broadcastId: newMsg.rows[0].broadcast_id,
       userId: newMsg.rows[0].appuser_id,
       username: newMsg.rows[0].username,
       message: newMsg.rows[0].message,
@@ -54,6 +55,7 @@ export const chatRepo = {
   destroyMsg: async function (msg: ChatMsgId): Promise<{
     messageId: number;
     userId: number;
+    broadcastId: number;
   } | void> {
     const sql =
       "DELETE FROM \
@@ -70,16 +72,26 @@ export const chatRepo = {
 
     // If user tries to delete nonexistent message, don't return anything
     if (res.rowCount !== null && res.rowCount > 0) {
-      return { userId: msg.userId, messageId: msg.messageId };
+      return {
+        userId: msg.userId,
+        messageId: msg.messageId,
+        broadcastId: msg.broadcastId,
+      };
     }
   },
 
-  readMsgsPaginated: async function (
-    limit: number,
-    nextCursor?: string,
-  ): Promise<
+  readMsgsPaginated: async function ({
+    broadcastId,
+    limit,
+    nextCursor,
+  }: {
+    broadcastId: number;
+    limit: number;
+    nextCursor?: string;
+  }): Promise<
     PaginatedItems<{
-      id: number;
+      broadcastId: number;
+      messageId: number;
       userId: number;
       username: string;
       createdAt: string;
@@ -87,36 +99,46 @@ export const chatRepo = {
       likedByUserId: number[];
     }>
   > {
-    const sql =
-      "SELECT \
-        username, v_c_h.*\
-      FROM \
-        appuser AS usr \
-      INNER JOIN \
-        view_chat_history AS v_c_h\
-      ON \
-        usr.appuser_id = v_c_h.appuser_id \
-      WHERE\
-        /* if user doesn't provide nextCursor, just return the last N rows */\
-        ($1::timestamp IS NULL OR $2::integer IS NULL)\
-          OR\
-        /* if user provides nextCursor, return msgs starting from this cursor*/\
-        ($1::timestamp IS NOT NULL AND \
-         $2::integer IS NOT NULL AND \
-         v_c_h.created_at <= $1 AND \
-         chat_message_id <= $2)\
-      ORDER BY \
-        v_c_h.created_at DESC, \
-        chat_message_id DESC\
-      LIMIT $3 + 1";
+    const sql = `
+      SELECT 
+        username, v_c_h.*
+      FROM 
+        appuser AS usr 
+      INNER JOIN 
+        view_chat_history AS v_c_h
+      ON 
+        usr.appuser_id = v_c_h.appuser_id
+      WHERE
+        broadcast_id = $3 AND
+        /* if user doesn't provide nextCursor, just return the last N rows */
+        (
+          $1::timestamp IS NULL OR $2::integer IS NULL
+        )
+          OR
+        /* if user provides nextCursor, return msgs starting from this cursor */
+        ( 
+          $1::timestamp IS NOT NULL AND 
+          $2::integer IS NOT NULL AND 
+          v_c_h.created_at <= $1 AND 
+          chat_message_id <= $2
+        )
+      ORDER BY 
+        v_c_h.created_at DESC,
+        chat_message_id DESC
+      LIMIT $4 + 1`;
 
     const { timestampCursor, idCursor } = decodeNextPageCursor(nextCursor);
-    const values = [timestampCursor, idCursor, limit];
+    console.log(
+      "+++++++++++++++!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    );
+    console.log(timestampCursor, idCursor);
+    const values = [timestampCursor, idCursor, broadcastId, limit];
     const pool = await dbConnection.open();
     const res = await pool.query<ReadMsgDBResponse>(sql, values);
 
     const items: {
-      id: number;
+      messageId: number;
+      broadcastId: number;
       userId: number;
       username: string;
       createdAt: string;
@@ -124,7 +146,8 @@ export const chatRepo = {
       likedByUserId: number[];
     }[] = res.rows.map((row) => {
       return {
-        id: row.chat_message_id,
+        messageId: row.chat_message_id,
+        broadcastId: row.broadcast_id,
         createdAt: row.created_at,
         likedByUserId: row.liked_by_user_id,
         userId: row.appuser_id,
@@ -142,7 +165,7 @@ export const chatRepo = {
       // To handle cases when multiple records have the same timestamp, we create composite cursor (for the last raw) combining record's timestamp and id
       const newNextCursor = encodeNextPageCursor(
         items[items.length - 1].createdAt,
-        items[items.length - 1].id,
+        items[items.length - 1].messageId,
       );
       const newPage = items.splice(0, items.length - 1);
 
