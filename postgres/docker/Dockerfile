@@ -1,4 +1,4 @@
-FROM postgres:latest AS base
+FROM postgres:17 AS base
 
 #
 # Production
