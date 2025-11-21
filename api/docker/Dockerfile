@@ -27,7 +27,7 @@ FROM base AS development
 USER node
 WORKDIR /home/node
 # Install all deps including development
-RUN npm ci --include=dev
+RUN yarn install --frozen-lockfile
 # Copy the whole dir instead of only "./src", otherwise directories with test
 # files won't be included
 COPY --chown=node:node . .
@@ -44,9 +44,9 @@ USER node
 WORKDIR /home/node
 COPY --chown=node:node tsconfig*.json ./
 # Install dependencies before copying .src, to leverage Docker build cache
-RUN npm ci && npm cache clean --force
+RUN yarn install --frozen-lockfile && yarn cache clean
 COPY --chown=node:node ./src ./src
-RUN npm run build
+RUN yarn build
 
 # Stage 2: strip all things TypeScript from our image.
 
@@ -55,7 +55,7 @@ USER node
 WORKDIR /home/node
 COPY --chown=node:node --from=js /home/node/build ./
 # Install only production dependencies
-RUN npm ci --omit=dev
+RUN yarn install --frozen-lockfile --production
 
 # Stage 3: create final production image ready to be deployed - copy only the
 # required files from stages above.
@@ -77,7 +77,7 @@ CMD ["node", "index.js"]
 FROM base AS test
 USER node
 WORKDIR /home/node
-RUN npm ci --include=dev
+RUN yarn install --frozen-lockfile
 COPY --chown=node:node . .
 CMD [ "npm", "run", "serve:dev" ]
 # CMD ["tail", "-f", "/dev/null"] # for debugging
