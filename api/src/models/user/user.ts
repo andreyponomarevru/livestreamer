@@ -1,8 +1,8 @@
 import { type Permissions } from "../../types";
 
-interface UserProfile {
-  uuid: string;
-  id: number;
+interface Profile {
+  uuid?: string;
+  userId: number;
   email: string;
   username: string;
   password: string;
@@ -10,32 +10,32 @@ interface UserProfile {
   lastLoginAt?: string;
   isEmailConfirmed: boolean;
   isDeleted: boolean;
-  permissions: Permissions;
+  permissions?: Permissions;
+  displayName: string;
+  websiteUrl: string;
+  about: string;
+  profilePictureUrl: string;
+  subscriptionName: string;
 }
 
 export class User {
-  uuid: string;
-  readonly id: number;
-  readonly username: string;
-  readonly email: string;
-  readonly password: string;
-  readonly createdAt: string;
+  uuid?: string;
+  readonly userId!: number;
+  readonly username!: string;
+  readonly email!: string;
+  readonly password!: string;
+  readonly createdAt!: string;
   lastLoginAt?: string;
-  readonly isEmailConfirmed: boolean;
-  readonly isDeleted: boolean;
-  readonly permissions: Permissions;
+  readonly isEmailConfirmed!: boolean;
+  readonly isDeleted!: boolean;
+  readonly permissions?: Permissions;
+  readonly displayName!: string;
+  readonly websiteUrl!: string;
+  readonly about!: string;
+  readonly profilePictureUrl!: string;
+  readonly subscriptionName!: string;
 
-  constructor(profile: UserProfile) {
-    this.uuid = profile.uuid;
-    this.id = profile.id;
-    this.email = profile.email;
-    this.username = profile.username;
-    this.password = profile.password;
-    this.createdAt = profile.createdAt;
-    this.isEmailConfirmed = profile.isEmailConfirmed;
-    this.isDeleted = profile.isDeleted;
-    this.permissions = profile.permissions;
-
-    if (profile.lastLoginAt) this.lastLoginAt = profile.lastLoginAt;
+  constructor(profile: Profile) {
+    Object.assign(this, profile);
   }
 }
