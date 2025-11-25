@@ -1,16 +1,18 @@
 import { type Socket } from "net";
 import util from "util";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
+
 import { type Request, type Response } from "express";
+
 import { wsServer } from "./ws-server";
 import { WSChatClient } from "./services/ws";
-import { HTTP_PORT } from "./config/env";
+import { NODE_HTTP_PORT } from "./config/env";
 import { logger } from "./config/logger";
 import { sessionParser } from "./express-app";
 
 export async function onServerListening(): Promise<void> {
   logger.debug(
-    `${__filename}: API HTTP Server is listening on port ${HTTP_PORT}`,
+    `${__filename}: API HTTP Server is listening on port ${NODE_HTTP_PORT}`,
   );
 }
 
@@ -18,7 +20,9 @@ export function onServerError(err: NodeJS.ErrnoException): void | never {
   if (err.syscall !== "listen") throw err;
 
   const bind =
-    typeof HTTP_PORT === "string" ? `Pipe ${HTTP_PORT}` : `Port ${HTTP_PORT}`;
+    typeof NODE_HTTP_PORT === "string"
+      ? `Pipe ${NODE_HTTP_PORT}`
+      : `Port ${NODE_HTTP_PORT}`;
 
   switch (err.code) {
     case "EACCES":
@@ -52,22 +56,28 @@ export function handleNewWSConnection(
     logger.info(`${__filename} [upgrade] User successfully authenticated`);
 
     const username = req.session.authenticatedUser.username;
-    const id = req.session.authenticatedUser.id;
-    const uuid = req.session.authenticatedUser!.uuid;
+    const userId = req.session.authenticatedUser.userId;
+    const uuid = req.session.authenticatedUser!.uuid!;
 
     wsServer.handleUpgrade(req, socket, head, (newSocket) => {
       wsServer.emit(
         "connection",
-        new WSChatClient({ uuid, id, username, socket: newSocket }),
+        new WSChatClient({ uuid, userId, username, socket: newSocket }),
       );
     });
   } else {
     logger.info(`${__filename}: [upgrade] User is not authenticated.`);
     // Add unauthenticated users to the store too, to be able to track the total number of opened connections
     wsServer.handleUpgrade(req, socket, head, (newSocket) => {
+      const uuid = randomUUID();
+
       wsServer.emit(
         "connection",
-        new WSChatClient({ uuid: uuidv4(), socket: newSocket }),
+        new WSChatClient({
+          uuid,
+          username: uuid,
+          socket: newSocket,
+        }),
       );
     });
 
@@ -88,7 +98,7 @@ export async function onServerUpgrade(
 ): Promise<void> {
   logger.debug("Parse session from request");
 
-  sessionParser(req, {} as Response, () =>
-    handleNewWSConnection(req, socket, head),
-  );
+  sessionParser(req, {} as Response, () => {
+    handleNewWSConnection(req, socket, head);
+  });
 }
