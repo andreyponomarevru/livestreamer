@@ -1,21 +1,33 @@
 import { describe, it } from "@jest/globals";
+import request from "supertest";
+import { httpServer } from "../../../src/http-server";
+import { superadminUser } from "../../../test-helpers/jest-hooks/utils/user";
+import { API_URL_PREFIX } from "../../../src/config/env";
 
-describe("/user/settings/password", () => {
+const ROUTE = `${API_URL_PREFIX}/users/me/settings/password`;
+
+describe(ROUTE, () => {
   describe(`PATCH - update the pasword`, () => {
     describe("202", () => {
-      /*it("responds with an empty body", async () => {
-        await request(httpServer).patch("/user/settings/password").send({
+      it.skip("responds with an empty body", async () => {
+        await request(httpServer).patch(ROUTE).send({
           email: superadminUser.email,
         });
-      });*/
+      });
 
       it.todo(
-        "responds with an empty body and sends the password reset (aka password update) token (i.e. the link with a password reset token) to the user's email if the user sends the request containing only email",
+        "responds with an empty body and sends the link with a password reset token (aka password update tooken) to the user's email if the user sends the request containing only email, while his email is already confirmed and account is not marked as deleted",
       );
 
       it.todo(
         "responds with an empty body and saves the new password if the user sends the request containing the previously provided password reset token (the one he got on email) + a new password",
       );
+    });
+
+    describe("responds with an empty body and does nothing", () => {
+      it.todo("if the user email is uncomfirmed");
+      it.todo("if the user email does not exist");
+      it.todo("if the user email is marked as delete");
     });
 
     describe("204", () => {

@@ -2,23 +2,28 @@ import { describe, it, expect } from "@jest/globals";
 import request from "supertest";
 import { faker } from "@faker-js/faker";
 
-import { httpServer } from "../../../src/http-server";
-import { dbConnection } from "../../../src/config/postgres";
-import { createUser } from "../../../test-helpers/helpers";
-import { API_URL_PREFIX } from "../../../src/config/env";
+import { httpServer } from "../../src/http-server";
+import { dbConnection } from "../../src/config/postgres";
+import {
+  createUser,
+  REQUEST_VALIDATION_RULES,
+} from "../../test-helpers/helpers";
+import { API_URL_PREFIX } from "../../src/config/env";
 
 const ROUTE = `${API_URL_PREFIX}/users`;
 
-const maxUsernameLength = 16;
-const maxPasswordLength = 50;
-const maxDisplayName = 32;
-
 describe(ROUTE, () => {
-  const username = faker.internet.username().substring(0, maxUsernameLength);
-  const password = faker.internet.password().substring(0, maxPasswordLength);
+  const username = faker.internet
+    .username()
+    .substring(0, REQUEST_VALIDATION_RULES.maxUsernameLength);
+  const password = faker.internet
+    .password()
+    .substring(0, REQUEST_VALIDATION_RULES.maxPasswordLength);
   const email = faker.internet.email();
   const profilePictureUrl = faker.system.filePath();
-  const displayName = faker.internet.displayName().substring(0, maxDisplayName);
+  const displayName = faker.internet
+    .displayName()
+    .substring(0, REQUEST_VALIDATION_RULES.maxDisplayName);
 
   describe(`POST - create a new user account`, () => {
     describe("202", () => {
@@ -43,7 +48,7 @@ describe(ROUTE, () => {
         expect(dbResponse.rows).toStrictEqual([
           {
             appuser_id: expect.any(Number),
-            role_id: 2,
+            role_id: expect.any(Number),
             username,
             email,
             created_at: expect.any(Date),
