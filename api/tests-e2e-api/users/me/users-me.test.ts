@@ -12,17 +12,6 @@ const maxUsernameLength = 16;
 const maxPasswordLength = 50;
 const maxDisplayName = 32;
 
-/*
-beforeAll(async () => {
-  httpServer.listen();
-});
-
-afterAll(async () => {
-  httpServer.close(async (err) => {
-    if (err) throw err;
-  });
-});*/
-
 describe(ROUTE, () => {
   const username = faker.internet.username().substring(0, maxUsernameLength);
   const password = faker.internet.password().substring(0, maxPasswordLength);
