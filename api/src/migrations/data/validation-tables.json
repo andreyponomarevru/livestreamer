@@ -1,23 +1,18 @@
 {
   "roles": {
     "1": "superadmin",
-    "2": "listener",
-    "3": "broadcaster"
+    "2": "streamer"
   },
   "resources": [
-    "user_own_account",
-    "all_user_accounts",
-    "user_own_settings",
-    "user_own_bookmarks",
-    "broadcast",
-    "all_broadcasts",
-    "broadcast_draft",
-    "all_broadcast_drafts",
-    "scheduled_broadcast",
+    "own_user_account",
+    "any_user_account",
+    "own_broadcast",
+    "any_broadcast",
     "stream_like",
-    "audio_stream",
-    "user_own_chat_message",
+    "own_audio_stream",
+    "any_audio_stream",
+    "own_chat_message",
     "any_chat_message"
   ],
-  "permissions": ["create", "read", "update", "delete", "update_partially"]
+  "permissions": ["create", "read", "update", "delete"]
 }

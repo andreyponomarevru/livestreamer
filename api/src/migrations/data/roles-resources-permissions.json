@@ -1,27 +1,17 @@
 {
-  "broadcaster": {
-    "audio_stream": ["create"]
-  },
-  "listener": {
-    "user_own_account": [
-      "create",
-      "read",
-      "update",
-      "delete",
-      "update_partially"
-    ],
-    "user_own_bookmarks": ["create", "read", "delete"],
-    "broadcast": ["read"],
-    "user_own_chat_message": ["delete", "read"]
-  },
   "superadmin": {
-    "audio_stream": ["create"],
-    "broadcast_draft": ["read", "create", "update_partially", "delete"],
-    "user_own_bookmarks": ["delete", "create", "read"],
-    "broadcast": ["update_partially", "delete"],
-    "scheduled_broadcast": ["create", "delete"],
-    "user_own_account": ["partially_update"],
-    "any_chat_message": ["delete"],
-    "all_user_accounts": ["read"]
+    "any_audio_stream": ["create", "read", "update", "delete"],
+    "own_broadcast": ["create", "read", "update", "delete"],
+    "any_broadcast": ["create", "read", "update", "delete"],
+    "own_user_account": ["read", "update"],
+    "any_user_account": ["read", "update", "delete"],
+    "any_chat_message": ["delete"]
+  },
+  "streamer": {
+    "own_audio_stream": ["create", "read", "update", "delete"],
+    "own_user_account": ["create", "read", "update", "delete"],
+    "own_broadcast": ["create", "read", "update", "delete"],
+    "any_broadcast": ["read"],
+    "own_chat_message": ["create", "read", "delete"]
   }
 }

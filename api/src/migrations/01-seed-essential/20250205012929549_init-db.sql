@@ -81,6 +81,13 @@ CREATE TABLE IF NOT EXISTS appuser (
   is_email_confirmed  boolean                      DEFAULT FALSE, 
 	email_confirmation_token  varchar(128)           DEFAULT NULL,
 	password_reset_token      varchar(128)           DEFAULT NULL,
+  display_name        varchar(32)                  NOT NULL,
+                                                   CHECK (display_name != ''),
+  website_url         text                         DEFAULT '', 
+  about               text                         DEFAULT '',
+  profile_picture_url text                         NOT NULL,
+                                                   CHECK (profile_picture_url != ''),
+  subscription_name   varchar(16)                  DEFAULT '',
 
   FOREIGN KEY (role_id) REFERENCES role (role_id)
 	  ON UPDATE NO ACTION
@@ -94,73 +101,24 @@ ON
 
 
 
-CREATE TABLE IF NOT EXISTS setting (
-  PRIMARY KEY (setting_id),
-  setting_id           integer                     GENERATED ALWAYS AS IDENTITY,
-  name                 varchar(60)                 NOT NULL, 
-	                                                 UNIQUE (name), 
-																									 CHECK (name != ''),
-  is_constrained       boolean                     NOT NULL,
-  data_type            varchar(15)                 NOT NULL,
-  min_value            varchar(10)                 DEFAULT NULL,
-  max_value            varchar(10)                 DEFAULT NULL
-);
+CREATE TABLE IF NOT EXISTS broadcast (
+  PRIMARY KEY (broadcast_id),
+  broadcast_id        integer                     GENERATED ALWAYS AS IDENTITY,
+  appuser_id          integer                     NOT NULL,
+  title               varchar(70)                 NOT NULL, 
+																									CHECK (title != ''),
+  start_at            timestamp with time zone    DEFAULT NULL,
+  end_at              timestamp with time zone    DEFAULT NULL,
+  artwork_url         text                        DEFAULT '',
+  description         text                        DEFAULT '',
+  listener_peak_count integer                     DEFAULT 0,
+  is_visible          boolean                     DEFAULT TRUE,
+                                                  CHECK (is_visible != NULL),
 
-
-
-CREATE TABLE IF NOT EXISTS allowed_setting_value (
-  PRIMARY KEY (allowed_setting_value_id),
-  allowed_setting_value_id      integer            GENERATED ALWAYS AS IDENTITY,
-  setting_id                    integer            NOT NULL,
-  value                         varchar(15)        NOT NULL,
-  
-  FOREIGN KEY (setting_id) REFERENCES setting (setting_id)
-	  ON UPDATE NO ACTION
-    ON DELETE RESTRICT
-);
-
-CREATE INDEX 
-	allowed_setting_value__setting_id_idx 
-ON 
-	allowed_setting_value (setting_id ASC);
-
-
-
-CREATE TABLE IF NOT EXISTS appuser_setting (
-  -- NOTE: `user setting_id` is used as PK because there may be settings allowing multiple values
-  PRIMARY KEY (appuser_setting_id),
-  appuser_setting_id            integer            GENERATED ALWAYS AS IDENTITY,
-  appuser_id                    integer            NOT NULL,
-  setting_id                    integer            NOT NULL, 
-  allowed_setting_value_id      integer            DEFAULT NULL,
-  unconstrained_value           varchar(15)        DEFAULT NULL, 
-																									 CHECK (unconstrained_value != ''),
-  
   FOREIGN KEY (appuser_id) REFERENCES appuser (appuser_id)
 	  ON UPDATE NO ACTION
-    ON DELETE CASCADE,
-  FOREIGN KEY (setting_id) REFERENCES setting (setting_id)
-    ON UPDATE NO ACTION  
-		ON DELETE CASCADE,
-  FOREIGN KEY (allowed_setting_value_id) REFERENCES allowed_setting_value (allowed_setting_value_id)
-    ON UPDATE NO ACTION  
-		ON DELETE RESTRICT 
+    ON DELETE CASCADE                                                
 );
-
-CREATE INDEX 
-	appuser_setting__appuser_id_idx 
-ON 
-	appuser_setting (appuser_id ASC);
-
-CREATE INDEX 
-	appuser_setting__setting_id_idx 
-ON
-	appuser_setting (setting_id ASC);
-
-CREATE INDEX 
-	appuser_setting__allowed_setting_value_id_idx 
-ON 
-	appuser_setting (allowed_setting_value_id ASC);
 
 
 
@@ -168,12 +126,16 @@ CREATE TABLE IF NOT EXISTS chat_message (
   PRIMARY KEY (chat_message_id),
   chat_message_id     integer                      GENERATED ALWAYS AS IDENTITY,
   appuser_id          integer                      NOT NULL,
+  broadcast_id        integer                      NOT NULL,
   created_at          timestamp with time zone     DEFAULT CURRENT_TIMESTAMP,
   message             varchar(500)                 NOT NULL, 
 	                                                 CHECK (message != ''),
   
   FOREIGN KEY (appuser_id) REFERENCES appuser (appuser_id)
 	  ON UPDATE NO ACTION
+    ON DELETE CASCADE,
+  FOREIGN KEY (broadcast_id) REFERENCES broadcast (broadcast_id)
+    ON UPDATE NO ACTION
     ON DELETE CASCADE
 );
 
@@ -204,38 +166,6 @@ CREATE TABLE IF NOT EXISTS chat_message_like (
 
 
 
-CREATE TABLE IF NOT EXISTS broadcast (
-  PRIMARY KEY (broadcast_id),
-  broadcast_id        integer                     GENERATED ALWAYS AS IDENTITY,
-  title               varchar(70)                 NOT NULL, 
-																									CHECK (title != ''),
-  tracklist           varchar(800)                DEFAULT '',
-  start_at            timestamp with time zone    DEFAULT NULL,
-  end_at              timestamp with time zone    DEFAULT NULL,
-  listener_peak_count integer                     DEFAULT 0,
-  download_url        text                        DEFAULT '',
-  listen_url          text                        DEFAULT '',
-  is_visible          boolean                     DEFAULT FALSE,
-                                                  CHECK (is_visible != NULL)
-);
-
-
-
-CREATE TABLE IF NOT EXISTS appuser_bookmark (
-  PRIMARY KEY (appuser_id, broadcast_id),
-  appuser_id           integer                     NOT NULL,
-  broadcast_id         integer                     NOT NULL,
-  
-  FOREIGN KEY (appuser_id) REFERENCES appuser (appuser_id)
-	  ON UPDATE NO ACTION
-    ON DELETE CASCADE,
-  FOREIGN KEY (broadcast_id) REFERENCES broadcast (broadcast_id)
-    ON UPDATE NO ACTION  
-		ON DELETE CASCADE
-);
-
-
-
 CREATE TABLE IF NOT EXISTS broadcast_like (
   PRIMARY KEY (broadcast_id, appuser_id),
   broadcast_id         integer                       NOT NULL,
@@ -253,31 +183,21 @@ CREATE TABLE IF NOT EXISTS broadcast_like (
 
 
 
-CREATE TABLE IF NOT EXISTS scheduled_broadcast (
-  PRIMARY KEY (scheduled_broadcast_id),
-  scheduled_broadcast_id  integer                  GENERATED ALWAYS AS IDENTITY,
-  title                   varchar(70)                   NOT NULL, 
-						  										     					        CHECK (title != ''),
-  start_at                timestamp with time zone      DEFAULT NULL,
-  end_at                  timestamp with time zone      DEFAULT NULL
-);
-
-
-
 --
 -- Create Views
 --
 
 CREATE VIEW view_broadcast AS
-SELECT 
+SELECT
 	br.broadcast_id,
+  br.appuser_id,
+  a_u.username,
 	br.title,
-	br.tracklist,
+	br.description,
 	br.start_at,
 	br.end_at,
 	br.listener_peak_count,
-	br.download_url,
-	br.listen_url,
+	br.artwork_url,
 	br.is_visible,
 	SUM( COALESCE(br_li.count, 0) ) AS like_count
 FROM broadcast AS br
@@ -285,8 +205,13 @@ FROM broadcast AS br
     broadcast_like AS br_li
   ON
     br_li.broadcast_id = br.broadcast_id
+  INNER JOIN 
+    appuser AS a_u
+  ON
+    a_u.appuser_id = br.appuser_id
   GROUP BY
-    br.broadcast_id
+    br.broadcast_id,
+    a_u.username
   ORDER BY
     start_at,
     br.broadcast_id;
@@ -319,6 +244,7 @@ CREATE VIEW view_chat_history AS
 SELECT
   c_m.appuser_id,
   c_m.chat_message_id,
+  c_m.broadcast_id,
   c_m.created_at,
   c_m.message,
   -- if the message doesn't have likes, Postgres returns '[null]' after join. 
@@ -362,19 +288,15 @@ DROP VIEW
   view_broadcast;
 
 DROP TABLE 
-  scheduled_broadcast,
   broadcast_like,
-  appuser_bookmark,
-  broadcast,
   chat_message_like,
   chat_message,
-  appuser_setting,
-  allowed_setting_value,
-  setting,
+  broadcast,
   appuser,
   role_resource_permission,
   permission,
   resource,
   role
   CASCADE;
+
 

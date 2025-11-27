@@ -1,6 +1,6 @@
 import { ColumnDefinitions, MigrationBuilder } from "node-pg-migrate";
-import rolesResourcesPermissions from "./data/roles-resources-permissions.json";
-import validationTables from "./data/validation-tables.json";
+import rolesResourcesPermissions from "../data/roles-resources-permissions.json";
+import validationTables from "../data/validation-tables.json";
 
 export const shorthands: ColumnDefinitions | undefined = undefined;
 
@@ -39,14 +39,11 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     }
   }
 
-  const broadcasterPerms = rolesResourcesPermissions.broadcaster;
-  await seed(validationTables.roles["3"], broadcasterPerms);
-
-  const listenerPerms = rolesResourcesPermissions.listener;
-  await seed(validationTables.roles["2"], listenerPerms);
-
   const superadminPerms = rolesResourcesPermissions.superadmin;
   await seed(validationTables.roles["1"], superadminPerms);
+
+  const streamerPerms = rolesResourcesPermissions.streamer;
+  await seed(validationTables.roles["2"], streamerPerms);
 }
 
 export async function down(pgm: MigrationBuilder): Promise<void> {

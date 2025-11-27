@@ -1,5 +1,5 @@
 import { ColumnDefinitions, MigrationBuilder } from "node-pg-migrate";
-import validationTables from "./data/validation-tables.json";
+import validationTables from "../data/validation-tables.json";
 
 export const shorthands: ColumnDefinitions | undefined = undefined;
 
