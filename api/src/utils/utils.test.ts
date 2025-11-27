@@ -1,5 +1,22 @@
 import { describe, it, expect } from "@jest/globals";
-import { validateScheduleTimestamps } from "./validate-schedule-timestamps";
+import { faker } from "@faker-js/faker";
+
+import { isFutureTimestamp } from "./utils";
+import { validateScheduleTimestamps } from "./utils";
+
+describe("isFutureTimestamp", () => {
+  it("returns true if timestamp is set in the future", () => {
+    expect(isFutureTimestamp(faker.date.future().toISOString())).toBe(true);
+  });
+
+  it("returns false if timestamp is set in the past", () => {
+    expect(isFutureTimestamp(faker.date.past().toISOString())).toBe(false);
+  });
+
+  it("returns false if timestamp is set to the current time", () => {
+    expect(isFutureTimestamp(new Date().toISOString())).toBe(false);
+  });
+});
 
 describe("validateScheduleTimestamps", () => {
   // now + 1sec

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { logger } from "../../config/logger";
 import { streamService, inoutStream } from "../../services/stream/service";
 import { wsService } from "../../services/ws/service";
-import { printReadableStreamMode } from "../../utils/print-readable-stream-mode";
+import { printReadableStreamMode } from "../../utils/utils";
 import { broadcastService } from "../../services/broadcast";
 import { HttpError } from "../../utils/http-error";
 
