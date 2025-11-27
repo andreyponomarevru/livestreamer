@@ -5,7 +5,6 @@ import amqpClient, {
 } from "amqplib";
 import EventEmitter from "events";
 import { logger } from "../logger";
-import { AMQP_SERVER_CONFIG, QUEUES } from "./config";
 
 class MessageQueueEmitter extends EventEmitter {}
 export const messageQueueEmitter = new MessageQueueEmitter();
@@ -15,9 +14,12 @@ let channel: Channel | null = null;
 
 export const rabbitMQConsumer = {
   connection: {
-    open: async function () {
+    open: async function (
+      config: amqpClient.Options.Connect,
+      queuesNames: string[],
+    ) {
       if (!connection) {
-        connection = await amqpClient.connect(AMQP_SERVER_CONFIG);
+        connection = await amqpClient.connect(config);
 
         connection.on("error", (err) => {
           if (err.message !== "Connection closing") {
@@ -36,15 +38,9 @@ export const rabbitMQConsumer = {
       channel.on("close", () => console.log("[Consumer] Channel closed"));
       await channel.prefetch(10);
 
-      await rabbitMQConsumer.consumeQueue(
-        channel,
-        QUEUES.confirmSignUpEmail.queue,
-      );
-      await rabbitMQConsumer.consumeQueue(channel, QUEUES.welcomeEmail.queue);
-      await rabbitMQConsumer.consumeQueue(
-        channel,
-        QUEUES.resetPasswordEmail.queue,
-      );
+      for (const queueName of queuesNames) {
+        await rabbitMQConsumer.consumeQueue(channel, queueName);
+      }
     },
 
     close: async function (msg = "[Consumer] Connection closed") {
@@ -55,7 +51,7 @@ export const rabbitMQConsumer = {
       if (connection) {
         await connection.close();
         connection = null;
-        logger.error(msg);
+        logger.debug(msg);
       }
     },
   },
