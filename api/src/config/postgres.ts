@@ -26,8 +26,8 @@ export const POOL_CONFIG: PoolConfig = {
 
 export const PG_MIGRATION_CONFIG = {
   databaseUrl: `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`,
-  migrationsTable: "pgmigrations",
-  dir: "./src/migrations",
+  migrationsTable: "pgmigrations_essential",
+  dir: "./src/migrations/01-seed-essential",
 };
 
 let connectionPool: Pool | undefined;
