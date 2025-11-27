@@ -1,6 +1,7 @@
 import fs from "fs";
+
 import { InOutStream } from "./inout-stream";
-import { BroadcastDraft, BroadcastState } from "../../types";
+import { type BroadcastStreamWebSocketData } from "../../types";
 import { broadcastRepo } from "../../models/broadcast/queries";
 import { streamRepo } from "../../models/stream/queries";
 import { StreamEmitter } from "./events";
@@ -8,65 +9,89 @@ import { StreamEmitter } from "./events";
 export const streamService = {
   events: new StreamEmitter(),
 
-  readBroadcastState: async function (): Promise<BroadcastState> {
+  readBroadcastStreamState: async function (
+    userId: number,
+    broadcastId: number,
+  ): Promise<BroadcastStreamWebSocketData> {
     if (inoutStream.isPaused()) {
-      return { isOnline: false };
+      return { isStreaming: false };
     } else {
-      const liveBroadcast = await this.readLiveBroadcast();
-      const liveBroadcastLikes = await this.readLikesCount();
-      const broadcast = { ...liveBroadcast, ...liveBroadcastLikes };
-      return { isOnline: true, broadcast };
+      const broadcastStream = await streamRepo.read(userId, broadcastId);
+      return { isStreaming: true, broadcast: broadcastStream };
     }
   },
 
-  startBroadcast: async function ({
-    listenersNow,
-  }: {
+  startBroadcastStream: async function (broadcast: {
+    broadcastId: number;
+    userId: number;
     listenersNow: number;
   }): Promise<void> {
-    const newBroadcast = await broadcastRepo.create({
-      title: this.buildStreamTitle(),
-      listenerPeakCount: listenersNow,
-      startAt: new Date().toISOString(),
-      isVisible: false,
-    });
+    const currentBroadcast = await broadcastRepo.readForUser(
+      broadcast.userId,
+      broadcast.broadcastId,
+    );
 
-    await streamRepo.create(newBroadcast);
-    this.events.start(newBroadcast);
+    if (!currentBroadcast) return;
+
+    const broadcastStream = await streamRepo.read(
+      broadcast.userId,
+      broadcast.broadcastId,
+    );
+    this.events.start({ ...currentBroadcast, ...broadcastStream });
   },
 
-  endBroadcast: async function (): Promise<void> {
+  endBroadcastStream: async function (
+    userId: number,
+    broadcastId: number,
+  ): Promise<void> {
     this.events.end();
-    const listenerPeakCount = await streamRepo.readListenerPeakCount();
-    const id = await streamRepo.readBroadcastId();
-    await broadcastRepo.update(
-      { id, listenerPeakCount, endAt: new Date().toISOString() },
-      { isVisible: false },
-    );
-    await streamRepo.destroy();
+
+    await broadcastRepo.update({
+      userId,
+      broadcastId,
+      listenerPeakCount: await streamRepo.readListenerPeakCount(
+        userId,
+        broadcastId,
+      ),
+      endAt: new Date().toISOString(),
+    });
+    await streamRepo.destroy(userId, broadcastId);
   },
 
   updateListenerPeakCount: async function (
+    userId: number,
+    broadcastId: number,
     listenersNow: number,
   ): Promise<void> {
-    if (listenersNow > (await streamRepo.readListenerPeakCount())) {
-      await streamRepo.updateListenerPeakCount(listenersNow);
+    if (
+      listenersNow >
+      (await streamRepo.readListenerPeakCount(userId, broadcastId))
+    ) {
+      await streamRepo.updateListenerPeakCount(
+        userId,
+        broadcastId,
+        listenersNow,
+      );
       this.events.newListenersPeak(listenersNow);
     }
   },
 
-  readLiveBroadcast: async function (): Promise<BroadcastDraft> {
-    return await streamRepo.read();
+  isBroadcastStreaming: async function (
+    userId: number,
+    broadcastId: number,
+  ): Promise<boolean> {
+    return await streamRepo.isExist(userId, broadcastId);
   },
 
-  like: async function ({
+  likeStream: async function ({
     userUUID,
     userId,
+    broadcastId,
   }: {
     userUUID: string;
     userId: number;
+    broadcastId: number;
   }): Promise<void> {
-    const broadcastId = await streamRepo.readBroadcastId();
     const like = await streamRepo.createLike(userId, broadcastId);
 
     this.events.like({
@@ -76,16 +101,6 @@ export const streamService = {
       likeCount: like.likeCount,
       broadcastId,
     });
-  },
-
-  readLikesCount: async function (): Promise<{ likeCount: number }> {
-    return await broadcastRepo.readLikesCount(
-      await streamRepo.readBroadcastId(),
-    );
-  },
-
-  buildStreamTitle: function (): string {
-    return new Date(new Date().toUTCString()).toDateString();
   },
 };
 

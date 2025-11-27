@@ -1,50 +1,81 @@
-import { BroadcastDraft } from "../../types";
 import { redisConnection } from "../../config/redis";
 import { dbConnection } from "../../config/postgres";
+import { BroadcastStream } from "../../types";
 
 export const streamRepo = {
-  create: async function (broadcast: BroadcastDraft): Promise<void> {
+  create: async function (broadcast: BroadcastStream): Promise<void> {
     const client = await redisConnection.open();
-    await client.HSET("live:broadcast", {
-      id: `${broadcast.id}`,
-      title: `${broadcast.title}`,
-      startAt: `${broadcast.startAt}`,
-      listenerPeakCount: `${broadcast.listenerPeakCount}`,
+
+    const stringifiedBroadcast: { [key: string]: string } = {};
+    Object.keys(broadcast).map((key) => {
+      stringifiedBroadcast[key] = String(
+        broadcast[key as keyof BroadcastStream],
+      );
+    });
+
+    await client.HSET(
+      this.getRedisBroadcastStreamKey(broadcast.userId, broadcast.broadcastId),
+      stringifiedBroadcast,
+    );
+  },
+
+  destroy: async function (userId: number, broadcastId: number): Promise<void> {
+    const client = await redisConnection.open();
+    await client.del(`livebroadcast:${userId}:${broadcastId}`);
+  },
+
+  read: async function (
+    userId: number,
+    broadcastId: number,
+  ): Promise<BroadcastStream> {
+    const client = await redisConnection.open();
+    const broadcast = await client.HGETALL(
+      this.getRedisBroadcastStreamKey(userId, broadcastId),
+    );
+
+    return {
+      userId: Number(broadcast.userId),
+      broadcastId: Number(broadcast.id),
+      title: broadcast.title,
+      listenerPeakCount: Number(broadcast.listenerPeakCount),
+      likeCount: Number(broadcast.likeCount),
+      startAt: broadcast.startAt,
+      endAt: broadcast.endAt,
+    };
+  },
+
+  isExist: async function (
+    userId: number,
+    broadcastId: number,
+  ): Promise<boolean> {
+    const client = await redisConnection.open();
+    return Boolean(
+      await client.exists(this.getRedisBroadcastStreamKey(userId, broadcastId)),
+    );
+  },
+
+  updateListenerPeakCount: async function (
+    userId: number,
+    broadcastId: number,
+    count: number,
+  ): Promise<void> {
+    const client = await redisConnection.open();
+    await client.HSET(this.getRedisBroadcastStreamKey(userId, broadcastId), {
+      listenerPeakCount: `${count}`,
     });
   },
 
-  destroy: async function (): Promise<void> {
+  readListenerPeakCount: async function (
+    userId: number,
+    broadcastId: number,
+  ): Promise<number> {
     const client = await redisConnection.open();
-    await client.del("live:broadcast");
-  },
-
-  read: async function (): Promise<BroadcastDraft> {
-    const client = await redisConnection.open();
-    const broadcast = await client.HGETALL("live:broadcast");
-    const parsed: BroadcastDraft = {
-      id: Number(broadcast.id),
-      title: broadcast.title,
-      startAt: broadcast.startAt,
-      listenerPeakCount: Number(broadcast.listenerPeakCount),
-      likeCount: Number(broadcast.likeCount),
-    };
-    return parsed;
-  },
-
-  readBroadcastId: async function (): Promise<number> {
-    const client = await redisConnection.open();
-    const id = await client.HGET("live:broadcast", "id");
-    return Number(id);
-  },
-
-  updateListenerPeakCount: async function (count: number): Promise<void> {
-    const client = await redisConnection.open();
-    await client.HSET("live:broadcast", { listenerPeakCount: `${count}` });
-  },
-
-  readListenerPeakCount: async function (): Promise<number> {
-    const client = await redisConnection.open();
-    return Number(await client.HGET("live:broadcast", "listenerPeakCount"));
+    return Number(
+      await client.HGET(
+        this.getRedisBroadcastStreamKey(userId, broadcastId),
+        "listenerPeakCount",
+      ),
+    );
   },
 
   createLike: async function (
@@ -56,7 +87,7 @@ export const streamRepo = {
     likedByUsername: string;
     likeCount: number;
   }> {
-    // FIX" looks like you retrieve only particular user's likes, but you need to retrieve ALL user likes
+    // TODO looks like you retrieve only particular user's likes, but you need to retrieve ALL user likes
 
     // If the user already has liked the broadcast, 'ON CONFLICT' clause allows us to just increment the counter of an existing row
     const insertSql =
@@ -96,5 +127,9 @@ export const streamRepo = {
       broadcastId: res.rows[0].broadcast_id,
       likeCount: res.rows[0].count,
     };
+  },
+
+  getRedisBroadcastStreamKey(userId: number, broadcastId: number) {
+    return `broadcaststream:${userId}:${broadcastId}`;
   },
 };

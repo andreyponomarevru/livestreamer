@@ -1,9 +1,9 @@
 import { wsService } from "../ws";
 import {
-  BroadcastDraft,
-  SavedBroadcastLike,
-  WSClient,
-  BroadcastState,
+  type SavedBroadcastLike,
+  type WSClient,
+  type BroadcastStreamWebSocketData,
+  type Broadcast,
 } from "../../types";
 
 export function onStreamLike(
@@ -16,23 +16,23 @@ export function onStreamLike(
   );
 }
 
-export function onStreamStart(broadcast: BroadcastDraft): void {
+export function onStreamStart(broadcast: Broadcast): void {
   wsService.sendToAll(
-    { event: "stream:state", data: { isOnline: true, broadcast } },
+    { event: "stream:state", data: { isStreaming: true, broadcast } },
     wsService.clientStore.clients,
   );
 }
 
 export function onStreamEnd(): void {
   wsService.sendToAll(
-    { event: "stream:state", data: { isOnline: false } },
+    { event: "stream:state", data: { isStreaming: false } },
     wsService.clientStore.clients,
   );
 }
 
 export function sendBroadcastState(
   reciever: WSClient,
-  broadcastState: BroadcastState,
+  broadcastState: BroadcastStreamWebSocketData,
 ): void {
   wsService.send({ event: "stream:state", data: broadcastState }, reciever);
 }

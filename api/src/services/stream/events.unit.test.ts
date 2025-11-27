@@ -1,5 +1,5 @@
 import { jest, describe, it, expect, beforeEach } from "@jest/globals";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import { faker } from "@faker-js/faker";
 import { StreamEmitter } from ".";
 
@@ -51,7 +51,7 @@ describe("StreamEmitter", () => {
         likedByUserId: faker.number.int(),
         likedByUsername: faker.internet.username(),
         likeCount: faker.number.int(),
-        likedByUserUUID: uuidv4(),
+        likedByUserUUID: randomUUID(),
       };
 
       streamEmitter.like(like);

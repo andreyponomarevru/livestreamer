@@ -1,6 +1,6 @@
 import { jest, describe, it, expect } from "@jest/globals";
 import WebSocket from "ws";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import { faker } from "@faker-js/faker";
 import {
   sendBroadcastState,
@@ -15,7 +15,7 @@ describe("onStreamLike", () => {
   it("sends the message to all except sender", () => {
     const eventData = {
       broadcastId: faker.number.int(),
-      likedByUserUUID: uuidv4(),
+      likedByUserUUID: randomUUID(),
       likedByUserId: faker.number.int(),
       likedByUsername: faker.internet.username(),
       likeCount: faker.number.int(),
@@ -83,7 +83,7 @@ describe("onStreamEnd", () => {
 describe("sendBroadcastState", () => {
   it("sends the message to the client", () => {
     const wsClient: WSClient = {
-      uuid: uuidv4(),
+      uuid: randomUUID(),
       id: faker.number.int(),
       username: faker.internet.username(),
       socket: { send: () => {} } as unknown as WebSocket,

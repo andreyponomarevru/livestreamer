@@ -1,8 +1,8 @@
 import EventEmitter from "events";
-import { BroadcastDraft, SavedBroadcastLike } from "../../types";
+import { type Broadcast, type SavedBroadcastLike } from "../../types";
 
 export class StreamEmitter extends EventEmitter {
-  start(broadcast: BroadcastDraft): void {
+  start(broadcast: Broadcast): void {
     this.emit("start", broadcast);
   }
 
