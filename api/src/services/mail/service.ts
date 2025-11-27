@@ -1,7 +1,8 @@
 import { type ConsumeMessage } from "amqplib";
-import nodemailer, { SendMailOptions } from "nodemailer";
+import nodemailer, { type SendMailOptions } from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import Mail from "nodemailer/lib/mailer";
+
 import { mailConfig } from "../../config/mail";
 import { logger } from "../../config/logger";
 import {
