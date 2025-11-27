@@ -14,7 +14,9 @@ let pubChannel: Channel | null = null;
 
 export const rabbitMQPublisher = {
   connection: {
-    connect: async function () {
+    connect: async function (
+      config: amqpClient.Options.Connect = AMQP_SERVER_CONFIG,
+    ) {
       function handleError(err: Error) {
         if (err.message !== "Connection closing") {
           logger.error("[Publisher] AMQP connection error " + err.message);
@@ -32,7 +34,7 @@ export const rabbitMQPublisher = {
           "Publisher is reusing the existing connection to RabbitMQ",
         );
       } else {
-        connection = await amqpClient.connect(AMQP_SERVER_CONFIG);
+        connection = await amqpClient.connect(config);
         connection.on("error", handleError);
         connection.on("close", handleCloseConnection);
 
