@@ -1,9 +1,11 @@
 import path from "path";
+
 import express from "express";
 import cors from "cors";
 import morganLogger from "morgan";
 import session from "express-session";
-import { HTTP_PORT } from "./config/env";
+
+import { API_URL_PREFIX, NODE_HTTP_PORT } from "./config/env";
 import { morganSettings, logger } from "./config/logger";
 import { handleErrors } from "./middlewares/handle-errors";
 import { handle404Error } from "./middlewares/handle-404-error";
@@ -12,7 +14,7 @@ import { sessionConfig } from "./config/redis";
 import { apiRouter } from "./controllers/router";
 
 const expressApp = express();
-expressApp.set("port", HTTP_PORT);
+expressApp.set("port", NODE_HTTP_PORT);
 if (SHOULD_EXPRESS_TRUST_FIRST_PROXY) expressApp.set("trust proxy", 1);
 // Save in var in order to reuse it for WebSocket Upgrade request
 // authentication:
@@ -29,7 +31,7 @@ expressApp.use(morganLogger("combined", morganSettings));
 expressApp.use(express.json());
 expressApp.use(express.urlencoded({ extended: true }));
 expressApp.use(express.static(path.join(__dirname, "public")));
-expressApp.use("/api/v1", apiRouter);
+expressApp.use(API_URL_PREFIX, apiRouter);
 // If request doesn't match the routes above, it is past to 404 error handler
 expressApp.use(handle404Error);
 expressApp.use(handleErrors);
