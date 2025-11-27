@@ -110,17 +110,19 @@ export const chatRepo = {
         usr.appuser_id = v_c_h.appuser_id
       WHERE
         broadcast_id = $3 AND
-        /* if user doesn't provide nextCursor, just return the last N rows */
         (
-          $1::timestamp IS NULL OR $2::integer IS NULL
-        )
-          OR
-        /* if user provides nextCursor, return msgs starting from this cursor */
-        ( 
-          $1::timestamp IS NOT NULL AND 
-          $2::integer IS NOT NULL AND 
-          v_c_h.created_at <= $1 AND 
-          chat_message_id <= $2
+          /* if user doesn't provide nextCursor, just return the last N rows */
+          (
+            $1::timestamp IS NULL OR $2::integer IS NULL
+          )
+            OR
+          /* if user provides nextCursor, return msgs starting from this cursor */
+          ( 
+            $1::timestamp IS NOT NULL AND 
+            $2::integer IS NOT NULL AND 
+            v_c_h.created_at <= $1 AND 
+            chat_message_id <= $2
+          )
         )
       ORDER BY 
         v_c_h.created_at DESC,
@@ -128,10 +130,6 @@ export const chatRepo = {
       LIMIT $4 + 1`;
 
     const { timestampCursor, idCursor } = decodeNextPageCursor(nextCursor);
-    console.log(
-      "+++++++++++++++!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-    );
-    console.log(timestampCursor, idCursor);
     const values = [timestampCursor, idCursor, broadcastId, limit];
     const pool = await dbConnection.open();
     const res = await pool.query<ReadMsgDBResponse>(sql, values);

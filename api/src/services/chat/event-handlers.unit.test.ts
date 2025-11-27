@@ -1,6 +1,6 @@
 import { jest, describe, it, expect } from "@jest/globals";
 import WebSocket from "ws";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import { faker } from "@faker-js/faker";
 import {
   onUnlikeChatMsg,
@@ -17,7 +17,7 @@ import { SanitizedWSChatClient, DeletedWSClient, WSClient } from "../../types";
 
 describe("onChatStart", () => {
   const wsClient: WSClient = {
-    uuid: uuidv4(),
+    uuid: randomUUID(),
     id: faker.number.int(),
     username: faker.internet.username(),
     socket: { send: () => {} } as unknown as WebSocket,
@@ -52,7 +52,7 @@ describe("onUnlikeChatMsg", () => {
   it("sends the message to all except sender", () => {
     const eventData = {
       messageId: faker.number.int(),
-      unlikedByUserUUID: uuidv4(),
+      unlikedByUserUUID: randomUUID(),
       unlikedByUserId: faker.number.int(),
       likedByUserIds: [45, 15, 1, 57],
     };
@@ -82,7 +82,7 @@ describe("onLikeChatMsg", () => {
       messageId: faker.number.int(),
       likedByUserId: faker.number.int(),
       likedByUserIds: [8, 58, 78, 9],
-      likedByUserUUID: uuidv4(),
+      likedByUserUUID: randomUUID(),
     };
     const sendSpy = jest.spyOn(wsService, "sendToAllExceptSender");
 
@@ -106,7 +106,7 @@ describe("onDestroyChatMsg", () => {
   it("sends the message to all except sender", () => {
     const eventData = {
       id: faker.number.int(),
-      userUUID: uuidv4(),
+      userUUID: randomUUID(),
       userId: faker.number.int(),
     };
     const sendSpy = jest.spyOn(wsService, "sendToAllExceptSender");
@@ -131,7 +131,7 @@ describe("onCreateChatMsg", () => {
   it("sends the message to all except sender", () => {
     const eventData = {
       id: faker.number.int(),
-      userUUID: uuidv4(),
+      userUUID: randomUUID(),
       userId: faker.number.int(),
       username: faker.internet.username(),
       createdAt: faker.date.past().toISOString(),
@@ -178,7 +178,7 @@ describe("onUpdateClientCount", () => {
 describe("onDeleteClient", () => {
   it("sends the message to all clients", () => {
     const eventData: DeletedWSClient = {
-      uuid: uuidv4(),
+      uuid: randomUUID(),
       username: faker.internet.username(),
       id: faker.number.int(),
     };
@@ -201,7 +201,7 @@ describe("onDeleteClient", () => {
 describe("onAddClient", () => {
   it("sands the message to all clients", () => {
     const eventData: SanitizedWSChatClient = {
-      uuid: uuidv4(),
+      uuid: randomUUID(),
       username: faker.internet.username(),
     };
     const sendSpy = jest.spyOn(wsService, "sendToAll");

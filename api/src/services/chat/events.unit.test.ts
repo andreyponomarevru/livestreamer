@@ -1,5 +1,5 @@
 import { jest, describe, it, expect, beforeEach } from "@jest/globals";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import { faker } from "@faker-js/faker";
 import { ChatEmitter } from ".";
 
@@ -13,7 +13,7 @@ describe("StreamEmitter", () => {
   describe("createChatMsg", () => {
     it("emits the 'create_message' event, providing the message object", () => {
       const msg = {
-        userUUID: uuidv4(),
+        userUUID: randomUUID(),
         id: faker.number.int(),
         userId: faker.number.int(),
         username: faker.internet.username(),
@@ -38,7 +38,7 @@ describe("StreamEmitter", () => {
       const msg = {
         id: faker.number.int(),
         userId: faker.number.int(),
-        userUUID: uuidv4(),
+        userUUID: randomUUID(),
       };
       const eventName = "delete_message";
 
@@ -55,7 +55,7 @@ describe("StreamEmitter", () => {
   describe("likeChatMsg", () => {
     it("emits the 'like_message' event, providing the message object", () => {
       const like = {
-        likedByUserUUID: uuidv4(),
+        likedByUserUUID: randomUUID(),
         messageId: faker.number.int(),
         likedByUserId: faker.number.int(),
         likedByUserIds: [faker.number.int(), faker.number.int()],
@@ -75,7 +75,7 @@ describe("StreamEmitter", () => {
   describe("unlikeChatMsg", () => {
     it("emits the 'unlike_message' event, providing the unlike object", () => {
       const unlike = {
-        unlikedByUserUUID: uuidv4(),
+        unlikedByUserUUID: randomUUID(),
         messageId: faker.number.int(),
         unlikedByUserId: faker.number.int(),
         likedByUserIds: [faker.number.int(), faker.number.int()],

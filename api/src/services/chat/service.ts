@@ -23,13 +23,19 @@ export const chatService = {
     }
   },
 
-  readMsgsPaginated: async function (
-    limit: number,
-    nextCursor?: string,
-  ): Promise<{
+  readMsgsPaginated: async function ({
+    broadcastId,
+    limit,
+    nextCursor,
+  }: {
+    broadcastId: number;
+    limit: number;
+    nextCursor?: string;
+  }): Promise<{
     nextCursor: string | null;
     messages: {
-      id: number;
+      messageId: number;
+      broadcastId: number;
       userId: number;
       username: string;
       createdAt: string;
@@ -37,7 +43,11 @@ export const chatService = {
       likedByUserId: number[];
     }[];
   }> {
-    const page = await chatRepo.readMsgsPaginated(limit, nextCursor);
+    const page = await chatRepo.readMsgsPaginated({
+      broadcastId,
+      limit,
+      nextCursor,
+    });
     return {
       nextCursor: page.nextCursor,
       messages: page.items,
