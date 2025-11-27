@@ -1,4 +1,4 @@
-import * as env from "./config/env";
+import { NODE_HTTP_PORT } from "./config/env";
 
 import { httpServer } from "./http-server";
 import {
@@ -10,5 +10,6 @@ import {
 process.once("uncaughtException", onUncaughtException);
 process.on("unhandledRejection", onUnhandledRejection);
 process.on("warning", onWarning);
+process.on("exit", onWarning);
 
-httpServer.listen(env.HTTP_PORT);
+httpServer.listen(NODE_HTTP_PORT);
