@@ -1,12 +1,12 @@
 import { describe, it, expect } from "@jest/globals";
 import { faker } from "@faker-js/faker";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import WebSocket from "ws";
 import { sanitizeWSClient } from "./sanitize-ws-client";
 
 describe("sanitizeWSClient", () => {
   const wsClient = {
-    uuid: uuidv4(),
+    uuid: randomUUID(),
     username: faker.internet.username(),
     socket: {} as WebSocket,
   };

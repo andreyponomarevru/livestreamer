@@ -1,6 +1,6 @@
 import { describe, it, expect } from "@jest/globals";
 import { faker } from "@faker-js/faker";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import WebSocket from "ws";
 import { WSChatClient } from "../../../src/services/ws/ws-client";
 
@@ -9,7 +9,7 @@ describe("WSChatClient class", () => {
     it("returns a new client", () => {
       const clientDetails = {
         id: undefined,
-        uuid: uuidv4(),
+        uuid: randomUUID(),
         username: faker.internet.username(),
         socket: {} as WebSocket,
       };
@@ -19,7 +19,7 @@ describe("WSChatClient class", () => {
     });
 
     it("creates username from uuid if no username has been provided", () => {
-      const clientDetails = { uuid: uuidv4(), socket: {} as WebSocket };
+      const clientDetails = { uuid: randomUUID(), socket: {} as WebSocket };
       const client = new WSChatClient(clientDetails);
 
       expect(client.username).toBe(clientDetails.uuid.substring(0, 8));

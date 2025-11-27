@@ -1,7 +1,7 @@
 import EventEmitter from "events";
 import { jest, describe, it, expect, beforeEach } from "@jest/globals";
 import WebSocket from "ws";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import { faker } from "@faker-js/faker";
 import { onConnection } from "./event-handlers";
 import { sendBroadcastState, streamService } from "../stream";
@@ -25,7 +25,7 @@ describe("onConnection", () => {
   }
 
   const client: WSClient = {
-    uuid: uuidv4(),
+    uuid: randomUUID(),
     username: faker.internet.username(),
     socket: new WebSocketEmitter() as unknown as WebSocket,
   };

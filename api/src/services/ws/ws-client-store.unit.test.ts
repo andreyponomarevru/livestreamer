@@ -1,7 +1,7 @@
 import WebSocket from "ws";
 import { beforeEach, jest, describe, it, expect } from "@jest/globals";
 import { faker } from "@faker-js/faker";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import { logger } from "../../config/logger";
 import { WSClientStore } from "./ws-client-store";
 
@@ -11,7 +11,7 @@ describe("WSClientStore class", () => {
   function createClient() {
     return {
       id: faker.number.int(),
-      uuid: uuidv4(),
+      uuid: randomUUID(),
       username: faker.internet.username(),
       socket: {} as WebSocket,
     };
@@ -95,7 +95,7 @@ describe("WSClientStore class", () => {
       const client = createClient();
       clientStore.addClient(client);
 
-      expect(() => clientStore.getClient(uuidv4())).not.toThrowError();
+      expect(() => clientStore.getClient(randomUUID())).not.toThrowError();
     });
 
     it("emits 'delete_client' event with the client as argument when the client deleted", () => {
