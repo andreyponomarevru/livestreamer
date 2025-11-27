@@ -9,8 +9,17 @@ import { WSChatClient } from "./services/ws";
 import { NODE_HTTP_PORT } from "./config/env";
 import { logger } from "./config/logger";
 import { sessionParser } from "./express-app";
+import { rabbitMQConsumer } from "./config/rabbitmq/consumer";
+import { AMQP_SERVER_CONFIG, QUEUES } from "./config/rabbitmq/config";
 
 export async function onServerListening(): Promise<void> {
+  await rabbitMQConsumer.connection.open(AMQP_SERVER_CONFIG, [
+    QUEUES.confirmSignUpEmail.queue,
+    QUEUES.welcomeEmail.queue,
+    QUEUES.resetPasswordEmail.queue,
+  ]);
+  logger.debug(`${__filename}: RabbitMQ Consumer connection is opened`);
+
   logger.debug(
     `${__filename}: API HTTP Server is listening on port ${NODE_HTTP_PORT}`,
   );

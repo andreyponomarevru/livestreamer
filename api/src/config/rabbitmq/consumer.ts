@@ -11,6 +11,7 @@ export const messageQueueEmitter = new MessageQueueEmitter();
 
 let connection: ChannelModel | null = null;
 let channel: Channel | null = null;
+const consumerTags = new Map<string, string>();
 
 export const rabbitMQConsumer = {
   connection: {
@@ -32,10 +33,12 @@ export const rabbitMQConsumer = {
       }
 
       if (!channel) channel = await connection.createChannel();
+
       channel.on("error", (err) => {
         console.error("[Consumer] Channel error" + err.message);
       });
-      channel.on("close", () => console.log("[Consumer] Channel closed"));
+      channel.on("close", () => logger.debug("[Consumer] Channel closed"));
+
       await channel.prefetch(10);
 
       for (const queueName of queuesNames) {
@@ -45,7 +48,13 @@ export const rabbitMQConsumer = {
 
     close: async function (msg = "[Consumer] Connection closed") {
       if (channel) {
+        for (const tag of consumerTags.values()) {
+          await channel.cancel(tag);
+        }
+        consumerTags.clear();
         await channel.close();
+
+        logger.debug("[Consumer] Channel closed");
       }
 
       if (connection) {
@@ -71,8 +80,19 @@ export const rabbitMQConsumer = {
     }
 
     await channel.assertQueue(queueName, { durable: true });
-    await channel.consume(queueName, handleMessage, { noAck: false });
+    const consumeResult = await channel.consume(queueName, handleMessage, {
+      noAck: false,
+    });
+    consumerTags.set(queueName, consumeResult.consumerTag);
 
     logger.debug("[Consumer] Waiting for messages ...");
+  },
+
+  deleteQueues: async function (queuesNames: string[]) {
+    if (!channel) return;
+
+    for (const name of queuesNames) {
+      await channel.deleteQueue(name);
+    }
   },
 };
