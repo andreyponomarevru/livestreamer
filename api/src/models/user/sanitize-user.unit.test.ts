@@ -1,13 +1,13 @@
 import { describe, it, expect } from "@jest/globals";
 import { faker } from "@faker-js/faker";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import { User } from "./user";
 import { sanitizeUser } from "./sanitize-user";
 import { type Permissions } from "../../types";
 
 describe("sanitizeUser function", () => {
-  const uuid = uuidv4();
-  const id = faker.number.int();
+  const uuid = randomUUID();
+  const userId = faker.number.int();
   const email = faker.internet.exampleEmail();
   const username = faker.internet.username();
   const password = faker.internet.password();
@@ -18,7 +18,7 @@ describe("sanitizeUser function", () => {
 
   const user: User = {
     uuid,
-    id,
+    userId,
     email,
     username,
     password,
@@ -31,7 +31,7 @@ describe("sanitizeUser function", () => {
   it("returns user with sensitive data stripped out", () => {
     expect(sanitizeUser(user)).toStrictEqual({
       uuid,
-      id,
+      userId,
       email,
       username,
       permissions,

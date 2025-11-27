@@ -4,7 +4,7 @@ import { SanitizedUser } from "../../types";
 export function sanitizeUser(user: User): SanitizedUser {
   return {
     uuid: user.uuid || "",
-    id: user.id,
+    userId: user.userId,
     email: user.email || "",
     username: user.username,
     permissions: user.permissions || {},

@@ -1,4 +1,6 @@
-import { SignUpData, Permissions } from "../../types";
+import { randomUUID } from "crypto";
+
+import { Permissions } from "../../types";
 import { User } from "../../models/user/user";
 import { authnService } from "../authn";
 import { mailService } from "../mail";
@@ -7,16 +9,27 @@ import { EXCHANGE_NAME, QUEUES } from "../../config/rabbitmq/config";
 import { rabbitMQPublisher } from "../../config/rabbitmq/publisher";
 
 export const userService = {
-  createUser: async function (signupData: SignUpData): Promise<void> {
+  createUser: async function ({
+    username,
+    password,
+    email,
+  }: {
+    username: string;
+    password: string;
+    email: string;
+  }): Promise<void> {
     const userToken = authnService.generateToken();
 
     const { userId } = await userRepo.createUser({
-      username: signupData.username,
-      email: signupData.email,
-      password: await authnService.hashPassword(signupData.password),
-      roleId: signupData.roleId,
+      username: username,
+      email: email,
+      password: await authnService.hashPassword(password),
+      roleId: 2,
       emailConfirmationToken: userToken,
-      isEmailConfirmed: signupData.isEmailConfirmed,
+      isEmailConfirmed: false,
+      displayName: username,
+      profilePictureUrl: "/mnt/default-avatar.jpg",
+      subscriptionName: "basic",
     });
 
     await rabbitMQPublisher.sendMsgToQueue({
@@ -26,8 +39,8 @@ export const userService = {
       content: Buffer.from(
         JSON.stringify(
           mailService.emailTemplates.createSignUpConfirmationEmail({
-            username: signupData.username,
-            email: signupData.email,
+            username: username,
+            email: email,
             userId: userId,
             userToken: userToken,
           }),
@@ -36,12 +49,18 @@ export const userService = {
     });
   },
 
-  readUser: async function (userId: number): Promise<User> {
-    return await userRepo.readUser(userId);
+  readUser: async function (userId: number): Promise<User | null> {
+    const user = await userRepo.readUser(userId);
+    if (!user) return null;
+
+    const permissions = await userRepo.readUserPermissions(user.userId);
+
+    return { uuid: randomUUID(), ...user, permissions };
   },
 
   readAllUsers: async function (): Promise<User[]> {
-    return await userRepo.readAllUsers();
+    const users = await userRepo.readAllUsers();
+    return users.map((user) => ({ uuid: randomUUID(), ...user }));
   },
 
   updateUser: async function ({
@@ -52,12 +71,13 @@ export const userService = {
     username: string;
   }): Promise<{
     uuid: string;
-    id: number;
+    userId: number;
     email: string;
     username: string;
     permissions: Permissions;
   }> {
-    return await userRepo.updateUser({ userId, username });
+    const user = await userRepo.updateUser({ userId, username });
+    return { uuid: randomUUID(), ...user };
   },
 
   destroyUser: async function (userId: number): Promise<void> {
@@ -120,7 +140,12 @@ export const userService = {
     username?: string;
     email?: string;
   }): Promise<User | null> {
-    return await userRepo.findByUsernameOrEmail({ username, email });
+    const user = await userRepo.findByUsernameOrEmail({ username, email });
+    if (!user) return null;
+
+    const permissions = await userRepo.readUserPermissions(user.userId);
+
+    return { uuid: randomUUID(), ...user, permissions };
   },
 
   findByEmailConfirmationToken: async function (token: string): Promise<{
