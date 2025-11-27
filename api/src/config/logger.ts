@@ -3,8 +3,6 @@ import {
   APP_NAME,
   LOG_LOCATION,
   DEBUG_LOG_NAME,
-  // INFO_LOG_NAME,
-  // ERROR_LOG_NAME,
   SHOULD_LOG_TO_FILE,
 } from "./../config/env";
 
@@ -47,9 +45,6 @@ const logger = winston.createLogger({
   exitOnError: false,
 });
 
-// Put Morgan logs inside Winston logs,
-// Create a stream object that will be used by Morgan. Later we will use this
-// function to get morgan-generated output into the winston log files
 const stream = {
   write: (message: string): void => {
     // use the 'info' log level. The output will be picked up by both 'file' and 'console' transports
