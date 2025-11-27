@@ -8,7 +8,10 @@ import { EXCHANGE_NAME, QUEUES } from "../../config/rabbitmq/config";
 
 export const authnService = {
   confirmEmail: async function (userId: number): Promise<void> {
-    const { username, email } = await userRepo.confirmEmail(userId);
+    const { username, email } = await userRepo.updateIsEmailConfirmed(
+      userId,
+      true,
+    );
 
     await rabbitMQPublisher.sendMsgToQueue({
       queue: QUEUES.welcomeEmail.queue,
