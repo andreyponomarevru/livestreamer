@@ -8,7 +8,7 @@ import { userService } from "../../services/user";
 export const adminController = {
   destroyChatMessage: async function (
     req: Request<
-      { messageId?: number },
+      { broadcastId?: number; messageId?: number },
       Record<string, unknown>,
       Record<string, unknown>,
       { user_id?: number }
@@ -18,7 +18,8 @@ export const adminController = {
   ): Promise<void> {
     try {
       await chatService.destroyMsg({
-        userUUID: req.session.authenticatedUser!.uuid,
+        broadcastId: req.params.broadcastId!,
+        userUUID: req.session.authenticatedUser!.uuid!,
         userId: req.query.user_id as number,
         messageId: req.params.messageId as number,
       });

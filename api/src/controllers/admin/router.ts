@@ -13,7 +13,9 @@ adminRouter.delete(
   isAuthenticated,
   isAuthorized("delete", "any_chat_message"),
   validate(
-    Joi.object({ messageId: idSchema }).required().unknown(true),
+    Joi.object({ broadcastId: idSchema, messageId: idSchema })
+      .required()
+      .unknown(true),
     "params",
   ),
   validate(Joi.object({ user_id: idSchema }).optional().unknown(true), "query"),
@@ -23,6 +25,6 @@ adminRouter.delete(
 adminRouter.get(
   "/users",
   isAuthenticated,
-  isAuthorized("read", "all_user_accounts"),
+  isAuthorized("read", "any_user_account"),
   adminController.readAllUsers,
 );
