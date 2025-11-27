@@ -25,15 +25,11 @@ describe("broadcastService", () => {
     it.todo("deletes the broadcast by id");
   });
 
-  describe("bookmark", () => {
-    it.todo("bookmarks the broadcast by id");
+  describe("create", () => {
+    it.todo("saves and returns the scheduled broadcast");
   });
 
-  describe("readAllBookmarked", () => {
-    it.todo("returns all bookmarked broadcasts");
-  });
-
-  describe("unbookmark", () => {
-    it.todo("removed the broadcast bookmark by id");
+  describe("destroy", () => {
+    it.todo("deletes the scheduled broadcast");
   });
 });

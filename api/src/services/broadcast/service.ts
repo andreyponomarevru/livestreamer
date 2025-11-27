@@ -1,40 +1,80 @@
 import { broadcastRepo } from "../../models/broadcast/queries";
-import { BroadcastUpdate, Bookmark, Broadcast } from "../../types";
+import { Broadcast, BroadcastFilters } from "../../types";
 
 export const broadcastService = {
-  read: async function (broadcastId: number): Promise<Broadcast | null> {
+  create: async function (newBroadcast: {
+    userId: number;
+    title: string;
+    artworkUrl: string;
+    description?: string;
+    startAt: string;
+    endAt: string;
+  }) {
+    // TODO: dissalow creating broadcasts longer than 3 hours
+
+    // TODO: check that the new broadcast doesn't overlap with any existing one. If there is overlapping, return a sensible error to be able to print in UI: "Can't schedule the broadcast because you've already scheduled one on the Your already have scheduled a broadcast on that time"
+
+    return await broadcastRepo.create({
+      userId: newBroadcast.userId,
+      title: newBroadcast.title,
+      startAt: newBroadcast.startAt,
+      endAt: newBroadcast.endAt,
+      listenerPeakCount: 0,
+      isVisible: true,
+      artworkUrl: newBroadcast.artworkUrl,
+      description: newBroadcast.description || "",
+    });
+  },
+
+  read: async function (broadcastId: number) {
     return await broadcastRepo.read(broadcastId);
   },
 
-  readAllPublished: async function (): Promise<Broadcast[]> {
-    return await broadcastRepo.readAll({ isVisible: true });
+  readForUser: async function (
+    userId: number,
+    broadcastId: number,
+  ): Promise<Broadcast | null> {
+    return await broadcastRepo.readForUser(userId, broadcastId);
   },
 
-  readAllHidden: async function (): Promise<Broadcast[]> {
-    return await broadcastRepo.readAll({ isVisible: false });
+  readAllForUser: async function (
+    user: { userId?: number; username?: string },
+    filters?: BroadcastFilters,
+  ): Promise<Broadcast[]> {
+    return await broadcastRepo.readAll(user, filters);
   },
 
-  updatePublished: async function (broadcast: BroadcastUpdate) {
-    return await broadcastRepo.update(broadcast, { isVisible: true });
+  update: async function (updatedBroadcast: {
+    userId: number;
+    broadcastId: number;
+    title?: string;
+    artworkUrl?: string;
+    description?: string;
+    startAt?: string;
+    endAt?: string;
+    isVisible?: boolean;
+  }) {
+    // TODO: check that the updated broadcast doesn't overlap in time (schedule) with any existing one. If there is overlapping, return a sensible error to be able to print in UI
+    return await broadcastRepo.update(updatedBroadcast);
   },
 
-  updateHidden: async function (broadcast: BroadcastUpdate) {
-    return await broadcastRepo.update(broadcast, { isVisible: false });
+  destroy: async function (userId: number, broadcastId: number) {
+    return await broadcastRepo.destroy(userId, broadcastId);
   },
 
-  destroy: async function (broadcastId: number) {
-    return await broadcastRepo.destroy(broadcastId);
+  isExist: async function (userId: number, broadcastId: number) {
+    return await broadcastRepo.isExist(userId, broadcastId);
   },
 
-  bookmark: async function (bookmark: Bookmark) {
-    return await broadcastRepo.bookmark(bookmark);
-  },
+  isISOTimestampInRange: function (
+    current: string,
+    start: string,
+    end: string,
+  ) {
+    const currentTs = new Date(current);
+    const startTs = new Date(start);
+    const endTs = new Date(end);
 
-  readAllBookmarked: async function (userId: number) {
-    return await broadcastRepo.readAllBookmarked(userId);
-  },
-
-  unbookmark: async function (bookmark: Bookmark) {
-    return await broadcastRepo.unbookmark(bookmark);
+    return currentTs >= startTs && currentTs < endTs;
   },
 };

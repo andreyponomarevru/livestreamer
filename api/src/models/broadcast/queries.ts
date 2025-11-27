@@ -3,149 +3,202 @@ import {
   BroadcastUpdate,
   BroadcastDBResponse,
   NewBroadcast,
-  Bookmark,
-  BroadcastDraft,
+  BroadcastFilters,
 } from "../../types";
 import { dbConnection } from "../../config/postgres";
 
-type CreateBroadcastDBResponse = {
-  broadcast_id: number;
-  start_at: string;
-  listener_peak_count: number;
-};
-
 export const broadcastRepo = {
-  create: async function ({
-    title,
-    listenerPeakCount,
-    isVisible = false,
-    startAt,
-  }: NewBroadcast): Promise<BroadcastDraft> {
-    const sql =
-      "INSERT INTO \
-        broadcast (title, is_visible, start_at) \
-      VALUES \
-        ($1, $2, $3) \
-      RETURNING \
-        broadcast_id, \
-        start_at,\
-        listener_peak_count";
-    const values = [title, isVisible, startAt];
+  create: async function (newBroadcast: NewBroadcast): Promise<Broadcast> {
+    const sql = `
+      INSERT INTO broadcast (
+          appuser_id, 
+          title, 
+          is_visible, 
+          start_at, 
+          end_at, 
+          artwork_url, 
+          description,
+          listener_peak_count
+        )
+      VALUES
+        ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING
+        broadcast_id`;
+    const values = [
+      newBroadcast.userId,
+      newBroadcast.title,
+      newBroadcast.isVisible,
+      newBroadcast.startAt,
+      newBroadcast.endAt,
+      newBroadcast.artworkUrl,
+      newBroadcast.description,
+      newBroadcast.listenerPeakCount,
+    ];
     const pool = await dbConnection.open();
-    const res = await pool.query<CreateBroadcastDBResponse>(sql, values);
+    const res = await pool.query<{ broadcast_id: number }>(sql, values);
 
     return {
-      id: res.rows[0].broadcast_id,
-      title: title,
-      startAt: res.rows[0].start_at,
-      listenerPeakCount: listenerPeakCount,
+      ...newBroadcast,
+      broadcastId: res.rows[0].broadcast_id,
       likeCount: 0,
     };
   },
 
   read: async function (broadcastId: number): Promise<Broadcast | null> {
-    const sql =
-      "SELECT * FROM view_published_broadcast WHERE broadcast_id = $1";
+    const sql = "SELECT * FROM view_broadcast WHERE broadcast_id = $1";
     const values = [broadcastId];
     const pool = await dbConnection.open();
     const res = await pool.query<BroadcastDBResponse>(sql, values);
 
     if (res.rowCount !== null && res.rowCount > 0) {
       return {
-        id: res.rows[0].broadcast_id,
+        broadcastId: res.rows[0].broadcast_id,
+        userId: res.rows[0].appuser_id,
         title: res.rows[0].title,
         startAt: res.rows[0].start_at,
         endAt: res.rows[0].end_at,
         listenerPeakCount: res.rows[0].listener_peak_count,
-        downloadUrl: res.rows[0].download_url,
-        listenUrl: res.rows[0].listen_url,
         isVisible: res.rows[0].is_visible,
         likeCount: res.rows[0].like_count,
-        tracklist: res.rows[0].tracklist,
+        artworkUrl: res.rows[0].artwork_url,
+        description: res.rows[0].description,
       };
     } else {
       return null;
     }
   },
 
-  readAll: async function ({
-    isVisible,
-  }: {
-    isVisible: boolean;
-  }): Promise<Broadcast[]> {
+  readForUser: async function (
+    userId: number,
+    broadcastId: number,
+  ): Promise<Broadcast | null> {
     const sql =
-      "SELECT * FROM view_broadcast WHERE is_visible = $1 ORDER BY start_at DESC";
-    const values = [isVisible];
+      "SELECT * FROM view_broadcast WHERE broadcast_id = $1 AND appuser_id = $2";
+    const values = [broadcastId, userId];
+    const pool = await dbConnection.open();
+    const res = await pool.query<BroadcastDBResponse>(sql, values);
+
+    if (res.rowCount !== null && res.rowCount > 0) {
+      return {
+        broadcastId: res.rows[0].broadcast_id,
+        userId: res.rows[0].appuser_id,
+        title: res.rows[0].title,
+        startAt: res.rows[0].start_at,
+        endAt: res.rows[0].end_at,
+        listenerPeakCount: res.rows[0].listener_peak_count,
+        isVisible: res.rows[0].is_visible,
+        likeCount: res.rows[0].like_count,
+        artworkUrl: res.rows[0].artwork_url,
+        description: res.rows[0].description,
+      };
+    } else {
+      return null;
+    }
+  },
+
+  readAll: async function (
+    { userId, username }: { userId?: number; username?: string },
+    filters: BroadcastFilters = { time: null, isVisible: null },
+  ): Promise<Broadcast[]> {
+    const sql = `
+      SELECT 
+        * 
+      FROM 
+        view_broadcast
+      WHERE 
+        ( appuser_id = $1 OR username = $2 ) AND 
+        
+        /* If is NULL, return ALL records, ignoring is_visible */
+        ( $3::boolean IS NULL OR is_visible = $3::boolean ) AND 
+        
+        (
+          /* Return all records if null */
+          ( $4::text ) IS NULL OR
+          ( $4::text = 'future'  AND CURRENT_TIMESTAMP < end_at ) OR
+          ( $4::text = 'past'    AND CURRENT_TIMESTAMP > end_at ) OR
+          ( $4::text = 'current' AND CURRENT_TIMESTAMP BETWEEN start_at AND end_at )
+        )
+      ORDER BY 
+        start_at 
+      DESC`;
+
+    console.log();
+
+    const values = [userId, username, filters.isVisible, filters.time];
     const pool = await dbConnection.open();
     const res = await pool.query<BroadcastDBResponse>(sql, values);
 
     if (res.rowCount !== null && res.rowCount > 0) {
       const broadcasts: Broadcast[] = res.rows.map((row) => {
         return {
-          id: row.broadcast_id,
+          broadcastId: row.broadcast_id,
+          userId: row.appuser_id,
           title: row.title,
           startAt: row.start_at,
           endAt: row.end_at,
+          artworkUrl: row.artwork_url,
+          description: row.description,
           listenerPeakCount: row.listener_peak_count,
-          downloadUrl: row.download_url,
-          listenUrl: row.listen_url,
-          isVisible: row.is_visible,
           likeCount: row.like_count,
-          tracklist: row.tracklist,
+          isVisible: row.is_visible,
         };
       });
+
+      console.log("---------------------------------------------------------");
+      console.log(broadcasts);
+
       return broadcasts;
     } else {
       return [];
     }
   },
 
-  update: async function (
-    broadcast: BroadcastUpdate,
-    { isVisible }: { isVisible: boolean },
-  ): Promise<void> {
+  update: async function (broadcast: BroadcastUpdate): Promise<void> {
     const sql =
       "UPDATE \
-			broadcast \
-		SET \
-			title = COALESCE($1, title), \
-			tracklist = COALESCE($2, tracklist), \
-			download_url = COALESCE($3, download_url), \
-      listen_url = COALESCE($4, listen_url), \
-      listener_peak_count = COALESCE($5, listener_peak_count),\
-      is_visible = COALESCE($6, is_visible), \
-      end_at = COALESCE($7, end_at) \
-		WHERE \
-      broadcast_id = $8 AND is_visible = $9";
+        broadcast \
+      SET \
+        title               = COALESCE($1, title), \
+        listener_peak_count = COALESCE($2, listener_peak_count),\
+        is_visible          = COALESCE($3, is_visible), \
+        start_at            = COALESCE($4, start_at) \
+        end_at              = COALESCE($5, end_at) \
+        artwork_url         = COALESCE($6, artwork_url) \
+        description         = COALESCE($7, description) \
+      WHERE \
+        broadcast_id = $8 AND\
+        appuser_id = $9";
     const values = [
       broadcast.title,
-      broadcast.tracklist,
-      broadcast.downloadUrl,
-      broadcast.listenUrl,
       broadcast.listenerPeakCount,
       broadcast.isVisible,
+      broadcast.startAt,
       broadcast.endAt,
-      broadcast.id,
-      isVisible,
+      broadcast.artworkUrl,
+      broadcast.description,
+      broadcast.broadcastId,
+      broadcast.userId,
     ];
     const pool = await dbConnection.open();
     await pool.query(sql, values);
   },
 
-  destroy: async function (broadcastId: number): Promise<void> {
-    const sql = "DELETE FROM broadcast WHERE broadcast_id = $1";
-    const values = [broadcastId];
+  destroy: async function (userId: number, broadcastId: number): Promise<void> {
+    const sql =
+      "DELETE FROM broadcast WHERE broadcast_id = $1 AND appuser_id = $2";
+    const values = [broadcastId, userId];
     const pool = await dbConnection.open();
     await pool.query<{ broadcast_id: number }>(sql, values);
   },
 
   readLikesCount: async function (
+    userId: number,
     broadcastId: number,
   ): Promise<{ likeCount: number }> {
     const pool = await dbConnection.open();
     const selectSql =
-      "SELECT like_count FROM view_broadcast WHERE broadcast_id = $1";
-    const selectValues = [broadcastId];
+      "SELECT like_count FROM view_broadcast WHERE broadcast_id = $1 AND appuser_id = $2";
+    const selectValues = [broadcastId, userId];
     const res = await pool.query<{ like_count: number }>(
       selectSql,
       selectValues,
@@ -153,81 +206,20 @@ export const broadcastRepo = {
     return { likeCount: res.rows[0].like_count };
   },
 
-  bookmark: async function (bookmark: Bookmark): Promise<void> {
-    const isBroadcastNotExistSql =
-      "SELECT \
-        * \
-      FROM \
-        broadcast \
-      WHERE \
-        broadcast_id = $1 \
-      AND \
-        is_visible = false \
-      OR NOT EXISTS (\
-        SELECT \
-          * \
-        FROM \
-          broadcast \
-        WHERE \
-          broadcast_id = $1\
-        )";
-    const isBroadcastNotExistValues = [bookmark.broadcastId];
+  isExist: async function (
+    userId: number,
+    broadcastId: number,
+  ): Promise<boolean> {
+    const sql =
+      "SELECT 1 FROM view_broadcast WHERE broadcast_id = $1 AND appuser_id = $2";
+    const values = [broadcastId, userId];
     const pool = await dbConnection.open();
-    const broadcasts = await pool.query(
-      isBroadcastNotExistSql,
-      isBroadcastNotExistValues,
-    );
-    const isBroadcastNotExist =
-      broadcasts.rowCount !== null && broadcasts.rowCount > 0;
+    const res = await pool.query<{ [key: string]: number }>(sql, values);
 
-    if (!isBroadcastNotExist) {
-      const sql =
-        "INSERT INTO appuser_bookmark (appuser_id, broadcast_id) VALUES ($1, $2) ON CONFLICT DO NOTHING";
-      const values = [bookmark.userId, bookmark.broadcastId];
-      await pool.query(sql, values);
+    if (res.rowCount !== null && res.rowCount > 0) {
+      return true;
+    } else {
+      return false;
     }
-  },
-
-  readAllBookmarked: async function (userId: number): Promise<Broadcast[]> {
-    const sql =
-      "SELECT \
-      v_b.*\
-    FROM\
-      appuser_bookmark AS a_b\
-    INNER JOIN\
-      view_broadcast AS v_b\
-    ON\
-      v_b.broadcast_id = a_b.broadcast_id\
-    WHERE\
-      appuser_id = $1\
-    AND\
-      v_b.is_visible = true";
-    const values = [userId];
-    const pool = await dbConnection.open();
-    const res = await pool.query<BroadcastDBResponse>(sql, values);
-
-    return res.rows.map((row) => {
-      const r: Broadcast = {
-        id: row.broadcast_id,
-        title: row.title,
-        tracklist: row.tracklist,
-        startAt: row.start_at,
-        endAt: row.end_at,
-        listenerPeakCount: row.listener_peak_count,
-        likeCount: row.like_count,
-        downloadUrl: row.download_url,
-        listenUrl: row.listen_url,
-        isVisible: row.is_visible,
-      };
-      return r;
-    });
-  },
-
-  unbookmark: async function (bookmark: Bookmark): Promise<void> {
-    const sql =
-      "DELETE FROM appuser_bookmark WHERE appuser_id = $1 AND broadcast_id = $2";
-    const values = [bookmark.userId, bookmark.broadcastId];
-    const pool = await dbConnection.open();
-    await pool.query(sql, values);
   },
 };
