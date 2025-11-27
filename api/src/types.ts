@@ -16,6 +16,10 @@ export type SanitizedWSChatClient = { uuid: string; username: string };
 export type AppState = { isStreamPaused: boolean };
 export type WebSocketUUID = { uuid: string };
 export type UnauthenticatedWSClient = { id: string; socket: WebSocket };
+export type BroadcastStreamWebSocketData = {
+  isStreaming: boolean;
+  broadcast?: BroadcastStream;
+};
 export type WSUserMsg<Data> = {
   event: string;
   clientUUID: string;
@@ -45,7 +49,7 @@ export type ClientsListMsg = {
 };
 export type StreamStateMsg = {
   event: "stream:state";
-  data: BroadcastState;
+  data: BroadcastStreamWebSocketData;
 };
 export type StreamLikeMsg = { event: "stream:like"; data: SavedBroadcastLike };
 export type CreateChatMsg = { event: "chat:created_message"; data: ChatMsg };
@@ -71,19 +75,18 @@ export type UpdateClientCountMsg = {
 // API
 //
 
-export type BroadcastState = {
-  isOnline: boolean;
-  broadcast?: {
-    likeCount: number;
-    id: number;
-    title: string;
-    startAt: string;
-    listenerPeakCount: number;
-  };
+export type BroadcastStream = {
+  userId: number;
+  broadcastId: number;
+  title: string;
+  likeCount: number;
+  listenerPeakCount: number;
+  startAt: string;
+  endAt: string;
 };
-export type Bookmark = { userId: number; broadcastId: number };
+
 export interface UserAccount {
-  id: number;
+  userId: number;
   username: string;
   email: string;
   createdAt: string;
@@ -94,64 +97,52 @@ export interface UserAccount {
 }
 export interface SanitizedUser {
   uuid: string;
-  id: number;
+  userId: number;
   email: string;
   username: string;
   permissions: Permissions;
 }
-export interface Schedule {
-  id?: number;
-  title: string;
-  startAt: string;
-  endAt: string;
-}
-export interface BroadcastDraft {
-  id: number;
-  title: string;
-  startAt: string;
-  listenerPeakCount: number;
-  likeCount: number;
-}
 export interface NewBroadcast {
+  userId: number;
   title: string;
-  listenerPeakCount: number;
-  isVisible?: boolean;
-  startAt: string;
-}
-export interface Broadcast {
-  id: number;
-  title: string;
+  isVisible: boolean;
+  artworkUrl: string;
+  description: string;
   startAt: string;
   endAt: string;
   listenerPeakCount: number;
-  downloadUrl: string;
-  listenUrl: string;
-  likeCount: number;
-  isVisible: boolean;
-  tracklist: string;
 }
+export type Broadcast = NewBroadcast & {
+  broadcastId: number;
+  likeCount: number;
+};
 export interface BroadcastUpdate {
-  id: number;
+  userId: number;
+  broadcastId: number;
   title?: string;
-  tracklist?: string;
-  downloadUrl?: string;
-  listenUrl?: string;
   listenerPeakCount?: number;
+  artworkUrl?: string;
+  description?: string;
   isVisible?: boolean;
+  startAt?: Date | string;
   endAt?: Date | string;
 }
 export interface BroadcastDBResponse {
   broadcast_id: number;
+  appuser_id: number;
   title: string;
-  tracklist: string;
   start_at: string;
   end_at: string;
   listener_peak_count: number;
-  download_url: string;
-  listen_url: string;
+  artwork_url: string;
+  description: string;
   is_visible: boolean;
   like_count: number;
 }
+export type BroadcastFilters = {
+  isVisible?: boolean | null;
+  time?: "future" | "past" | "current" | null;
+};
 export type SavedBroadcastLike = {
   broadcastId: number;
   likedByUserId: number;
@@ -159,15 +150,24 @@ export type SavedBroadcastLike = {
   likeCount: number;
 };
 export interface ChatMsg {
-  id: number;
+  messageId: number;
+  broadcastId: number;
   userId: number;
   username: string;
   createdAt: string;
   message: string;
   likedByUserId: number[];
 }
-export type ChatMsgId = { id: number; userId: number };
-export type NewChatMsg = { userId: number; message: string };
+export type ChatMsgId = {
+  broadcastId: number;
+  messageId: number;
+  userId: number;
+};
+export type NewChatMsg = {
+  broadcastId: number;
+  userId: number;
+  message: string;
+};
 export type ChatMsgLike = {
   messageId: number;
   likedByUserId: number;
@@ -195,13 +195,8 @@ export type Permissions = { [key: string]: string[] };
 // Database responses
 //
 
-export type ScheduledBroadcastDBResponse = {
-  scheduled_broadcast_id: number;
-  title: string;
-  start_at: Date;
-  end_at: Date;
-};
 export type ReadMsgDBResponse = {
+  broadcast_id: number;
   chat_message_id: number;
   appuser_id: number;
   username: string;
