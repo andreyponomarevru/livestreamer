@@ -1,6 +1,6 @@
 import util from "util";
 import { Request, Response, NextFunction } from "express";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import { authnService } from "../../services/authn";
 import { userService } from "../../services/user";
 import { HttpError } from "../../utils/http-error";
@@ -86,9 +86,11 @@ export const sessionController = {
       ) {
         // We need to save uuid in session to be able to use it later when client ends the session by signing out: using this uuid we find the closed socket in WSClientStore and remove this socket. This is the only purpose of storing uuid in user object/in session.
         // TODO: move lastLoginTime update to Model level, call 'updateLastLoginTime' from 'readUser' or something like that
-        const { lastLoginAt } = await userService.updateLastLoginTime(user.id);
+        const { lastLoginAt } = await userService.updateLastLoginTime(
+          user.userId,
+        );
         user.lastLoginAt = lastLoginAt;
-        user.uuid = uuidv4();
+        user.uuid = randomUUID();
         req.session.authenticatedUser = user;
         logger.debug(
           `${__filename} [createSession] User ${user.username} is authenticated and saved in session`,
