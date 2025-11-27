@@ -1,8 +1,15 @@
 import { describe, it } from "@jest/globals";
 
 import { API_URL_PREFIX } from "../../src/config/env";
+import { generateUrlPath } from "../../test-helpers/helpers";
 
-const ROUTE = `${API_URL_PREFIX}/:broadcastId/messages/:messageId/likes`;
+const ROUTE = generateUrlPath(
+  `${API_URL_PREFIX}/:broadcastId/messages/:messageId/likes`,
+  {
+    broadcastId: ":broadcastId",
+    messageId: ":messageId",
+  },
+);
 
 describe(ROUTE, () => {
   describe("POST - like chat message", () => {

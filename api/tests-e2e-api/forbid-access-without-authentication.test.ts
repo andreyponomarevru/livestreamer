@@ -89,7 +89,6 @@ describe("responds with a 401 if the header doesn't contain the session cookie",
   it.each(ROUTES.GET)("GET %p", async (route: string) => {
     await request(httpServer)
       .post(`${API_URL_PREFIX}/sessions`)
-      .set("accept", "application/json")
       .send(superadminCredentials)
       .expect(200);
 
@@ -104,7 +103,6 @@ describe("responds with a 401 if the header doesn't contain the session cookie",
   it.each(ROUTES.POST)("POST %p", async (route: string) => {
     await request(httpServer)
       .post(`${API_URL_PREFIX}/sessions`)
-      .set("accept", "application/json")
       .send(superadminCredentials)
       .expect(200);
 
@@ -119,7 +117,6 @@ describe("responds with a 401 if the header doesn't contain the session cookie",
   it.each(ROUTES.PUT)("PUT %p", async (route: string) => {
     await request(httpServer)
       .post(`${API_URL_PREFIX}/sessions`)
-      .set("accept", "application/json")
       .send(superadminCredentials)
       .expect(200);
 
@@ -134,7 +131,6 @@ describe("responds with a 401 if the header doesn't contain the session cookie",
   it.each(ROUTES.DELETE)("DELETE %p", async (route: string) => {
     await request(httpServer)
       .post(`${API_URL_PREFIX}/sessions`)
-      .set("accept", "application/json")
       .send(superadminCredentials)
       .expect(200);
 
@@ -149,7 +145,6 @@ describe("responds with a 401 if the header doesn't contain the session cookie",
   it.each(ROUTES.PATCH)("PATCH %p", async (route: string) => {
     await request(httpServer)
       .post(`${API_URL_PREFIX}/sessions`)
-      .set("accept", "application/json")
       .send(superadminCredentials)
       .expect(200);
 

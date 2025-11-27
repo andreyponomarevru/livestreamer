@@ -35,7 +35,6 @@ describe(ROUTE, () => {
         const agent = request.agent(httpServer);
         await agent
           .post(`${API_URL_PREFIX}/sessions`)
-          .set("accept", "application/json")
           .send({ username, password })
           .expect(200);
 
@@ -60,7 +59,6 @@ describe(ROUTE, () => {
         const agent = request.agent(httpServer);
         await agent
           .post(`${API_URL_PREFIX}/sessions`)
-          .set("accept", "application/json")
           .send({ username, password })
           .expect(200);
 
@@ -100,7 +98,6 @@ describe(ROUTE, () => {
         const agent = request.agent(httpServer);
         await agent
           .post(`${API_URL_PREFIX}/sessions`)
-          .set("accept", "application/json")
           .send({ username, password })
           .expect(200);
         const newUsername = faker.internet
@@ -158,7 +155,6 @@ describe(ROUTE, () => {
         const agent = request.agent(httpServer);
         await agent
           .post(`${API_URL_PREFIX}/sessions`)
-          .set("accept", "application/json")
           .send({ username: user2.username, password: user2.password })
           .expect(200);
 

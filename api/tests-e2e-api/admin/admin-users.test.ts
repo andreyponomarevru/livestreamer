@@ -16,13 +16,10 @@ describe(ROUTE, () => {
     describe("200", () => {
       it("responds with an array of all users (not paginated) if the user role is 'superadmin'", async () => {
         const agent = request.agent(httpServer);
-        await agent
-          .post(`${API_URL_PREFIX}/sessions`)
-          .set("accept", "application/json")
-          .send({
-            username: superadminUser.username,
-            password: superadminUser.password,
-          });
+        await agent.post(`${API_URL_PREFIX}/sessions`).send({
+          username: superadminUser.username,
+          password: superadminUser.password,
+        });
 
         const user = {
           uuid: expect.any(String),
@@ -53,13 +50,10 @@ describe(ROUTE, () => {
     describe("403", () => {
       it("responds with an error if the user role is not 'superadmin'", async () => {
         const agent = request.agent(httpServer);
-        await agent
-          .post(`${API_URL_PREFIX}/sessions`)
-          .set("accept", "application/json")
-          .send({
-            username: broadcasterUser.username,
-            password: broadcasterUser.password,
-          });
+        await agent.post(`${API_URL_PREFIX}/sessions`).send({
+          username: broadcasterUser.username,
+          password: broadcasterUser.password,
+        });
 
         const response = await agent
           .get(ROUTE)
