@@ -14,7 +14,7 @@ type Schema =
   | Joi.NumberSchema
   | Joi.ArraySchema;
 
-type Location = "body" | "headers" | "query" | "params";
+type Location = "body" | "headers" | "query" | "params" | "files";
 
 export function validate(schema: Schema, location: Location) {
   return async function (
@@ -28,7 +28,10 @@ export function validate(schema: Schema, location: Location) {
 
     try {
       const validated = await schema.validateAsync(req[location]);
-      req[location] = { ...req[location], ...validated };
+
+      if (typeof req.validated !== "object") req.validated = {};
+
+      req.validated[location] = { ...req[location], ...validated };
 
       logger.debug(
         `${__filename}: [after validation] ${util.inspect(req[location])}`,
