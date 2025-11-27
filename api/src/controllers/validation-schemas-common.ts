@@ -56,52 +56,8 @@ export const jsonContentTypeSchema = Joi.object({
   .unknown(true);
 
 export const idSchema = Joi.number().positive().greater(0).required().messages({
-  "number.base": `ID should be a type of 'number'`,
-  "number.positive": `ID should be positive`,
-  "number.greater": `ID should be greater than 1`,
-  "any.required": `ID is required`,
+  "number.base": `id should be a type of 'number'`,
+  "number.positive": `id should be positive`,
+  "number.greater": `id should be greater than 1`,
+  "any.required": `id is required`,
 });
-
-export const updateBroadcastSchema = Joi.object({
-  title: Joi.string().trim().min(5).max(70).optional().messages({
-    "string.base": `'title' should be a type of 'string'`,
-    "string.empty": `'title' cannot be an empty string`,
-    "string.min": `'title' is shorter than expected`,
-    "string.max": `'title' is longer than expected`,
-  }),
-  tracklist: Joi.string().trim().max(800).optional().messages({
-    "string.base": `'tracklist' should be a type of 'string'`,
-    "string.empty": `'tracklist' cannot be an empty string`,
-    "string.max": `'tracklist' is longer than expected`,
-  }),
-  downloadUrl: Joi.string().trim().max(1000).optional().messages({
-    "string.base": `'downloadUrl' should be a type of 'string'`,
-    "string.empty": `'downloadUrl' cannot be an empty string`,
-    "string.max": `'downloadUrl' is longer than expected`,
-  }),
-  listenUrl: Joi.string().trim().max(1000).optional().messages({
-    "string.base": `'listenUrl' should be a type of 'string'`,
-    "string.empty": `'listenUrl' cannot be an empty string`,
-    "string.max": `'listenUrl' is longer than expected`,
-  }),
-  listenerPeakCount: Joi.number()
-    .positive()
-    .integer()
-    .min(0)
-    .max(50000)
-    .optional()
-    .messages({
-      "number.base": `'listenerPeakCount' should be a type of 'number'`,
-      "number.integer": `'listenerPeakCount' must be an integer`,
-      "number.positive": `'listenerPeakCount' should be positive`,
-      "number.min": `'listenerPeakCount' minimum value is '0'`,
-      "number.max": `'listenerPeakCount' max length is 50000 characters`,
-    }),
-  isVisible: Joi.boolean()
-    .optional()
-    .messages({ "boolean.base": `'isVisible' should be a type of 'boolean'` }),
-  endAt: Joi.date().iso().optional().messages({
-    "date.format":
-      "'endAt' timestamp is in invalid format, string should be in ISO-8601",
-  }),
-}).min(1);
