@@ -1,16 +1,22 @@
 import { describe, it, beforeAll, afterAll, expect } from "@jest/globals";
 import request from "supertest";
 import setCookie from "set-cookie-parser";
+import { faker } from "@faker-js/faker";
 
 import {
   broadcasterUser,
   superadminUser,
 } from "../test-helpers/jest-hooks/utils/user";
 import { httpServer } from "../src/http-server";
-import { RedisClient, redisConnection } from "../src/config/redis";
-import { MORE_INFO, RESPONSE_401 } from "../test-helpers/helpers";
+import { type RedisClient, redisConnection } from "../src/config/redis";
+import {
+  MORE_INFO,
+  REQUEST_VALIDATION_RULES,
+  RESPONSE_401,
+} from "../test-helpers/helpers";
 import { signIn } from "../test-helpers/helpers";
 import { API_URL_PREFIX } from "../src/config/env";
+import { createUser } from "../test-helpers/helpers";
 
 const ROUTE = `${API_URL_PREFIX}/sessions`;
 
@@ -169,9 +175,43 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
     });
 
     describe("404", () => {
-      it.todo(
-        "responds with an error if the user account hasn't been confirmed",
-      );
+      it("responds with an error if the user account hasn't been confirmed", async () => {
+        const username = faker.internet
+          .username()
+          .substring(0, REQUEST_VALIDATION_RULES.maxUsernameLength);
+        const password = faker.internet
+          .password()
+          .substring(0, REQUEST_VALIDATION_RULES.maxPasswordLength);
+        const email = faker.internet.email();
+        const profilePictureUrl = faker.system.filePath();
+        const displayName = faker.internet
+          .displayName()
+          .substring(0, REQUEST_VALIDATION_RULES.maxDisplayName);
+
+        await createUser({
+          username,
+          password,
+          email,
+          roleId: 2,
+          isDeleted: false,
+          isEmailConfirmed: false,
+          displayName,
+          profilePictureUrl,
+        });
+
+        const response = await request(httpServer)
+          .post(ROUTE)
+          .send({ username, password })
+          .expect("content-type", /json/)
+          .expect(404);
+        expect(response.body).toStrictEqual({
+          ...MORE_INFO,
+          status: 404,
+          statusText: "NotFound",
+          message:
+            "Pending Account. Look for the verification email in your inbox and click the link in that email",
+        });
+      });
     });
   });
 
