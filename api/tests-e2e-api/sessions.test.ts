@@ -153,6 +153,14 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
           message: "Can't authenticate the request, no cookie found",
         });
       });
+
+      it("doesn't set a cookie if credentials are invalid", async () => {
+        const response = await request(httpServer)
+          .post(ROUTE)
+          .send({ username: "invalid", password: "invalid" });
+
+        expect(setCookie.parse(response.headers["set-cookie"]).length).toBe(0);
+      });
     });
 
     describe("400", () => {
@@ -172,22 +180,31 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
           message: "Invalid email, username or password",
         });
       });
+
+      it("doesn't set a cookie if the request object is malformed", async () => {
+        const response = await request(httpServer).post(ROUTE).send({
+          uuser: superadminUser.username,
+          ppass: superadminUser.password,
+        });
+
+        expect(setCookie.parse(response.headers["set-cookie"]).length).toBe(0);
+      });
     });
 
     describe("404", () => {
-      it("responds with an error if the user account hasn't been confirmed", async () => {
-        const username = faker.internet
-          .username()
-          .substring(0, REQUEST_VALIDATION_RULES.maxUsernameLength);
-        const password = faker.internet
-          .password()
-          .substring(0, REQUEST_VALIDATION_RULES.maxPasswordLength);
-        const email = faker.internet.email();
-        const profilePictureUrl = faker.system.filePath();
-        const displayName = faker.internet
-          .displayName()
-          .substring(0, REQUEST_VALIDATION_RULES.maxDisplayName);
+      const username = faker.internet
+        .username()
+        .substring(0, REQUEST_VALIDATION_RULES.maxUsernameLength);
+      const password = faker.internet
+        .password()
+        .substring(0, REQUEST_VALIDATION_RULES.maxPasswordLength);
+      const email = faker.internet.email();
+      const profilePictureUrl = faker.system.filePath();
+      const displayName = faker.internet
+        .displayName()
+        .substring(0, REQUEST_VALIDATION_RULES.maxDisplayName);
 
+      it("responds with an error if the user account hasn't been confirmed", async () => {
         await createUser({
           username,
           password,
@@ -211,6 +228,25 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
           message:
             "Pending Account. Look for the verification email in your inbox and click the link in that email",
         });
+      });
+
+      it("doesn't set a cookie if the user account hasn't been confirmed", async () => {
+        await createUser({
+          username,
+          password,
+          email,
+          roleId: 2,
+          isDeleted: false,
+          isEmailConfirmed: false,
+          displayName,
+          profilePictureUrl,
+        });
+
+        const response = await request(httpServer)
+          .post(ROUTE)
+          .send({ username, password });
+
+        expect(setCookie.parse(response.headers["set-cookie"]).length).toBe(0);
       });
     });
   });
