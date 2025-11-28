@@ -1,22 +1,51 @@
-import { describe, it, expect } from "@jest/globals";
+import { describe, it, expect, beforeAll, afterAll } from "@jest/globals";
 import request from "supertest";
+import { faker } from "@faker-js/faker";
 
 import { httpServer } from "../src/http-server";
 import { dbConnection } from "../src/config/postgres";
-import { MORE_INFO, RESPONSE_401 } from "../test-helpers/helpers";
+import {
+  DATABASE_CONSTRAINTS,
+  MORE_INFO,
+  REQUEST_VALIDATION_RULES,
+  RESPONSE_401,
+} from "../test-helpers/helpers";
 import { API_URL_PREFIX } from "../src/config/env";
+
+const ROUTE = "/verification";
 
 const unconfirmedUser = {
   roleId: 2,
-  username: "ivanivanovich",
-  email: "ivan@ivanovich.ru",
-  passwordHash: "pass-hash",
-  emailConfirmationToken: "123456789",
-  displayName: "ivanivanovich",
-  profilePictureUrl: "/mnt/home/ava.jpg",
+  username: faker.internet
+    .username()
+    .substring(0, REQUEST_VALIDATION_RULES.maxUsernameLength),
+  email: faker.internet.email(),
+  passwordHash: faker.internet
+    .password()
+    .substring(0, REQUEST_VALIDATION_RULES.maxPasswordLength),
+  emailConfirmationToken: faker.string.uuid(),
+  displayName: faker.internet
+    .displayName()
+    .substring(0, REQUEST_VALIDATION_RULES.maxDisplayName),
+  profilePictureUrl: faker.system.filePath(),
+  about: faker.lorem.paragraphs(),
+  subscriptionName: faker.string
+    .alpha()
+    .substring(0, DATABASE_CONSTRAINTS.maxSubscriptionPlanLength),
+  websiteUrl: faker.internet.url(),
 };
 
-describe("/verification", () => {
+beforeAll(async () => {
+  httpServer.listen();
+});
+
+afterAll(async () => {
+  httpServer.close(async (err) => {
+    if (err) throw err;
+  });
+});
+
+describe(ROUTE, () => {
   describe(`POST  - verify user sign up`, () => {
     async function seedUser(user: typeof unconfirmedUser) {
       const pool = await dbConnection.open();
@@ -28,7 +57,10 @@ describe("/verification", () => {
           password_hash, 
           email_confirmation_token,
           display_name,
-          profile_picture_url
+          profile_picture_url,
+          about,
+          subscription_name,
+          website_url
         ) 
         VALUES (
           ${user.roleId},
@@ -37,7 +69,10 @@ describe("/verification", () => {
           '${user.passwordHash}', 
           '${user.emailConfirmationToken}',
           '${user.displayName}',
-          '${user.profilePictureUrl}'
+          '${user.profilePictureUrl}',
+          '${user.about}', 
+          '${user.subscriptionName}',
+          '${user.websiteUrl}'
         )`);
     }
 
@@ -60,20 +95,20 @@ describe("/verification", () => {
           {
             appuser_id: expect.any(Number),
             role_id: 2,
-            username: "ivanivanovich",
-            password_hash: "pass-hash",
-            email: "ivan@ivanovich.ru",
+            username: unconfirmedUser.username,
+            password_hash: unconfirmedUser.passwordHash,
+            email: unconfirmedUser.email,
             created_at: expect.any(Date),
             last_login_at: null,
             is_deleted: false,
             is_email_confirmed: true,
             email_confirmation_token: null,
             password_reset_token: null,
-            display_name: "ivanivanovich",
-            about: "",
-            profile_picture_url: "/mnt/home/ava.jpg",
-            subscription_name: "",
-            website_url: "",
+            display_name: unconfirmedUser.displayName,
+            about: unconfirmedUser.about,
+            profile_picture_url: unconfirmedUser.profilePictureUrl,
+            subscription_name: unconfirmedUser.subscriptionName,
+            website_url: unconfirmedUser.websiteUrl,
           },
         ]);
       });
