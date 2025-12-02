@@ -77,65 +77,42 @@ export type SignUpData = {
   displayName: string;
   profilePictureUrl: string;
   subscriptionName: "basic" | "unlimited";
+  about?: string;
+  websiteUrl?: string;
 };
 
 export const userRepo = {
-  // TODO: move this function to authorization model module and retrieve permissions via service layer
-  readUserPermissions: async function (userId: number): Promise<Permissions> {
-    const sql = `
-      SELECT 
-        re.name AS resource, 
-        ARRAY_AGG(pe.name ORDER BY pe.name) AS permissions 
-      FROM appuser AS us 
-        INNER JOIN role_resource_permission AS r_r_p 
-          ON us.role_id = r_r_p.role_id 
-        INNER JOIN role AS rol 
-          ON rol.role_id = r_r_p.role_id 
-        INNER JOIN permission AS pe 
-          ON pe.permission_id = r_r_p.permission_id 
-        INNER JOIN resource AS re 
-          ON re.resource_id = r_r_p.resource_id 
-      WHERE 
-        us.appuser_id = $1 
-      GROUP BY 
-        r_r_p.resource_id, 
-        re.name, 
-        us.username`;
-    const values = [userId];
-    const pool = await dbConnection.open();
-    const res = await pool.query<UserPermissionsDBResponse>(sql, values);
-
-    const permissions: Permissions = {};
-    res.rows.forEach((row) => {
-      permissions[row.resource] = row.permissions;
-    });
-
-    return permissions;
-  },
-
-  findByUsernameOrEmail: async function ({
+  readUser: async function ({
+    userId,
     username,
     email,
   }: {
+    userId?: number;
     username?: string;
     email?: string;
   }): Promise<Omit<User, "uuid"> | null> {
     const sql = `
-      SELECT
-        appuser_id,
-        username,
+      SELECT 
+			  appuser_id, 
+        username, 
         email, 
-        password_hash,
-        created_at,
-        last_login_at,
-        is_email_confirmed,
-        is_deleted
-      FROM
-        appuser
-      WHERE
-        username=$1 OR
-        email=$2`;
-    const values = [username, email];
+        password_hash, 
+        created_at, 
+        last_login_at, 
+        is_email_confirmed, 
+        is_deleted,
+        display_name,
+        website_url,
+        about,
+        profile_picture_url,
+        subscription_name
+		  FROM 
+        appuser 
+		  WHERE 
+        appuser_id = $1 OR
+        username = $2 OR
+        email = $3`;
+    const values = [userId, username, email];
     const pool = await dbConnection.open();
     const res = await pool.query<ReadUserDBResponse>(sql, values);
 
@@ -146,18 +123,60 @@ export const userRepo = {
       email: res.rows[0].email,
       username: res.rows[0].username,
       password: res.rows[0].password_hash,
-      isEmailConfirmed: res.rows[0].is_email_confirmed,
-      isDeleted: res.rows[0].is_deleted,
       createdAt: res.rows[0].created_at,
       lastLoginAt: res.rows[0].last_login_at,
+      isEmailConfirmed: res.rows[0].is_email_confirmed,
+      isDeleted: res.rows[0].is_deleted,
       displayName: res.rows[0].display_name,
-      profilePictureUrl: res.rows[0].profile_picture_url,
-      about: res.rows[0].about,
       websiteUrl: res.rows[0].website_url,
+      about: res.rows[0].about,
+      profilePictureUrl: res.rows[0].profile_picture_url,
       subscriptionName: res.rows[0].subscription_name,
     });
 
     return user;
+  },
+
+  readAllUsers: async function (): Promise<Omit<User, "uuid">[]> {
+    const sql = `
+      SELECT 
+        appuser_id, 
+        username, 
+        email, 
+        password_hash, 
+        created_at, 
+        last_login_at, 
+        is_email_confirmed, 
+        is_deleted,
+        display_name, 
+        website_url, 
+        about, 
+        profile_picture_url,
+        subscription_name 
+      FROM
+        appuser`;
+    const pool = await dbConnection.open();
+    const res = await pool.query<ReadUserDBResponse>(sql);
+
+    const users = res.rows.map((user) => {
+      return new User({
+        userId: user.appuser_id,
+        email: user.email,
+        username: user.username,
+        password: user.password_hash,
+        createdAt: user.created_at,
+        lastLoginAt: user.last_login_at,
+        isEmailConfirmed: user.is_email_confirmed,
+        isDeleted: user.is_deleted,
+        displayName: user.display_name,
+        profilePictureUrl: user.profile_picture_url,
+        websiteUrl: user.website_url,
+        about: user.about,
+        subscriptionName: user.subscription_name,
+      });
+    });
+
+    return users;
   },
 
   findByEmailConfirmationToken: async function (
@@ -343,10 +362,12 @@ export const userRepo = {
           email_confirmation_token,
           display_name,
           profile_picture_url,
-          subscription_name
+          subscription_name,
+          about,
+          website_url
         )
       VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
       )
       RETURNING 
         appuser_id`;
@@ -360,101 +381,14 @@ export const userRepo = {
       signupData.displayName,
       signupData.profilePictureUrl,
       signupData.subscriptionName,
+      signupData.about,
+      signupData.websiteUrl,
     ];
     const pool = await dbConnection.open();
     const res = await pool.query<CreateUserDBResponse>(sql, values);
 
     const user = { userId: res.rows[0].appuser_id };
     return user;
-  },
-
-  readUser: async function (
-    userId: number,
-  ): Promise<Omit<User, "uuid"> | null> {
-    const sql = `
-      SELECT 
-			  appuser_id, 
-        username, 
-        email, 
-        password_hash, 
-        created_at, 
-        last_login_at, 
-        is_email_confirmed, 
-        is_deleted,
-        display_name,
-        website_url,
-        about,
-        profile_picture_url,
-        subscription_name
-		  FROM 
-        appuser 
-		  WHERE 
-        appuser_id = $1`;
-    const values = [userId];
-    const pool = await dbConnection.open();
-    const userRes = await pool.query<ReadUserDBResponse>(sql, values);
-
-    if (userRes.rowCount === 0) return null;
-
-    const user = new User({
-      userId: userRes.rows[0].appuser_id,
-      email: userRes.rows[0].email,
-      username: userRes.rows[0].username,
-      password: userRes.rows[0].password_hash,
-      createdAt: userRes.rows[0].created_at,
-      lastLoginAt: userRes.rows[0].last_login_at,
-      isEmailConfirmed: userRes.rows[0].is_email_confirmed,
-      isDeleted: userRes.rows[0].is_deleted,
-      displayName: userRes.rows[0].display_name,
-      websiteUrl: userRes.rows[0].website_url,
-      about: userRes.rows[0].about,
-      profilePictureUrl: userRes.rows[0].profile_picture_url,
-      subscriptionName: userRes.rows[0].subscription_name,
-    });
-
-    return user;
-  },
-
-  readAllUsers: async function (): Promise<Omit<User, "uuid">[]> {
-    const sql = `
-      SELECT 
-        appuser_id, 
-        username, 
-        email, 
-        password_hash, 
-        created_at, 
-        last_login_at, 
-        is_email_confirmed, 
-        is_deleted,
-        display_name, 
-        website_url, 
-        about, 
-        profile_picture_url,
-        subscription_name 
-      FROM
-        appuser`;
-    const pool = await dbConnection.open();
-    const res = await pool.query<ReadUserDBResponse>(sql);
-
-    const users = res.rows.map((user) => {
-      return new User({
-        userId: user.appuser_id,
-        email: user.email,
-        username: user.username,
-        password: user.password_hash,
-        createdAt: user.created_at,
-        lastLoginAt: user.last_login_at,
-        isEmailConfirmed: user.is_email_confirmed,
-        isDeleted: user.is_deleted,
-        displayName: user.display_name,
-        profilePictureUrl: user.profile_picture_url,
-        websiteUrl: user.website_url,
-        about: user.about,
-        subscriptionName: user.subscription_name,
-      });
-    });
-
-    return users;
   },
 
   updateUser: async function ({
@@ -596,5 +530,38 @@ export const userRepo = {
     for (const valueName of setting.allowedSettingValues) {
       await this.createAllowedSettingValue(settingId, valueName);
     }
+  },
+
+  // TODO: move this function to authorization model module and retrieve permissions via service layer
+  readUserPermissions: async function (userId: number): Promise<Permissions> {
+    const sql = `
+      SELECT 
+        re.name AS resource, 
+        ARRAY_AGG(pe.name ORDER BY pe.name) AS permissions 
+      FROM appuser AS us 
+        INNER JOIN role_resource_permission AS r_r_p 
+          ON us.role_id = r_r_p.role_id 
+        INNER JOIN role AS rol 
+          ON rol.role_id = r_r_p.role_id 
+        INNER JOIN permission AS pe 
+          ON pe.permission_id = r_r_p.permission_id 
+        INNER JOIN resource AS re 
+          ON re.resource_id = r_r_p.resource_id 
+      WHERE 
+        us.appuser_id = $1 
+      GROUP BY 
+        r_r_p.resource_id, 
+        re.name, 
+        us.username`;
+    const values = [userId];
+    const pool = await dbConnection.open();
+    const res = await pool.query<UserPermissionsDBResponse>(sql, values);
+
+    const permissions: Permissions = {};
+    res.rows.forEach((row) => {
+      permissions[row.resource] = row.permissions;
+    });
+
+    return permissions;
   },
 };
