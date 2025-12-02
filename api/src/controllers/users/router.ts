@@ -7,7 +7,6 @@ import {
   emailSchema,
   passwordSchema,
   usernameSchema,
-  idSchema,
 } from "../validation-schemas-common";
 import { validate } from "../../middlewares/validate";
 import { userController } from "./controller";
@@ -52,8 +51,11 @@ usersRouter.post(
 
 usersRouter.get(
   "/:username",
-  validate(Joi.object({ userId: idSchema }).required().unknown(true), "params"),
-  userController.readUserById,
+  validate(
+    Joi.object({ username: usernameSchema }).required().unknown(true),
+    "params",
+  ),
+  userController.readUserByUsername,
 );
 
 // Get all public broadcasts for any user
@@ -66,7 +68,6 @@ usersRouter.get(
   validate(
     Joi.object({
       time: Joi.string().allow("past", "current", "future").optional(),
-      is_visible: Joi.boolean().optional(),
     })
       .optional()
       .unknown(true),
