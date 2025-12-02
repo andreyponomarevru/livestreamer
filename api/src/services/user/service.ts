@@ -30,6 +30,8 @@ export const userService = {
       displayName: username,
       profilePictureUrl: "/mnt/default-avatar.jpg",
       subscriptionName: "basic",
+      about: "",
+      websiteUrl: "",
     });
 
     await rabbitMQPublisher.sendMsgToQueue({
@@ -49,8 +51,16 @@ export const userService = {
     });
   },
 
-  readUser: async function (userId: number): Promise<User | null> {
-    const user = await userRepo.readUser(userId);
+  readUser: async function ({
+    userId,
+    username,
+    email,
+  }: {
+    userId?: number;
+    username?: string;
+    email?: string;
+  }): Promise<User | null> {
+    const user = await userRepo.readUser({ userId, username, email });
     if (!user) return null;
 
     const permissions = await userRepo.readUserPermissions(user.userId);
@@ -131,21 +141,6 @@ export const userService = {
     email?: string;
   }): Promise<boolean> {
     return await userRepo.isEmailConfirmed({ userId, email });
-  },
-
-  findByUsernameOrEmail: async function ({
-    username,
-    email,
-  }: {
-    username?: string;
-    email?: string;
-  }): Promise<User | null> {
-    const user = await userRepo.findByUsernameOrEmail({ username, email });
-    if (!user) return null;
-
-    const permissions = await userRepo.readUserPermissions(user.userId);
-
-    return { uuid: randomUUID(), ...user, permissions };
   },
 
   findByEmailConfirmationToken: async function (token: string): Promise<{
