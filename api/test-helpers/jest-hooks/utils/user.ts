@@ -1,6 +1,8 @@
 import { dbConnection } from "../../../src/config/postgres";
 import { authnService } from "../../../src/services/authn";
 
+// USERS USED ONLY FOR TESTING
+
 type User = {
   userId?: number;
   roleName: string;
@@ -10,6 +12,11 @@ type User = {
   email: string;
   isEmailConfirmed: boolean;
   isDeleted: boolean;
+  displayName: string;
+  websiteUrl?: string;
+  about?: string;
+  profilePictureUrl: string;
+  subscriptionName?: string;
 };
 
 let superadminUser: User = {
@@ -19,22 +26,24 @@ let superadminUser: User = {
   email: process.env.HAL_EMAIL || "",
   isEmailConfirmed: true,
   isDeleted: false,
+  displayName: process.env.HAL_USERNAME || "",
+  websiteUrl: "http://test.ru",
+  about: "A few words",
+  profilePictureUrl: "/home/ava.jpg",
+  subscriptionName: "unlimited",
 };
 let broadcasterUser: User = {
-  roleName: "broadcaster",
+  roleName: "streamer",
   username: process.env.ANDREYPONOMAREV_USERNAME || "",
   password: process.env.ANDREYPONOMAREV_PASSWORD || "",
   email: process.env.ANDREYPONOMAREV_EMAIL || "",
   isEmailConfirmed: true,
   isDeleted: false,
-};
-let listenerUser: User = {
-  roleName: "listener",
-  username: process.env.JOHNDOE_USERNAME || "",
-  password: process.env.JOHNDOE_PASSWORD || "",
-  email: process.env.JOHNDOE_EMAIL || "",
-  isEmailConfirmed: true,
-  isDeleted: false,
+  displayName: process.env.ANDREYPONOMAREV_USERNAME || "",
+  websiteUrl: "http://test2.ru",
+  about: "A few words more",
+  profilePictureUrl: "/home/ava2.jpg",
+  subscriptionName: "basic",
 };
 
 async function seed({
@@ -44,6 +53,11 @@ async function seed({
   password,
   isEmailConfirmed,
   isDeleted,
+  displayName,
+  websiteUrl,
+  about,
+  profilePictureUrl,
+  subscriptionName,
 }: User): Promise<{ userId: number; passwordHash: string }> {
   const pool = await dbConnection.open();
 
@@ -60,7 +74,12 @@ async function seed({
         password_hash, 
         email, 
         is_email_confirmed, 
-        is_deleted 
+        is_deleted,
+        display_name,
+        website_url,
+        about,
+        profile_picture_url,
+        subscription_name
       ) 
       VALUES (
         ${selectRoleIdRes.rows[0].role_id}, 
@@ -68,7 +87,12 @@ async function seed({
         '${passwordHash}', 
         '${email}', 
         ${isEmailConfirmed}, 
-        ${isDeleted} 
+        ${isDeleted},
+        '${displayName}',
+        '${websiteUrl}', 
+        '${about}', 
+        '${profilePictureUrl}', 
+        '${subscriptionName}'
       )
       RETURNING appuser_id
   `;
@@ -78,10 +102,9 @@ async function seed({
   return { userId: insertUserRes.rows[0].appuser_id, passwordHash };
 }
 
-const createUsers = async () => {
+async function createUsers() {
   const superadmin = await seed(superadminUser);
   const broadcaster = await seed(broadcasterUser);
-  const listener = await seed(listenerUser);
 
   superadminUser = {
     ...superadminUser,
@@ -93,15 +116,10 @@ const createUsers = async () => {
     userId: broadcaster.userId,
     passwordHash: broadcaster.passwordHash,
   };
-  listenerUser = {
-    ...listenerUser,
-    userId: listener.userId,
-    passwordHash: listener.passwordHash,
-  };
-};
+}
 
-// Now you can import user for the specific test (integration or e2e) at the top of the test file e.g. import { defaultUser: { roleNameSuperadmin } } from "..." and user the properties of the imported user in a test e.g.
+// Now you can import user for the specific test (integration or e2e) at the top of the test file e.g. import { defaultUser: { roleNameSuperadmin } } from "..." and use the properties of the imported user in a test e.g.
 //  const response = await request(app)
 //    .put(`/users/${user.username}`)
 //    .send({ email: user.email, password: "a_password" })
-export { superadminUser, broadcasterUser, listenerUser, createUsers };
+export { superadminUser, broadcasterUser, createUsers };

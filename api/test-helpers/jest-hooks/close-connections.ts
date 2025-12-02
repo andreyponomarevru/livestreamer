@@ -5,9 +5,8 @@ import { rabbitMQPublisher } from "../../src/config/rabbitmq/publisher";
 import { rabbitMQConsumer } from "../../src/config/rabbitmq/consumer";
 import { QUEUES } from "../../src/config/rabbitmq/config";
 
+// Run after *all* tests
 afterAll(async () => {
-  console.log("[ Jest - afterAll Hook ]");
-
   await dbConnection.close();
 
   redisConnection.quit();
