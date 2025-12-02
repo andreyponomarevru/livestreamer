@@ -249,17 +249,16 @@ SELECT
   -- To fix this and return just an empty array, we use 'array_remove'
   array_remove(array_agg(c_m_l.appuser_id), NULL) AS liked_by_user_id
 FROM chat_message_like AS c_m_l
-  FULL OUTER JOIN 
+  LEFT OUTER JOIN 
     chat_message AS c_m 
   ON
     c_m.chat_message_id = c_m_l.chat_message_id
   GROUP BY 
-    c_m_l.chat_message_id,
-    c_m.chat_message_id
-  ORDER BY
+    c_m.appuser_id,
+    c_m.chat_message_id,
+    c_m.broadcast_id,
     c_m.created_at,
-    c_m.chat_message_id
-  ASC;
+    c_m.message;
 
 
 
