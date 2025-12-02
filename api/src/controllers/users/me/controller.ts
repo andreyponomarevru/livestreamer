@@ -64,9 +64,9 @@ export const meController = {
         return;
       }
 
-      const user = await userService.readUser(
-        req.session.authenticatedUser!.userId,
-      );
+      const user = await userService.readUser({
+        userId: req.session.authenticatedUser!.userId,
+      });
 
       const sanitizedUser = user ? sanitizeUser(user) : null;
       await cacheService.saveWithTTL(cacheKey, { results: sanitizedUser }, 300);
@@ -91,30 +91,39 @@ export const meController = {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const email = req.body.email;
-      const token = req.body.token;
-      const newPassword = req.body.newPassword;
-
-      if (email) {
-        // Do nothing on attempt to change pass before the email has been confirmed
-        if (!(await userService.isEmailConfirmed({ email }))) {
-          res.status(202).end();
-          return;
-          // Do nothing on attempt to change pass on deleted account
-        } else if (await userService.isUserDeleted({ email })) {
+      if (req.body.email) {
+        // Do nothing on attempt to change pass before the email has been confirmed. Do not return errors to avoid revealing registered emails
+        if (!(await userService.isEmailConfirmed({ email: req.body.email }))) {
           res.status(202).end();
           return;
         }
-        await authnService.handlePasswordReset(email);
+
+        if (await userService.isUserDeleted({ email: req.body.email })) {
+          res.status(202).end();
+          return;
+        }
+
+        await authnService.handlePasswordReset(req.body.email);
         res.status(202).end();
-      } else if (token && newPassword) {
-        const { userId } = await userService.findByPasswordResetToken(token);
-        if (!userId)
+        return;
+      }
+
+      if (req.body.token && req.body.newPassword) {
+        const { userId } = await userService.findByPasswordResetToken(
+          req.body.token,
+        );
+
+        if (!userId) {
           throw new HttpError({
             code: 401,
             message: "Confirmation token is invalid",
           });
-        await userService.updatePassword({ userId, newPassword });
+        }
+
+        await userService.updatePassword({
+          userId,
+          newPassword: req.body.newPassword,
+        });
         res.status(204).end();
       }
     } catch (err) {
@@ -174,7 +183,7 @@ export const meController = {
           endAt: string;
         }
       >,
-      res: Response,
+      res: Response<{ results: Broadcast }>,
       next: NextFunction,
     ): Promise<void> {
       try {
