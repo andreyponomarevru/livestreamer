@@ -18,12 +18,18 @@ sessionRouter.post(
   validate(
     Joi.alternatives()
       .try(
-        Joi.object({ email: emailSchema, password: passwordSchema }),
-        Joi.object({ username: usernameSchema, password: passwordSchema }),
+        Joi.object({
+          email: emailSchema.required(),
+          password: passwordSchema.required(),
+        }),
+        Joi.object({
+          username: usernameSchema.required(),
+          password: passwordSchema.required(),
+        }),
       )
       .match("one")
       .messages({
-        "alternatives.any": `Invalid email, username or password`,
+        "alternatives.any": "Invalid email, username or password",
       }),
     "body",
   ),
