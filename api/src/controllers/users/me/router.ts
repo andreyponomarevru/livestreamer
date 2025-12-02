@@ -47,6 +47,15 @@ meRouter.get(
   "/broadcasts",
   isAuthenticated,
   isAuthorized("read", "own_broadcast"),
+  validate(
+    Joi.object({
+      time: Joi.string().allow("past", "current", "future").optional(),
+      is_visible: Joi.boolean().optional(),
+    })
+      .optional()
+      .unknown(true),
+    "query",
+  ),
   meController.broadcasts.readAll,
 );
 
