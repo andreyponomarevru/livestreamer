@@ -1,6 +1,7 @@
 import { Request } from "express";
 import WebSocket from "ws";
 import { IncomingHttpHeaders } from "http";
+import { User } from "./models/user/user";
 
 //
 // Web Socket
@@ -95,13 +96,22 @@ export interface UserAccount {
   isDeleted: boolean;
   permissions: Permissions;
 }
-export interface SanitizedUser {
-  uuid: string;
-  userId: number;
-  email: string;
-  username: string;
-  permissions: Permissions;
-}
+export type SanitizedUser = Pick<
+  User,
+  | "uuid"
+  | "userId"
+  | "email"
+  | "username"
+  | "permissions"
+  | "createdAt"
+  | "lastLoginAt"
+  | "about"
+  | "displayName"
+  | "websiteUrl"
+  | "profilePictureUrl"
+  | "subscriptionName"
+  | "isEmailConfirmed"
+>;
 export interface NewBroadcast {
   userId: number;
   title: string;
@@ -112,6 +122,7 @@ export interface NewBroadcast {
   endAt: string;
   listenerPeakCount: number;
 }
+
 export type Broadcast = NewBroadcast & {
   broadcastId: number;
   likeCount: number;
