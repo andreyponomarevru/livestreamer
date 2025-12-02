@@ -1,31 +1,38 @@
-import { describe, it, expect } from "@jest/globals";
+import { describe, it, expect, beforeAll, afterAll } from "@jest/globals";
 import request from "supertest";
 import { faker } from "@faker-js/faker";
 
 import { httpServer } from "../../src/http-server";
 import { dbConnection } from "../../src/config/postgres";
-import {
-  createUser,
-  REQUEST_VALIDATION_RULES,
-} from "../../test-helpers/helpers";
+import { createUser, DATABASE_CONSTRAINTS } from "../../test-helpers/helpers";
 import { API_URL_PREFIX } from "../../src/config/env";
 
 const ROUTE = `${API_URL_PREFIX}/users`;
 
+beforeAll(async () => {
+  httpServer.listen();
+});
+
+afterAll(async () => {
+  httpServer.close(async (err) => {
+    if (err) throw err;
+  });
+});
+
 describe(ROUTE, () => {
   const username = faker.internet
     .username()
-    .substring(0, REQUEST_VALIDATION_RULES.maxUsernameLength);
+    .substring(0, DATABASE_CONSTRAINTS.maxUsernameLength);
   const password = faker.internet
     .password()
-    .substring(0, REQUEST_VALIDATION_RULES.maxPasswordLength);
+    .substring(0, DATABASE_CONSTRAINTS.maxPasswordLength);
   const email = faker.internet.email();
   const profilePictureUrl = faker.system.filePath();
   const displayName = faker.internet
     .displayName()
-    .substring(0, REQUEST_VALIDATION_RULES.maxDisplayName);
+    .substring(0, DATABASE_CONSTRAINTS.maxDisplayName);
 
-  describe(`POST - create a new user account`, () => {
+  describe("POST - create a new user account", () => {
     describe("202", () => {
       it("accepts the request for processing, responding with an empty body", async () => {
         await request(httpServer)
@@ -48,9 +55,9 @@ describe(ROUTE, () => {
         expect(dbResponse.rows).toStrictEqual([
           {
             appuser_id: expect.any(Number),
-            role_id: expect.any(Number),
             username,
             email,
+            role_id: 2,
             created_at: expect.any(Date),
             password_hash: expect.any(String),
             last_login_at: null,
