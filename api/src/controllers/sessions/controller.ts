@@ -26,24 +26,14 @@ export const sessionController = {
     next: NextFunction,
   ): Promise<void> {
     try {
-      if (!req.cookies && req.session.authenticatedUser) {
+      if (req.session.authenticatedUser && !req.cookies) {
         throw new HttpError({
           code: 401,
           message: "Can't authenticate the request, no cookie found",
         });
       }
 
-      if (req.body.username && req.body.email) {
-        throw new HttpError({
-          code: 400,
-          message: "Specify either email OR username",
-        });
-      }
-
       if (req.session.authenticatedUser) {
-        logger.debug(
-          `${__filename} [createSession] User is already authenticated `,
-        );
         res
           .status(200)
           .json({ results: sanitizeUser(req.session.authenticatedUser) });
@@ -51,12 +41,12 @@ export const sessionController = {
         return;
       }
 
-      const user = await userService.findByUsernameOrEmail({
+      const user = await userService.readUser({
         email: req.body.email,
         username: req.body.username,
       });
 
-      if (!user) {
+      if (!user || user.isDeleted) {
         throw new HttpError({
           code: 401,
           message: "Invalid email, username or password",
@@ -71,16 +61,6 @@ export const sessionController = {
         });
       }
 
-      if (user.isDeleted) {
-        logger.error(
-          `${__filename} [createSession] Deleted user ${user.username} tries to sign in`,
-        );
-        throw new HttpError({
-          code: 401,
-          message: "Invalid email, username or password",
-        });
-      }
-
       if (
         await authnService.isPasswordMatch(req.body.password, user.password)
       ) {
@@ -91,11 +71,7 @@ export const sessionController = {
         );
         user.lastLoginAt = lastLoginAt;
         user.uuid = randomUUID();
-        req.session.authenticatedUser = user;
-        logger.debug(
-          `${__filename} [createSession] User ${user.username} is authenticated and saved in session`,
-        );
-        logger.debug(`${__filename} [createSession] ${util.inspect(user)}`);
+        req.session.authenticatedUser = { ...user };
 
         res.status(200).json({ results: sanitizeUser(user) });
       } else {
