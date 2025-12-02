@@ -1,4 +1,4 @@
-import { describe, it, expect } from "@jest/globals";
+import { describe, it, expect, beforeAll, afterAll } from "@jest/globals";
 import request from "supertest";
 
 import { httpServer } from "../../src/http-server";
@@ -10,6 +10,16 @@ import { RESPONSE_403 } from "../../test-helpers/helpers";
 import { API_URL_PREFIX } from "../../src/config/env";
 
 const ROUTE = `${API_URL_PREFIX}/admin/users`;
+
+beforeAll(async () => {
+  httpServer.listen();
+});
+
+afterAll(async () => {
+  httpServer.close(async (err) => {
+    if (err) throw err;
+  });
+});
 
 describe(ROUTE, () => {
   describe("GET - get all app users", () => {
