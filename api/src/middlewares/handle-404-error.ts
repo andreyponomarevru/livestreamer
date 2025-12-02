@@ -17,6 +17,9 @@ export function handle404Error(
     )}\nurl:\n${req.url}\npath:\n${req.path}`,
   );
   next(
-    new HttpError({ code: 404, message: "The requested page does not exist" }),
+    new HttpError({
+      code: 404,
+      message: `The requested page ${req.url} does not exist`,
+    }),
   );
 }
