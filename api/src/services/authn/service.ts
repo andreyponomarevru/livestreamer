@@ -27,17 +27,19 @@ export const authnService = {
 
   handlePasswordReset: async function (email: string): Promise<void> {
     const token = this.generateToken();
+
     await userRepo.savePasswordResetToken({ email, token });
+
+    const passResetEmail = mailService.emailTemplates.createPasswordResetEmail({
+      email,
+      token,
+    });
 
     await rabbitMQPublisher.sendMsgToQueue({
       queue: QUEUES.resetPasswordEmail.queue,
       exchange: EXCHANGE_NAME,
       routingKey: QUEUES.resetPasswordEmail.routingKey,
-      content: Buffer.from(
-        JSON.stringify(
-          mailService.emailTemplates.createPasswordResetEmail({ email, token }),
-        ),
-      ),
+      content: Buffer.from(JSON.stringify(passResetEmail)),
     });
   },
 
