@@ -122,8 +122,6 @@ export const broadcastRepo = {
         start_at 
       DESC`;
 
-    console.log();
-
     const values = [userId, username, filters.isVisible, filters.time];
     const pool = await dbConnection.open();
     const res = await pool.query<BroadcastDBResponse>(sql, values);
@@ -139,13 +137,10 @@ export const broadcastRepo = {
           artworkUrl: row.artwork_url,
           description: row.description,
           listenerPeakCount: row.listener_peak_count,
-          likeCount: row.like_count,
+          likeCount: Number(row.like_count),
           isVisible: row.is_visible,
         };
       });
-
-      console.log("---------------------------------------------------------");
-      console.log(broadcasts);
 
       return broadcasts;
     } else {
