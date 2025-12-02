@@ -50,13 +50,13 @@ export const userController = {
     }
   },
 
-  readUserById: async function (
-    req: Request<{ userId?: number }>,
+  readUserByUsername: async function (
+    req: Request<{ username?: string }>,
     res: Response<{ results: SanitizedUser | null }>,
     next: NextFunction,
   ): Promise<void> {
     try {
-      const cacheKey = `user_id_${req.params.userId}`;
+      const cacheKey = `user_id_${req.params.username}`;
       const cachedData = await cacheService.get(cacheKey);
       if (cachedData) {
         logger.debug(`${__filename} Got cached data`);
@@ -64,7 +64,9 @@ export const userController = {
         return;
       }
 
-      const user = await userService.readUser(req.params.userId!);
+      const user = await userService.readUser({
+        username: req.params.username!,
+      });
       const sanitizedUser = user ? sanitizeUser(user) : null;
       await cacheService.saveWithTTL(cacheKey, { results: sanitizedUser }, 300);
 
@@ -79,7 +81,7 @@ export const userController = {
       { username?: string },
       Record<string, unknown>,
       Record<string, unknown>,
-      { time?: "past" | "current" | "future"; is_visible?: boolean }
+      { time?: "past" | "current" | "future" }
     >,
     res: Response<{ results: Broadcast[] }>,
     next: NextFunction,
