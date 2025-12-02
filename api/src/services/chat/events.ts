@@ -6,7 +6,11 @@ export class ChatEmitter extends EventEmitter {
     this.emit("create_message", msg);
   }
 
-  destroyChatMsg(msg: ChatMsgId & { userUUID: string }): void {
+  destroyChatMsg(msg: {
+    broadcastId: number;
+    messageId: number;
+    userUUID: string;
+  }): void {
     this.emit("delete_message", msg);
   }
 
