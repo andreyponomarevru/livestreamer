@@ -16,27 +16,40 @@ import {
 
 export const chatRepo = {
   createMsg: async function (msg: NewChatMsg): Promise<ChatMsg> {
-    const insertSql =
-      "INSERT INTO chat_message (appuser_id, message) VALUES ($1, $2) RETURNING chat_message_id";
-    const insertValues = [msg.userId, msg.message];
+    const insertSql = `
+      INSERT INTO chat_message (
+        appuser_id, 
+        broadcast_id,
+        message
+      ) 
+      VALUES (
+        $1, $2, $3
+      ) 
+      RETURNING 
+        chat_message_id,
+        broadcast_id`;
     const pool = await dbConnection.open();
     const insertedMsgId = await pool.query<{ chat_message_id: number }>(
       insertSql,
-      insertValues,
+      [msg.userId, msg.broadcastId, msg.message],
     );
 
-    const selectSql =
-      "SELECT \
-        au.username,\
-        v_c_h.* \
-      FROM \
-        view_chat_history AS v_c_h\
-      INNER JOIN \
-        appuser AS au \
-      ON \
-        au.appuser_id = v_c_h.appuser_id \
-      WHERE \
-        v_c_h.chat_message_id = $1";
+    const selectSql = `
+      SELECT
+        au.username,
+        v_c_h.* 
+      FROM 
+        view_chat_history AS v_c_h
+      INNER JOIN 
+        appuser AS au 
+      ON 
+        au.appuser_id = v_c_h.appuser_id 
+      WHERE 
+        v_c_h.chat_message_id = $1
+      ORDER BY
+        v_c_h.created_at,
+        v_c_h.chat_message_id
+      ASC`;
     const newMsg = await pool.query<ReadMsgDBResponse>(selectSql, [
       insertedMsgId.rows[0].chat_message_id,
     ]);
@@ -52,28 +65,63 @@ export const chatRepo = {
     };
   },
 
-  destroyMsg: async function (msg: ChatMsgId): Promise<{
+  destroyOwnMsg: async function (msg: ChatMsgId): Promise<{
     messageId: number;
     userId: number;
     broadcastId: number;
   } | void> {
-    const sql =
-      "DELETE FROM \
-        chat_message \
-      WHERE \
-        appuser_id = $1 \
-      AND \
-        chat_message_id = $2\
-      RETURNING \
-        chat_message_id";
-    const values = [msg.userId, msg.messageId];
+    const sql = `
+      DELETE FROM 
+        chat_message 
+      WHERE 
+        broadcast_id = $1
+      AND
+        appuser_id = $2 
+      AND 
+        chat_message_id = $3
+      RETURNING 
+        chat_message_id`;
+    const values = [msg.broadcastId, msg.userId, msg.messageId];
     const pool = await dbConnection.open();
     const res = await pool.query<{ chat_message_id: number }>(sql, values);
 
-    // If user tries to delete nonexistent message, don't return anything
     if (res.rowCount !== null && res.rowCount > 0) {
       return {
         userId: msg.userId,
+        messageId: msg.messageId,
+        broadcastId: msg.broadcastId,
+      };
+    }
+  },
+
+  destroyAnyMsg: async function (msg: {
+    broadcastId: number;
+    messageId: number;
+  }): Promise<{
+    messageId: number;
+    broadcastId: number;
+  } | void> {
+    const sql = `
+      DELETE FROM 
+        chat_message 
+      WHERE 
+        broadcast_id = $1 
+      AND
+        chat_message_id = $2
+      RETURNING 
+        chat_message_id`;
+    const values = [msg.broadcastId, msg.messageId];
+    const pool = await dbConnection.open();
+    const res = await pool.query<{ chat_message_id: number }>(sql, values);
+
+    console.log(
+      "================================================================================================================================================================================================================================",
+    );
+    console.log(msg);
+    console.log(res.rows);
+
+    if (res.rowCount !== null && res.rowCount > 0) {
+      return {
         messageId: msg.messageId,
         broadcastId: msg.broadcastId,
       };
@@ -175,13 +223,15 @@ export const chatRepo = {
     messageId: number;
     userId: number;
   }): Promise<ChatMsgLike> {
-    const insertSql =
-      "INSERT INTO \
-        chat_message_like (appuser_id, chat_message_id) \
-      VALUES \
-        ($1, $2) \
-      ON CONFLICT \
-        DO NOTHING";
+    const insertSql = `
+      INSERT INTO \
+        chat_message_like (
+          appuser_id, chat_message_id
+        )
+      VALUES 
+        ($1, $2) 
+      ON CONFLICT 
+        DO NOTHING`;
     const insertValues = [msg.userId, msg.messageId];
     const pool = await dbConnection.open();
     await pool.query(insertSql, insertValues);
@@ -204,13 +254,13 @@ export const chatRepo = {
   destroyMsgLike: async function (
     msg: ChatMsgId,
   ): Promise<ChatMsgUnlike | void> {
-    const deleteSql =
-      "DELETE FROM \
-        chat_message_like \
-      WHERE \
-        appuser_id = $1 \
-      AND \
-        chat_message_id = $2";
+    const deleteSql = `
+      DELETE FROM 
+        chat_message_like 
+      WHERE 
+        appuser_id = $1 
+      AND 
+        chat_message_id = $2`;
     const deleteValues = [msg.userId, msg.messageId];
     const pool = await dbConnection.open();
     await pool.query(deleteSql, deleteValues);

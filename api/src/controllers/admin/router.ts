@@ -18,7 +18,6 @@ adminRouter.delete(
       .unknown(true),
     "params",
   ),
-  validate(Joi.object({ user_id: idSchema }).optional().unknown(true), "query"),
   adminController.destroyChatMessage,
 );
 

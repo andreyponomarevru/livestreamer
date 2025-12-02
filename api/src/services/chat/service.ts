@@ -17,7 +17,18 @@ export const chatService = {
   destroyMsg: async function (
     msg: ChatMsgId & { userUUID: string },
   ): Promise<void> {
-    const destroyedMsg = await chatRepo.destroyMsg(msg);
+    const destroyedMsg = await chatRepo.destroyOwnMsg(msg);
+    if (destroyedMsg) {
+      this.events.destroyChatMsg({ ...destroyedMsg, userUUID: msg.userUUID });
+    }
+  },
+
+  destroyAnyMsg: async function (msg: {
+    broadcastId: number;
+    messageId: number;
+    userUUID: string;
+  }): Promise<void> {
+    const destroyedMsg = await chatRepo.destroyAnyMsg(msg);
     if (destroyedMsg) {
       this.events.destroyChatMsg({ ...destroyedMsg, userUUID: msg.userUUID });
     }

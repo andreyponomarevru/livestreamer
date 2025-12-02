@@ -10,18 +10,16 @@ export const adminController = {
     req: Request<
       { broadcastId?: number; messageId?: number },
       Record<string, unknown>,
-      Record<string, unknown>,
-      { user_id?: number }
+      Record<string, unknown>
     >,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
     try {
-      await chatService.destroyMsg({
-        broadcastId: req.params.broadcastId!,
+      await chatService.destroyAnyMsg({
+        broadcastId: Number(req.params.broadcastId!),
         userUUID: req.session.authenticatedUser!.uuid!,
-        userId: req.query.user_id as number,
-        messageId: req.params.messageId as number,
+        messageId: Number(req.params.messageId as number),
       });
       res.status(204).end();
     } catch (err) {
