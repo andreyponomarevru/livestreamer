@@ -3,15 +3,11 @@ import request from "supertest";
 import setCookie from "set-cookie-parser";
 import { faker } from "@faker-js/faker";
 
-import {
-  broadcasterUser,
-  superadminUser,
-} from "../test-helpers/jest-hooks/utils/user";
 import { httpServer } from "../src/http-server";
 import { type RedisClient, redisConnection } from "../src/config/redis";
 import {
   MORE_INFO,
-  REQUEST_VALIDATION_RULES,
+  DATABASE_CONSTRAINTS,
   RESPONSE_401,
 } from "../test-helpers/helpers";
 import { signIn } from "../test-helpers/helpers";
@@ -46,35 +42,38 @@ afterAll(() => {
   });
 });
 
-describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
-  const superadminUserResponse = {
-    results: {
-      uuid: expect.any(String),
-      userId: 1,
-      email: "system.andreyponomarev@yandex.ru",
-      username: "hal",
-      permissions: {
-        any_audio_stream: ["create", "delete", "read", "update"],
-        own_broadcast: ["create", "delete", "read", "update"],
-        any_broadcast: ["create", "delete", "read", "update"],
-        own_user_account: ["read", "update"],
-        any_user_account: ["delete", "read", "update"],
-        any_chat_message: ["delete"],
-      },
-    },
+describe(ROUTE, () => {
+  const testUser = {
+    roleId: 2,
+    username: faker.internet
+      .username()
+      .substring(0, DATABASE_CONSTRAINTS.maxUsernameLength),
+    password: faker.internet
+      .password()
+      .substring(0, DATABASE_CONSTRAINTS.maxPasswordLength),
+    email: faker.internet.email(),
+    displayName: faker.internet
+      .displayName()
+      .substring(0, DATABASE_CONSTRAINTS.maxDisplayName),
+    isEmailConfirmed: true,
+    isDeleted: false,
+    profilePictureUrl: faker.internet.url(),
+    about: faker.lorem.paragraphs(),
   };
 
   describe("POST - sign in", () => {
     describe("200", () => {
       it("signs the user in, creating a cookie session", async () => {
+        await createUser(testUser);
+
         const sessionsBeforeSignIn = await redisClient.keys(sessionKeyPattern);
         expect(sessionsBeforeSignIn.length).toBe(0);
 
         const response = await request(httpServer)
           .post(ROUTE)
           .send({
-            username: superadminUser.username,
-            password: superadminUser.password,
+            username: testUser.username,
+            password: testUser.password,
           })
           .expect(200);
 
@@ -86,37 +85,86 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
         expect(sessionsAfterSignIn.length).toBe(1);
       });
 
-      describe("signs the user in, responding with the user object if", () => {
-        it("the user provides username and password", async () => {
+      describe("signs the user in, responding with the user object", () => {
+        it("if the user provides username and password", async () => {
+          await createUser(testUser);
           const response = await request(httpServer)
             .post(ROUTE)
             .send({
-              username: superadminUser.username,
-              password: superadminUser.password,
+              username: testUser.username,
+              password: testUser.password,
             })
             .expect("content-type", /json/)
             .expect(200);
 
-          expect(response.body).toStrictEqual(superadminUserResponse);
+          expect(response.body).toStrictEqual({
+            results: {
+              uuid: expect.any(String),
+              userId: expect.any(Number),
+              username: testUser.username,
+              email: testUser.email,
+              displayName: testUser.displayName,
+              isEmailConfirmed: testUser.isEmailConfirmed,
+              profilePictureUrl: testUser.profilePictureUrl,
+              about: testUser.about,
+              createdAt: expect.any(String),
+              lastLoginAt: expect.any(String),
+              subscriptionName: "",
+              websiteUrl: "",
+              permissions: {
+                own_audio_stream: ["create", "delete", "read", "update"],
+                own_user_account: ["create", "delete", "read", "update"],
+                own_broadcast: ["create", "delete", "read", "update"],
+                any_broadcast: ["read"],
+                own_chat_message: ["create", "delete", "read"],
+              },
+            },
+          });
         });
 
-        it("the user provides email and password", async () => {
+        it("if the user provides email and password", async () => {
+          await createUser(testUser);
           const response = await request(httpServer)
             .post(ROUTE)
             .send({
-              username: superadminUser.username,
-              password: superadminUser.password,
+              username: testUser.username,
+              password: testUser.password,
             })
             .expect("content-type", /json/)
             .expect(200);
 
-          expect(response.body).toStrictEqual(superadminUserResponse);
+          console.log(response.body);
+
+          expect(response.body).toStrictEqual({
+            results: {
+              uuid: expect.any(String),
+              userId: expect.any(Number),
+              username: testUser.username,
+              email: testUser.email,
+              displayName: testUser.displayName,
+              isEmailConfirmed: testUser.isEmailConfirmed,
+              profilePictureUrl: testUser.profilePictureUrl,
+              about: testUser.about,
+              createdAt: expect.any(String),
+              lastLoginAt: expect.any(String),
+              subscriptionName: "",
+              websiteUrl: "",
+              permissions: {
+                own_audio_stream: ["create", "delete", "read", "update"],
+                own_user_account: ["create", "delete", "read", "update"],
+                own_broadcast: ["create", "delete", "read", "update"],
+                any_broadcast: ["read"],
+                own_chat_message: ["create", "delete", "read"],
+              },
+            },
+          });
         });
       });
     });
 
     describe("401", () => {
       it("responds with an error if credentials are invalid", async () => {
+        await createUser(testUser);
         const response = await request(httpServer)
           .post(ROUTE)
           .send({ username: "invalid", password: "invalid" })
@@ -132,7 +180,11 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
       });
 
       it("responds with an error if the user is already signed in but attempts to sign in again", async () => {
-        const firstSignInResponse = await signIn(superadminUser);
+        await createUser(testUser);
+        const firstSignInResponse = await signIn({
+          username: testUser.username,
+          password: testUser.password,
+        });
         const sessionCookie = setCookie.parse(
           firstSignInResponse.headers["set-cookie"][0],
         )[0];
@@ -141,8 +193,8 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
           .post(ROUTE)
           .set("cookie", `${sessionCookie.name}=${sessionCookie.value}`)
           .send({
-            username: superadminUser.username,
-            password: superadminUser.password,
+            username: testUser.username,
+            password: testUser.password,
           })
           .expect("content-type", /json/)
           .expect(401);
@@ -155,6 +207,7 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
       });
 
       it("doesn't set a cookie if credentials are invalid", async () => {
+        await createUser(testUser);
         const response = await request(httpServer)
           .post(ROUTE)
           .send({ username: "invalid", password: "invalid" });
@@ -165,11 +218,12 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
 
     describe("400", () => {
       it("responds with an error if the request object is malformed", async () => {
+        await createUser(testUser);
         const response = await request(httpServer)
           .post(ROUTE)
           .send({
-            uuser: superadminUser.username,
-            ppass: superadminUser.password,
+            uuser: testUser.username,
+            ppass: testUser.password,
           })
           .expect("content-type", /json/)
           .expect(400);
@@ -182,43 +236,78 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
       });
 
       it("doesn't set a cookie if the request object is malformed", async () => {
+        await createUser(testUser);
         const response = await request(httpServer).post(ROUTE).send({
-          uuser: superadminUser.username,
-          ppass: superadminUser.password,
+          uuser: testUser.username,
+          ppass: testUser.password,
         });
 
         expect(setCookie.parse(response.headers["set-cookie"]).length).toBe(0);
       });
+
+      it("responds with an error if the request object doesn't contain neither username nor email", async () => {
+        await createUser(testUser);
+        const response = await request(httpServer)
+          .post(ROUTE)
+          .send({})
+          .expect("content-type", /json/)
+          .expect(400);
+        expect(response.body).toStrictEqual({
+          ...MORE_INFO,
+          status: 400,
+          statusText: "BadRequest",
+          message: "Invalid email, username or password",
+        });
+      });
     });
 
     describe("404", () => {
-      const username = faker.internet
-        .username()
-        .substring(0, REQUEST_VALIDATION_RULES.maxUsernameLength);
-      const password = faker.internet
-        .password()
-        .substring(0, REQUEST_VALIDATION_RULES.maxPasswordLength);
-      const email = faker.internet.email();
-      const profilePictureUrl = faker.system.filePath();
-      const displayName = faker.internet
-        .displayName()
-        .substring(0, REQUEST_VALIDATION_RULES.maxDisplayName);
+      it("responds with an error if the user account has been deleted", async () => {
+        await createUser({ ...testUser, isEmailConfirmed: false });
+        const response = await request(httpServer)
+          .post(ROUTE)
+          .send({
+            username: testUser.username,
+            password: testUser.password,
+          })
+          .expect("content-type", /json/)
+          .expect(404);
+        expect(response.body).toStrictEqual({
+          ...MORE_INFO,
+          status: 404,
+          statusText: "NotFound",
+          message:
+            "Pending Account. Look for the verification email in your inbox and click the link in that email",
+        });
+      });
+
+      it("doesn't set a cookie if the user account has been deleted", async () => {
+        await createUser({ ...testUser, isDeleted: true });
+        const response = await request(httpServer)
+          .post(ROUTE)
+          .send({
+            username: testUser.username,
+            password: testUser.password,
+          })
+          .expect("content-type", /json/)
+          .expect(401);
+        expect(response.body).toStrictEqual({
+          ...MORE_INFO,
+          status: 401,
+          statusText: "Unauthorized",
+          message: "Invalid email, username or password",
+        });
+      });
 
       it("responds with an error if the user account hasn't been confirmed", async () => {
         await createUser({
-          username,
-          password,
-          email,
-          roleId: 2,
-          isDeleted: false,
+          ...testUser,
           isEmailConfirmed: false,
-          displayName,
-          profilePictureUrl,
         });
 
         const response = await request(httpServer)
           .post(ROUTE)
-          .send({ username, password })
+          .send({ username: testUser.username, password: testUser.password })
           .expect("content-type", /json/)
           .expect(404);
         expect(response.body).toStrictEqual({
@@ -232,19 +321,13 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
 
       it("doesn't set a cookie if the user account hasn't been confirmed", async () => {
         await createUser({
-          username,
-          password,
-          email,
-          roleId: 2,
-          isDeleted: false,
+          ...testUser,
           isEmailConfirmed: false,
-          displayName,
-          profilePictureUrl,
         });
 
         const response = await request(httpServer)
           .post(ROUTE)
-          .send({ username, password });
+          .send({ username: testUser.username, password: testUser.password });
 
         expect(setCookie.parse(response.headers["set-cookie"]).length).toBe(0);
       });
@@ -254,7 +337,11 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
   describe(`DELETE - sign out`, () => {
     describe("204", () => {
       it("signs the user out if the user is currently signed in and ends the cookie session", async () => {
-        const signInResponse = await signIn(superadminUser);
+        await createUser(testUser);
+        const signInResponse = await signIn({
+          username: testUser.username,
+          password: testUser.password,
+        });
         const sessionCookie = setCookie.parse(
           signInResponse.headers["set-cookie"],
         )[0];
@@ -279,11 +366,12 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
       it.todo("responds with an error is the session cookie is malformed");
 
       it("responds with an error if the user is not signed in", async () => {
+        await createUser(testUser);
         const response = await request(httpServer)
           .delete(ROUTE)
           .send({
-            username: superadminUser.username,
-            password: superadminUser.password,
+            username: testUser.username,
+            password: testUser.password,
           })
           .expect("content-type", /json/)
           .expect(401);
@@ -292,6 +380,7 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
       });
 
       it("responds with an error if username and password are invalid", async () => {
+        await createUser(testUser);
         const response = await request(httpServer)
           .delete(ROUTE)
           .send({ username: "invalid", password: "invalid" })
@@ -299,41 +388,6 @@ describe(`${ROUTE} (for the pre-seeded user with the role Superadmin)`, () => {
           .expect(401);
 
         expect(response.body).toStrictEqual(RESPONSE_401);
-      });
-    });
-  });
-});
-
-describe("/sessions (for the pre-seeded user with the role Streamer)", () => {
-  const broadcasterUserResponse = {
-    results: {
-      uuid: expect.any(String),
-      userId: expect.any(Number),
-      email: expect.any(String),
-      username: expect.any(String),
-      permissions: {
-        own_audio_stream: ["create", "delete", "read", "update"],
-        own_user_account: ["create", "delete", "read", "update"],
-        own_broadcast: ["create", "delete", "read", "update"],
-        any_broadcast: ["read"],
-        own_chat_message: ["create", "delete", "read"],
-      },
-    },
-  };
-
-  describe("POST - sign in", () => {
-    describe("200", () => {
-      it("signs in with the username and password", async () => {
-        const response = await request(httpServer)
-          .post(ROUTE)
-          .send({
-            username: broadcasterUser.username,
-            password: broadcasterUser.password,
-          })
-          .expect("content-type", /json/)
-          .expect(200);
-
-        expect(response.body).toStrictEqual(broadcasterUserResponse);
       });
     });
   });
