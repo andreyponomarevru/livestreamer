@@ -8,8 +8,9 @@ import Joi from "joi";
 
 import { HttpError } from "../utils/http-error";
 import { logger } from "../config/logger";
+import multer from "multer";
 
-// Main error handler (this is a centralized error handler — all error handling logic is here)
+// App's main error handler
 // - handle errors passed to next() handler
 // - handle errors thrown inside route handler
 // - ...
@@ -24,6 +25,12 @@ export function handleErrors(
   switch (true) {
     case err instanceof HttpError:
       res.status(err.status).json(err);
+      break;
+
+    case err instanceof multer.MulterError:
+      res
+        .status(400)
+        .json(new HttpError({ code: 400, message: "File uploading error" }));
       break;
 
     case err instanceof Joi.ValidationError:

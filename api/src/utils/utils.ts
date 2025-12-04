@@ -1,4 +1,6 @@
-import { Readable, Duplex } from "stream";
+import { type Readable, type Duplex } from "stream";
+import crypto from "crypto";
+import path from "path";
 
 export function isFutureTimestamp(timestamp: string) {
   const tsInFuture = new Date(timestamp).getTime();
@@ -28,4 +30,11 @@ export function printReadableStreamMode(
     : `${streamName} FLOWING`;
 
   console.log(`${mode} [${new Date().toISOString()}]`);
+}
+
+export function generateUploadFilename(
+  reqFieldname: string,
+  originalFilename: string,
+) {
+  return `${reqFieldname}-${crypto.randomUUID()}${path.extname(originalFilename)}`;
 }

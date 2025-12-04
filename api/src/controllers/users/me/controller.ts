@@ -253,7 +253,7 @@ export const meController = {
           userId: req.session.authenticatedUser!.userId,
           broadcastId: req.params.broadcastId!,
           ...req.body,
-          artworkUrl: req.file!.path,
+          artworkUrl: req.file?.path,
         });
 
         res.status(204).end();

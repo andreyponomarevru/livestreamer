@@ -14,7 +14,7 @@ type Schema =
   | Joi.NumberSchema
   | Joi.ArraySchema;
 
-type Location = "body" | "headers" | "query" | "params" | "files";
+type Location = "body" | "headers" | "query" | "params";
 
 export function validate(schema: Schema, location: Location) {
   return async function (

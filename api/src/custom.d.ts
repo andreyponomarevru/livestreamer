@@ -8,7 +8,6 @@ declare global {
         query?: Record<string, unknown>;
         body?: Record<string, unknown>;
         headers?: Record<string, unknown>;
-        files?: Record<string, unknown>;
       };
     }
   }

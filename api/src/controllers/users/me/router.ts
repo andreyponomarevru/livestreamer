@@ -12,7 +12,7 @@ import {
 } from "../../validation-schemas-common";
 import { validate } from "../../../middlewares/validate";
 import { meController } from "./controller";
-import { upload } from "../../../config/file-upload-storage";
+import { uploadBroadcastArtwork } from "../../../middlewares/upload-broadcast-artwork";
 
 export const meRouter = express.Router();
 
@@ -75,13 +75,11 @@ meRouter.post(
         "date.format":
           "'endAt' timestamp is in invalid format, string should be in ISO-8601",
       }),
-      artwork: Joi.string().trim().min(0).max(2000).required(),
       description: Joi.string().trim().min(0).max(800).optional(),
     }),
     "body",
   ),
-  validate(Joi.object({ artwork: Joi.array().length(1) }), "files"),
-  upload.single("artwork"),
+  uploadBroadcastArtwork,
   meController.broadcasts.create,
 );
 
@@ -99,17 +97,6 @@ meRouter.patch(
         "string.min": `'title' is shorter than expected`,
         "string.max": `'title' is longer than expected`,
       }),
-      artwork: Joi.string().trim().min(0).max(2000).optional().messages({
-        "string.base": `'artworkUrl' should be a type of 'string'`,
-        "string.max": `'artworkUrl' is longer than expected`,
-      }),
-      description: Joi.string().trim().min(0).max(800).optional().messages({
-        "string.base": `'title' should be a type of 'string'`,
-        "string.max": `'title' is longer than expected`,
-      }),
-      isVisible: Joi.boolean().optional().messages({
-        "boolean.base": `'isVisible' should be a type of 'boolean'`,
-      }),
       startAt: Joi.date().iso().optional().messages({
         "date.format":
           "'startAt' timestamp is in invalid format, string should be in ISO-8601",
@@ -118,10 +105,17 @@ meRouter.patch(
         "date.format":
           "'endAt' timestamp is in invalid format, string should be in ISO-8601",
       }),
+      description: Joi.string().trim().min(0).max(800).optional().messages({
+        "string.base": `'title' should be a type of 'string'`,
+        "string.max": `'title' is longer than expected`,
+      }),
+      isVisible: Joi.boolean().optional().messages({
+        "boolean.base": `'isVisible' should be a type of 'boolean'`,
+      }),
     }).min(2),
     "body",
   ),
-  upload.single("artwork"),
+  uploadBroadcastArtwork({ isFileRequired: false }),
   meController.broadcasts.update,
 );
 
