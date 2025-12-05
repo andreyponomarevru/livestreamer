@@ -8,7 +8,7 @@ import {
 import { HttpError } from "../utils/http-error";
 import { generateUploadFilename } from "../utils/utils";
 
-const broadcastArtworkUploader = multer({
+export const uploader = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
       cb(
@@ -33,7 +33,7 @@ export function uploadBroadcastArtwork({
   isFileRequired: boolean;
 }) {
   return function (req: Request, res: Response, next: NextFunction) {
-    broadcastArtworkUploader(req, res, (err) => {
+    uploader(req, res, (err) => {
       if (isFileRequired && !req.file) {
         next(
           new HttpError({
@@ -42,20 +42,18 @@ export function uploadBroadcastArtwork({
           }),
         );
       } else if (err instanceof multer.MulterError) {
-        if (err.code === "LIMIT_FILE_SIZE") {
-          next(
-            new HttpError({
-              code: 400,
-              message:
-                "The file size exceeds the limit 10MB. Please upload a smaller file.",
-            }),
-          );
-        } else {
-          next(err);
-        }
-      } else {
-        next();
+        next(
+          new HttpError({
+            code: 400,
+            message:
+              err.code === "LIMIT_FILE_SIZE"
+                ? "The file size exceeds the limit 10MB. Please upload a smaller file."
+                : "File uploading error",
+          }),
+        );
       }
+
+      next();
     });
   };
 }

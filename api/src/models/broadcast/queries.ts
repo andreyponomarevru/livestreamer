@@ -59,7 +59,7 @@ export const broadcastRepo = {
         endAt: res.rows[0].end_at,
         listenerPeakCount: res.rows[0].listener_peak_count,
         isVisible: res.rows[0].is_visible,
-        likeCount: res.rows[0].like_count,
+        likeCount: Number(res.rows[0].like_count),
         artworkUrl: res.rows[0].artwork_url,
         description: res.rows[0].description,
       };

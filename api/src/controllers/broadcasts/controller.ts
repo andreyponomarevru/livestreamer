@@ -141,7 +141,7 @@ export const broadcastController = {
     ): Promise<void> {
       try {
         const msgs = await chatService.readMsgsPaginated({
-          broadcastId: req.validated!.params!.broadcastId as number,
+          broadcastId: req.params!.broadcastId as number,
           limit: req.query.limit || 50,
           nextCursor: req.query.next_cursor,
         });

@@ -177,23 +177,27 @@ export const meController = {
         Record<string, unknown>,
         Record<string, unknown>,
         {
-          title: string;
-          description?: string;
-          startAt: string;
-          endAt: string;
+          broadcast: {
+            title: string;
+            startAt: string;
+            endAt: string;
+            description: string;
+          };
         }
       >,
       res: Response<{ results: Broadcast }>,
       next: NextFunction,
     ): Promise<void> {
       try {
+        // TODO: fix path,s it should start with public/ or smth, see express.static()
+
         const newBroadcast = await broadcastService.create({
           userId: req.session.authenticatedUser!.userId,
-          title: req.body.title,
-          startAt: req.body.startAt,
-          endAt: req.body.endAt,
           artworkUrl: req.file!.path,
-          description: req.body.description,
+          title: req.body.broadcast.title,
+          startAt: req.body.broadcast.startAt,
+          endAt: req.body.broadcast.endAt,
+          description: req.body.broadcast.description,
         });
         res.set("location", `/users/me/broadcasts/${newBroadcast.broadcastId}`);
         res.status(200).send({ results: newBroadcast });

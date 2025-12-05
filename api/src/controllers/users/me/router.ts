@@ -9,10 +9,12 @@ import {
   passwordSchema,
   usernameSchema,
   idSchema,
+  multipartContentTypeSchema,
 } from "../../validation-schemas-common";
 import { validate } from "../../../middlewares/validate";
 import { meController } from "./controller";
 import { uploadBroadcastArtwork } from "../../../middlewares/upload-broadcast-artwork";
+import { parseMultipartJSONBody } from "../../../middlewares/parse-multipart-json-body";
 
 export const meRouter = express.Router();
 
@@ -63,23 +65,26 @@ meRouter.post(
   "/broadcasts",
   isAuthenticated,
   isAuthorized("create", "own_broadcast"),
-  validate(jsonContentTypeSchema, "headers"),
+  validate(multipartContentTypeSchema, "headers"),
+  uploadBroadcastArtwork({ isFileRequired: true }),
+  parseMultipartJSONBody,
   validate(
     Joi.object({
-      title: Joi.string().trim().min(5).max(70).required(),
-      startAt: Joi.date().iso().required().messages({
-        "date.format":
-          "'startAt' timestamp is in invalid format, string should be in ISO-8601",
-      }),
-      endAt: Joi.date().iso().required().messages({
-        "date.format":
-          "'endAt' timestamp is in invalid format, string should be in ISO-8601",
-      }),
-      description: Joi.string().trim().min(0).max(800).optional(),
-    }),
+      broadcast: {
+        title: Joi.string().trim().min(5).max(70).required(),
+        startAt: Joi.date().iso().required().messages({
+          "date.format":
+            "'startAt' timestamp is in invalid format, string should be in ISO-8601",
+        }),
+        endAt: Joi.date().iso().required().messages({
+          "date.format":
+            "'endAt' timestamp is in invalid format, string should be in ISO-8601",
+        }),
+        description: Joi.string().trim().min(0).max(800).optional(),
+      },
+    }).unknown(true),
     "body",
   ),
-  uploadBroadcastArtwork,
   meController.broadcasts.create,
 );
 
@@ -88,34 +93,37 @@ meRouter.patch(
   isAuthenticated,
   isAuthorized("update", "own_broadcast"),
   validate(jsonContentTypeSchema, "headers"),
+  uploadBroadcastArtwork({ isFileRequired: false }),
+  parseMultipartJSONBody,
   validate(
     Joi.object({
-      broadcastId: idSchema,
-      title: Joi.string().trim().min(5).max(70).optional().messages({
-        "string.base": `'title' should be a type of 'string'`,
-        "string.empty": `'title' cannot be an empty string`,
-        "string.min": `'title' is shorter than expected`,
-        "string.max": `'title' is longer than expected`,
-      }),
-      startAt: Joi.date().iso().optional().messages({
-        "date.format":
-          "'startAt' timestamp is in invalid format, string should be in ISO-8601",
-      }),
-      endAt: Joi.date().iso().optional().messages({
-        "date.format":
-          "'endAt' timestamp is in invalid format, string should be in ISO-8601",
-      }),
-      description: Joi.string().trim().min(0).max(800).optional().messages({
-        "string.base": `'title' should be a type of 'string'`,
-        "string.max": `'title' is longer than expected`,
-      }),
-      isVisible: Joi.boolean().optional().messages({
-        "boolean.base": `'isVisible' should be a type of 'boolean'`,
-      }),
+      broadcast: {
+        broadcastId: idSchema,
+        title: Joi.string().trim().min(5).max(70).optional().messages({
+          "string.base": `'title' should be a type of 'string'`,
+          "string.empty": `'title' cannot be an empty string`,
+          "string.min": `'title' is shorter than expected`,
+          "string.max": `'title' is longer than expected`,
+        }),
+        startAt: Joi.date().iso().optional().messages({
+          "date.format":
+            "'startAt' timestamp is in invalid format, string should be in ISO-8601",
+        }),
+        endAt: Joi.date().iso().optional().messages({
+          "date.format":
+            "'endAt' timestamp is in invalid format, string should be in ISO-8601",
+        }),
+        description: Joi.string().trim().min(0).max(800).optional().messages({
+          "string.base": `'title' should be a type of 'string'`,
+          "string.max": `'title' is longer than expected`,
+        }),
+        isVisible: Joi.boolean().optional().messages({
+          "boolean.base": `'isVisible' should be a type of 'boolean'`,
+        }),
+      },
     }).min(2),
     "body",
   ),
-  uploadBroadcastArtwork({ isFileRequired: false }),
   meController.broadcasts.update,
 );
 

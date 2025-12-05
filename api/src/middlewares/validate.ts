@@ -29,9 +29,7 @@ export function validate(schema: Schema, location: Location) {
     try {
       const validated = await schema.validateAsync(req[location]);
 
-      if (typeof req.validated !== "object") req.validated = {};
-
-      req.validated[location] = { ...req[location], ...validated };
+      Object.assign(req[location], validated);
 
       logger.debug(
         `${__filename}: [after validation] ${util.inspect(req[location])}`,

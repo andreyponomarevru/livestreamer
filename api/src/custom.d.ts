@@ -3,12 +3,6 @@ declare global {
     interface Request {
       // Now in your code your can access it like 'req.tenant'
       tenant?: string;
-      validated?: {
-        params?: Record<string, unknown>;
-        query?: Record<string, unknown>;
-        body?: Record<string, unknown>;
-        headers?: Record<string, unknown>;
-      };
     }
   }
 }
