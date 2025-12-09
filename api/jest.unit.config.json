@@ -4,8 +4,6 @@
 
   "testEnvironment": "node",
 
-  "setupFilesAfterEnv": ["jest-extended/all"],
-
   "roots": ["./"],
   "testMatch": ["**/?(*.)+(spec|test).+(ts|tsx|js)"],
   "moduleFileExtensions": ["ts", "js", "json"],

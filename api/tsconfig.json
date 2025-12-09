@@ -6,7 +6,7 @@
     "files": true
   },
   "compilerOptions": {
-    "types": ["node", "jest", "jest-extended"],
+    "types": ["node", "jest"],
     "rootDir": "./src",
     "target": "ES2020",
     "module": "esnext",

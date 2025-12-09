@@ -6,7 +6,6 @@
   "globalSetup": "./test-helpers/jest-hooks/global-setup.ts",
 
   "setupFilesAfterEnv": [
-    "jest-extended/all",
     "<rootDir>/test-helpers/jest-hooks/truncate-tables.ts",
     "<rootDir>/test-helpers/jest-hooks/seed-users.ts",
     "<rootDir>/test-helpers/jest-hooks/close-connections.ts"
@@ -20,5 +19,6 @@
   "clearMocks": true,
   "resetMocks": true,
   "restoreMocks": true,
-  "extensionsToTreatAsEsm": [".ts"]
+  "extensionsToTreatAsEsm": [".ts"],
+  "silent": false
 }
