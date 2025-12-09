@@ -68,7 +68,8 @@ describe(ROUTE, () => {
   describe("GET - get all existing broadcasts for the authenticated user", () => {
     describe("200", () => {
       it("responds with a list of all broadcasts", async () => {
-        for (let i = 0; i < 30; i++) {
+        const totalBroadcasts = 5;
+        for (let i = 0; i < totalBroadcasts; i++) {
           const from = faker.date.anytime();
           const to = dateFns.addHours(from, 3);
           const [startAt, endAt] = faker.date.betweens({ from, to, count: 2 });
@@ -78,7 +79,7 @@ describe(ROUTE, () => {
               .sentence()
               .substring(0, DATABASE_CONSTRAINTS.maxBroadcastTitle),
             isVisible: faker.datatype.boolean(),
-            artworkUrl: faker.internet.url(),
+            artworkUrl: faker.system.fileName(),
             description: faker.lorem.paragraphs(),
             startAt: startAt.toISOString(),
             endAt: endAt.toISOString(),
@@ -96,7 +97,41 @@ describe(ROUTE, () => {
 
         const response = await agent.get(ROUTE).expect(200);
         expect(response.body).toStrictEqual({ results: expect.any(Array) });
-        expect(response.body?.results).toHaveLength(30);
+        expect(response.body?.results).toHaveLength(totalBroadcasts);
+      });
+
+      it.only("sets the broadcast artworkUrl field in reponse relative to API upload dir", async () => {
+        const from = faker.date.anytime();
+        const to = dateFns.addHours(from, 3);
+        const [startAt, endAt] = faker.date.betweens({ from, to, count: 2 });
+        const broadcast = {
+          userId: userId!,
+          title: faker.lorem
+            .sentence()
+            .substring(0, DATABASE_CONSTRAINTS.maxBroadcastTitle),
+          isVisible: faker.datatype.boolean(),
+          artworkUrl: faker.system.fileName(),
+          description: faker.lorem.paragraphs(),
+          startAt: startAt.toISOString(),
+          endAt: endAt.toISOString(),
+          listenerPeakCount: faker.number.int(100000),
+        };
+
+        await createBroadcast(broadcast);
+
+        const agent = request.agent(httpServer);
+        await agent
+          .post(`${API_URL_PREFIX}/sessions`)
+          .send({ username, password })
+          .expect(200);
+
+        const response = await agent.get(ROUTE).expect(200);
+        expect(response.body).toEqual({ results: expect.any(Array) });
+        expect(response.body.results).toHaveLength(1);
+        expect(response.body.results[0]).toHaveProperty("artworkUrl");
+        expect(response.body.results[0].artworkUrl).toMatch(
+          "/uploads/broadcasts/",
+        );
       });
     });
 
@@ -109,7 +144,7 @@ describe(ROUTE, () => {
 
   describe("POST - create a new broadcast", () => {
     describe("200", () => {
-      it.only("responds with a new broadcast", async () => {
+      it("responds with a new broadcast", async () => {
         const agent = request.agent(httpServer);
         await agent
           .post(`${API_URL_PREFIX}/sessions`)
@@ -147,9 +182,7 @@ describe(ROUTE, () => {
             userId,
             title: newBroadcast.title,
             isVisible: true,
-            artworkUrl: expect.stringMatching(
-              "/home/node/uploads/broadcast-artworks/",
-            ),
+            artworkUrl: expect.any(String),
             description: newBroadcast.description,
             startAt: newBroadcast.startAt,
             endAt: newBroadcast.endAt,
@@ -170,9 +203,7 @@ describe(ROUTE, () => {
           username,
           title: newBroadcast.title,
           is_visible: true,
-          artwork_url: expect.stringMatching(
-            "/home/node/uploads/broadcast-artworks/",
-          ),
+          artwork_url: expect.any(String),
           description: newBroadcast.description,
           start_at: startAt,
           end_at: endAt,

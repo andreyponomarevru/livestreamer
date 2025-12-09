@@ -1,24 +1,16 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
 
-import {
-  UPLOADED_PROFILE_PICS_IMG_DIR,
-  UPLOADED_MISC_DIR,
-} from "../config/env";
+import { UPLOADED_PROFILE_PICS_IMG_DIR } from "../config/env";
 import { HttpError } from "../utils/http-error";
-import { generateUploadFilename } from "../utils/utils";
+import { generateUploadFilename, generateUploadPath } from "../utils/utils";
 
 const FIELDNAME = "profilepic";
 
 const userProfilePicUploader = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(
-        null,
-        file.fieldname === FIELDNAME
-          ? UPLOADED_PROFILE_PICS_IMG_DIR
-          : UPLOADED_MISC_DIR,
-      );
+      cb(null, generateUploadPath(UPLOADED_PROFILE_PICS_IMG_DIR));
     },
     filename: (
       req: Request,

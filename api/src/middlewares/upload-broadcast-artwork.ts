@@ -1,22 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
 
-import {
-  UPLOADED_BROADCAST_ARTWORKS_IMG_DIR,
-  UPLOADED_MISC_DIR,
-} from "../config/env";
+import { UPLOADED_BROADCAST_ARTWORKS_IMG_DIR } from "../config/env";
 import { HttpError } from "../utils/http-error";
-import { generateUploadFilename } from "../utils/utils";
+import { generateUploadFilename, generateUploadPath } from "../utils/utils";
 
 export const uploader = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(
-        null,
-        file.fieldname === "artwork"
-          ? UPLOADED_BROADCAST_ARTWORKS_IMG_DIR
-          : UPLOADED_MISC_DIR,
-      );
+      cb(null, generateUploadPath(UPLOADED_BROADCAST_ARTWORKS_IMG_DIR));
     },
     filename: (
       req: Request,

@@ -8,7 +8,6 @@ export const UPLOADED_PROFILE_PICS_IMG_DIR =
   process.env.UPLOADED_PROFILE_PICS_IMG_DIR || uninit;
 export const UPLOADED_BROADCAST_ARTWORKS_IMG_DIR =
   process.env.UPLOADED_BROADCAST_ARTWORKS_IMG_DIR || uninit;
-export const UPLOADED_MISC_DIR = process.env.UPLOADED_MISC_DIR || uninit;
 
 // HTTP Server
 

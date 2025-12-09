@@ -1,3 +1,6 @@
+import path from "path";
+
+import { UPLOADED_BROADCAST_ARTWORKS_IMG_DIR } from "../../config/env";
 import { broadcastRepo } from "../../models/broadcast/queries";
 import { Broadcast, BroadcastFilters } from "../../types";
 
@@ -41,7 +44,16 @@ export const broadcastService = {
     user: { userId?: number; username?: string },
     filters?: BroadcastFilters,
   ): Promise<Broadcast[]> {
-    return await broadcastRepo.readAll(user, filters);
+    const broadcasts = await broadcastRepo.readAll(user, filters);
+    return broadcasts.map((b) => {
+      return {
+        ...b,
+        artworkUrl: path.resolve(
+          UPLOADED_BROADCAST_ARTWORKS_IMG_DIR,
+          b.artworkUrl,
+        ),
+      };
+    });
   },
 
   update: async function (updatedBroadcast: {

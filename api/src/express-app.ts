@@ -30,7 +30,17 @@ expressApp.use((req, res, next) => {
 expressApp.use(morganLogger("combined", morganSettings));
 expressApp.use(express.json());
 expressApp.use(express.urlencoded({ extended: true }));
-expressApp.use(express.static(path.join(__dirname, "public")));
+
+expressApp.use("/assets", express.static(path.join(__dirname, "assets")));
+expressApp.use(
+  "/uploads/broadcasts",
+  express.static(path.join(__dirname, "uploads/broadcast-artworks")),
+);
+expressApp.use(
+  "/uploads/profile-pics",
+  express.static(path.join(__dirname, "uploads/profile-pics")),
+);
+
 expressApp.use(API_URL_PREFIX, apiRouter);
 // If request doesn't match the routes above, it is past to 404 error handler
 expressApp.use(handle404Error);
