@@ -13,16 +13,8 @@ FROM node:${NODE_VERSION}-slim AS base
 # to execute scripts) > remove the downloaded package to free up space (Bash 
 # remains installed)
 # RUN apk add --upgrade --no-cache bash
-ENV UPLOADED_PROFILE_PICS_IMG_DIR /home/node/uploads/profile-pics
-ENV UPLOADED_BROADCAST_ARTWORKS_IMG_DIR /home/node/uploads/broadcast-artworks
-ENV UPLOADED_MISC_DIR /home/node/uploads/misc
 USER node
 WORKDIR /home/node
-# Create dirs required for the app proper functioning
-RUN mkdir --parents \
-  ${UPLOADED_PROFILE_PICS_IMG_DIR} \
-  ${UPLOADED_BROADCAST_ARTWORKS_IMG_DIR} \
-  ${UPLOADED_MISC_DIR}
 COPY --chown=node:node package*.json ./
 
 #
