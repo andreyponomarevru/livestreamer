@@ -55,6 +55,20 @@ export const jsonContentTypeSchema = Joi.object({
   .required()
   .unknown(true);
 
+export const multipartContentTypeSchema = Joi.object({
+  "content-type": Joi.string()
+    .required()
+    .regex(/^multipart\/form-data; ?boundary=.*$/)
+    .messages({
+      "string.base": `'content-type' should be a type of 'string'`,
+      "string.empty": `'content-type' cannot be an empty string`,
+      "any.required": `'content-type' is required`,
+      "string.pattern.base": `'content-type' must be a valid multipart/form-data header including a boundary.`,
+    }),
+})
+  .required()
+  .unknown(true);
+
 export const idSchema = Joi.number().positive().greater(0).required().messages({
   "number.base": `id should be a type of 'number'`,
   "number.positive": `id should be positive`,
