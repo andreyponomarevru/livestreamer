@@ -1,3 +1,5 @@
+import path from "path";
+
 import { Request, Response, NextFunction } from "express";
 
 import { userService } from "../../../services/user/service";
@@ -193,7 +195,7 @@ export const meController = {
 
         const newBroadcast = await broadcastService.create({
           userId: req.session.authenticatedUser!.userId,
-          artworkUrl: req.file!.path,
+          artworkUrl: path.basename(req.file!.path),
           title: req.body.broadcast.title,
           startAt: req.body.broadcast.startAt,
           endAt: req.body.broadcast.endAt,
