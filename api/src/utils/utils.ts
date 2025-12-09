@@ -38,3 +38,7 @@ export function generateUploadFilename(
 ) {
   return `${reqFieldname}-${crypto.randomUUID()}${path.extname(originalFilename)}`;
 }
+
+export function generateUploadPath(targetPath: string) {
+  return path.resolve("/home/node/", targetPath);
+}
