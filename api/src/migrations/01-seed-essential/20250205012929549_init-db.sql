@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS appuser (
   display_name        varchar(32)                  NOT NULL CHECK (display_name != ''),
   website_url         text                         NOT NULL DEFAULT '',
   about               text                         NOT NULL DEFAULT '',
-  profile_picture_url text                         NOT NULL DEFAULT '' CHECK (profile_picture_url != ''),
+  profile_picture_url text                         NOT NULL DEFAULT '',
   subscription_name   varchar(16)                  NOT NULL DEFAULT '',
 
   FOREIGN KEY (role_id) REFERENCES role (role_id)
@@ -249,7 +249,7 @@ SELECT
   -- To fix this and return just an empty array, we use 'array_remove'
   array_remove(array_agg(c_m_l.appuser_id), NULL) AS liked_by_user_id
 FROM chat_message_like AS c_m_l
-  LEFT OUTER JOIN 
+  RIGHT OUTER JOIN 
     chat_message AS c_m 
   ON
     c_m.chat_message_id = c_m_l.chat_message_id
