@@ -6,25 +6,28 @@
   "scripts": {
     "build": "tsc -p ./tsconfig.json",
     "serve:dev": "nodemon --watch ./src",
+    "//": "Testing ***********************************************************",
     "test:unit": "jest --config=./jest.unit.config.json --detectOpenHandles --watchAll --colors ./src",
     "test:int": "jest --config=jest.int.config.json --roots ./tests-integration --detectOpenHandles --runInBand --colors",
     "test:e2e-api": "jest --config=jest.int.config.json --roots ./tests-e2e-api --detectOpenHandles --runInBand --colors",
     "test:coverage": "jest --config=./jest.unit.config.json ./src --coverage",
     "test:clearjest": "jest --clearCache",
-    "//": "CI ****************************************************************",
+    "//": "Migrations ********************************************************",
     "migrate-essential": "DATABASE_URL=\"postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB\" node-pg-migrate --check-order --migrations-dir ./src/migrations/01-seed-essential --migrations-table pgmigrations_essential  --migration-filename-format utc --tsconfig ./tsconfig.json",
     "migrate-users": "DATABASE_URL=\"postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB\" node-pg-migrate --no-check-order --migrations-dir ./src/migrations/02-seed-users --migrations-table pgmigrations_users --migration-filename-format utc --tsconfig ./tsconfig.json",
     "migrate-fake-data": "DATABASE_URL=\"postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB\" node-pg-migrate --no-check-order --migrations-dir ./src/migrations/03-seed-with-fake-user-generated-data --migrations-table pgmigrations_fakedata --migration-filename-format utc --tsconfig ./tsconfig.json",
-    "": "",
+    "//": "CI ****************************************************************",
     "ci:lint": "eslint ./src ./test-helpers ./tests-integration ./tests-e2e-api",
     "ci:prettier": "prettier ./src ./test-helpers ./tests-integration ./tests-e2e-api --check \"**/*.{ts,tsx,js,md,mdx,css,yaml}\""
   },
   "keywords": [
     "rest",
     "api",
-    "live streaming",
+    "audio streaming",
+    "real-time",
     "broadcasting",
-    "radio"
+    "radio",
+    "chat"
   ],
   "author": "Andrey Ponomarev",
   "license": "ISC",
