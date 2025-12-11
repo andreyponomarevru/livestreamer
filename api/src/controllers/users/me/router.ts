@@ -66,11 +66,11 @@ meRouter.post(
   isAuthenticated,
   isAuthorized("create", "own_broadcast"),
   validate(multipartContentTypeSchema, "headers"),
-  uploadBroadcastArtwork({ isFileRequired: true }),
+  uploadBroadcastArtwork({ isFileRequired: false }),
   parseMultipartJSONBody,
   validate(
     Joi.object({
-      broadcast: {
+      broadcast: Joi.object({
         title: Joi.string().trim().min(5).max(70).required(),
         startAt: Joi.date().iso().required().messages({
           "date.format":
@@ -81,7 +81,7 @@ meRouter.post(
             "'endAt' timestamp is in invalid format, string should be in ISO-8601",
         }),
         description: Joi.string().trim().min(0).max(800).optional(),
-      },
+      }).unknown(true),
     }).unknown(true),
     "body",
   ),
@@ -92,19 +92,17 @@ meRouter.patch(
   "/broadcasts/:broadcastId",
   isAuthenticated,
   isAuthorized("update", "own_broadcast"),
-  validate(jsonContentTypeSchema, "headers"),
+  validate(multipartContentTypeSchema, "headers"),
+  validate(
+    Joi.object({ broadcastId: idSchema }).required().unknown(true),
+    "params",
+  ),
   uploadBroadcastArtwork({ isFileRequired: false }),
   parseMultipartJSONBody,
   validate(
     Joi.object({
-      broadcast: {
-        broadcastId: idSchema,
-        title: Joi.string().trim().min(5).max(70).optional().messages({
-          "string.base": `'title' should be a type of 'string'`,
-          "string.empty": `'title' cannot be an empty string`,
-          "string.min": `'title' is shorter than expected`,
-          "string.max": `'title' is longer than expected`,
-        }),
+      broadcast: Joi.object({
+        title: Joi.string().trim().min(5).max(70).optional(),
         startAt: Joi.date().iso().optional().messages({
           "date.format":
             "'startAt' timestamp is in invalid format, string should be in ISO-8601",
@@ -120,8 +118,10 @@ meRouter.patch(
         isVisible: Joi.boolean().optional().messages({
           "boolean.base": `'isVisible' should be a type of 'boolean'`,
         }),
-      },
-    }).min(2),
+      })
+        .unknown(true)
+        .min(2),
+    }).unknown(),
     "body",
   ),
   meController.broadcasts.update,
