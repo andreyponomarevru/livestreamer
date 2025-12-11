@@ -1,6 +1,7 @@
+import request from "supertest";
+
 import { dbConnection } from "../src/config/postgres";
 import { authnService } from "../src/services/authn";
-import request from "supertest";
 import { httpServer } from "../src/http-server";
 import { API_URL_PREFIX } from "../src/config/env";
 import { NewChatMsg, ReadMsgDBResponse, type NewBroadcast } from "../src/types";
