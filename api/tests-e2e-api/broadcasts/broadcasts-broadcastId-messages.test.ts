@@ -19,6 +19,8 @@ import {
   createUser,
   DATABASE_CONSTRAINTS,
   generateUrlPath,
+  newBroadcast,
+  newUser,
 } from "../../test-helpers/helpers";
 
 const ROUTE = `${API_URL_PREFIX}/broadcasts/:broadcastId/messages`;
@@ -49,17 +51,9 @@ beforeEach(async () => {
     .substring(0, DATABASE_CONSTRAINTS.maxPasswordLength);
 
   const { appuser_id } = await createUser({
-    roleId: 2,
     username: username!,
     password: password!,
-    email: faker.internet.email(),
-    displayName: faker.internet
-      .displayName()
-      .substring(0, DATABASE_CONSTRAINTS.maxDisplayName),
-    isEmailConfirmed: true,
-    isDeleted: false,
-    profilePictureUrl: faker.system.filePath(),
-    about: faker.lorem.paragraphs(),
+    ...newUser,
   });
 
   userId = appuser_id;
@@ -67,20 +61,11 @@ beforeEach(async () => {
   const from = new Date();
   const to = dateFns.addHours(from, 3);
   const [startAt, endAt] = faker.date.betweens({ from, to, count: 2 });
-  const broadcast = {
-    title: faker.book
-      .title()
-      .substring(0, DATABASE_CONSTRAINTS.maxBroadcastTitle),
-    isVisible: true,
+  const { broadcast_id } = await createBroadcast({
     startAt: startAt.toISOString(),
     endAt: endAt.toISOString(),
-    artworkUrl: faker.internet.url(),
-    description: faker.lorem.paragraphs(),
-    listenerPeakCount: faker.number.int({ min: 0, max: 10000 }),
-  };
-  const { broadcast_id } = await createBroadcast({
-    ...broadcast,
     userId,
+    ...newBroadcast,
   });
 
   broadcastId = broadcast_id;
