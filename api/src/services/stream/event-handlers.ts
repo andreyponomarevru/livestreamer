@@ -9,30 +9,36 @@ import {
 export function onStreamLike(
   like: SavedBroadcastLike & { likedByUserUUID: string },
 ): void {
-  wsService.sendToAllExceptSender(
-    { event: "stream:like", data: like },
-    { senderUUID: like.likedByUserUUID },
-    wsService.clientStore.clients,
-  );
+  wsService.sendToAllExceptSender({
+    broadcastId: like.broadcastId,
+    senderUUID: like.likedByUserUUID,
+    message: { event: "stream:like", data: like },
+  });
 }
 
 export function onStreamStart(broadcast: Broadcast): void {
-  wsService.sendToAll(
-    { event: "stream:state", data: { isStreaming: true, broadcast } },
-    wsService.clientStore.clients,
-  );
+  wsService.sendToAll({
+    broadcastId: broadcast.broadcastId,
+    message: {
+      event: "stream:state",
+      data: { isStreaming: true, broadcast },
+    },
+  });
 }
 
-export function onStreamEnd(): void {
-  wsService.sendToAll(
-    { event: "stream:state", data: { isStreaming: false } },
-    wsService.clientStore.clients,
-  );
+export function onStreamEnd(broadcastId: number): void {
+  wsService.sendToAll({
+    broadcastId,
+    message: { event: "stream:state", data: { isStreaming: false } },
+  });
 }
 
 export function sendBroadcastState(
-  reciever: WSClient,
+  reciever: Pick<WSClient, "socket">,
   broadcastState: BroadcastStreamWebSocketData,
 ): void {
-  wsService.send({ event: "stream:state", data: broadcastState }, reciever);
+  wsService.send({
+    message: { event: "stream:state", data: broadcastState },
+    socket: reciever.socket,
+  });
 }

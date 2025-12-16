@@ -10,69 +10,55 @@ export const streamService = {
   events: new StreamEmitter(),
 
   readBroadcastStreamState: async function (
-    userId: number,
     broadcastId: number,
   ): Promise<BroadcastStreamWebSocketData> {
     if (inoutStream.isPaused()) {
       return { isStreaming: false };
     } else {
-      const broadcastStream = await streamRepo.read(userId, broadcastId);
+      const broadcastStream = await streamRepo.read(broadcastId);
       return { isStreaming: true, broadcast: broadcastStream };
     }
   },
 
-  startBroadcastStream: async function (broadcast: {
+  startBroadcastStream: async function ({
+    broadcastId,
+    userId,
+    listenersCount,
+  }: {
     broadcastId: number;
     userId: number;
-    listenersNow: number;
+    listenersCount: number | undefined;
   }): Promise<void> {
-    const currentBroadcast = await broadcastRepo.readForUser(
-      broadcast.userId,
-      broadcast.broadcastId,
-    );
+    const broadcast = await broadcastRepo.readForUser(userId, broadcastId);
+    if (!broadcast) return;
+    const broadcastStream = await streamRepo.read(broadcastId);
 
-    if (!currentBroadcast) return;
-
-    const broadcastStream = await streamRepo.read(
-      broadcast.userId,
-      broadcast.broadcastId,
-    );
-    this.events.start({ ...currentBroadcast, ...broadcastStream });
+    this.events.start({ ...broadcast, ...broadcastStream, listenersCount });
   },
 
   endBroadcastStream: async function (
     userId: number,
     broadcastId: number,
   ): Promise<void> {
-    this.events.end();
+    this.events.end(broadcastId);
 
     await broadcastRepo.update({
       userId,
       broadcastId,
-      listenerPeakCount: await streamRepo.readListenerPeakCount(
-        userId,
-        broadcastId,
-      ),
+      listenerPeakCount: await streamRepo.readListenerPeakCount(broadcastId),
       endAt: new Date().toISOString(),
     });
     await streamRepo.destroy(userId, broadcastId);
   },
 
   updateListenerPeakCount: async function (
-    userId: number,
     broadcastId: number,
-    listenersNow: number,
+    newPeakCount: number,
   ): Promise<void> {
-    if (
-      listenersNow >
-      (await streamRepo.readListenerPeakCount(userId, broadcastId))
-    ) {
-      await streamRepo.updateListenerPeakCount(
-        userId,
-        broadcastId,
-        listenersNow,
-      );
-      this.events.newListenersPeak(listenersNow);
+    const peakCount = await streamRepo.readListenerPeakCount(broadcastId);
+    if (newPeakCount > peakCount) {
+      await streamRepo.updateListenerPeakCount(broadcastId, newPeakCount);
+      this.events.newListenersPeak({ broadcastId, count: newPeakCount });
     }
   },
 
@@ -86,19 +72,21 @@ export const streamService = {
   likeStream: async function ({
     userUUID,
     userId,
+    username,
     broadcastId,
   }: {
     userUUID: string;
     userId: number;
+    username: string;
     broadcastId: number;
   }): Promise<void> {
-    const like = await streamRepo.createLike(userId, broadcastId);
+    const { likesCount } = await streamRepo.createLike(userId, broadcastId);
 
     this.events.like({
       likedByUserId: userId,
       likedByUserUUID: userUUID,
-      likedByUsername: like.likedByUsername,
-      likeCount: like.likeCount,
+      likedByUsername: username,
+      likeCount: likesCount,
       broadcastId,
     });
   },
