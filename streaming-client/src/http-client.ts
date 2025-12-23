@@ -2,7 +2,7 @@ import http from "http";
 import https from "https";
 
 import fs from "fs-extra";
-import axios, { AxiosResponse } from "axios";
+import axios, { type AxiosResponse } from "axios";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
 
@@ -30,7 +30,7 @@ async function buildRequestOptions(): Promise<
   const options: http.RequestOptions | https.RequestOptions = {
     host: API_HOST,
     port: API_PORT,
-    path: `${API_ROOT_PATH}${API_STREAM_PATH}`,
+    path: `http://localhost:5000/api/v1/stream`,
     method: "PUT",
     headers: {
       "content-type": "audio/mpeg",
@@ -51,17 +51,19 @@ async function signIn(): Promise<AxiosResponse<unknown>> {
     { username: BROADCASTER_USERNAME, password: BROADCASTER_PASSWORD },
     { jar, withCredentials: true },
   );
-  const sessionCookie = response.headers["set-cookie"][0];
+  const sessionCookie = response.headers["set-cookie"]![0];
   await fs.writeFile("session-cookie", sessionCookie);
   console.log("Logged In Successfully.");
   process.exit(0);
 }
 
 async function signOut(): Promise<AxiosResponse<unknown>> {
-  await client.delete(API_SESSION_URL, {
+  const sessCookie = await fs.readFile("session-cookie");
+
+  await client.delete(`http://localhost:5000/api/v1/sessions`, {
     jar,
     withCredentials: true,
-    headers: { cookie: await fs.readFile("session-cookie") },
+    headers: { cookie: String(sessCookie) },
   });
   console.log("Logged Out Successfully.");
   process.exit(0);

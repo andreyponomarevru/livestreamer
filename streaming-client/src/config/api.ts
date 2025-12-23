@@ -7,7 +7,7 @@ export const apiConfig = {
     API_HOST: "localhost",
     API_PORT: 5000,
     API_ROOT_PATH: "",
-    API_SESSION_URL: `http://localhost:5000/sessions`,
+    API_SESSION_URL: `http://localhost:5000/api/v1/sessions`,
     API_STREAM_PATH: "/stream",
     BROADCASTER_USERNAME,
     BROADCASTER_PASSWORD,

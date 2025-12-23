@@ -1,7 +1,5 @@
 import util from "util";
 
-import { v4 as uuidv4 } from "uuid";
-
 import { startStream, buildRequestOptions, signOut } from "./http-client";
 import { signIn } from "./http-client";
 import { writeStream } from "./utils";
@@ -56,7 +54,7 @@ async function startApp(action?: string) {
       await startBroadcast();
       SAVE_STREAM = args[1] === "save" ? true : false;
       if (SAVE_STREAM) {
-        const saveTo = `./recordings/${uuidv4()}.wav`;
+        const saveTo = `./recordings/${crypto.randomUUID()}.wav`;
         writeStream(audioStream.stdout, saveTo);
       }
       break;
@@ -86,12 +84,3 @@ startApp(ACTION).catch((err) => {
   console.error(err);
   process.exit(0);
 });
-/*
-"start:dev": "nodemon --watch ./src -e ts,json --exec TS_NODE_PROJECT=tsconfig.json node --inspect=0.0.0.0:9229 -r ts-node/register ./src/index.ts",
-"login:dev": "API_SESSION_URL=http://localhost:5000/sessions node ./build/index.js login",
-"login:prod": "API_SESSION_URL=https://live.andreyponomarev.ru:443/api/v1/sessions node ./build/index.js login",
-"logout:dev": "API_SESSION_URL=http://localhost:5000/sessions node ./build/index.js logout",
-"logout:prod": "API_SESSION_URL=https://live.andreyponomarev.ru:443/api/v1/sessions node ./build/index.js logout",
-"stream:prod": "API_SESSION_URL=https://live.andreyponomarev.ru:443/api/v1/sessions API_HOST=live.andreyponomarev.ru API_PORT=443 API_ROOT_PATH=/api/v1 API_STREAM_PATH=/stream node ./build/index.js stream",
-"stream:dev": "API_SESSION_URL=http://localhost:5000/sessions API_HOST=localhost:5000 API_PORT=5000 API_ROOT_PATH=/api/v1 API_STREAM_PATH=/stream node ./build/index.js stream"
-*/
