@@ -6,12 +6,14 @@ export const FFMPEG_ARGS = [
   // to make output even less verbose, output only errors (https://superuser.com/questions/326629/how-can-i-make-ffmpeg-be-quieter-less-verbose)
   "-loglevel",
   "error",
+  "-use_wallclock_as_timestamps",
+  "1",
   // capture OS audio output (from pulseaudio)
   "-f",
   "pulse",
-  // input device "default"
+  // input device
   "-i",
-  "default",
+  "alsa_output.pci-0000_00_1f.3.analog-stereo.monitor",
   // output in .mp3
   "-f",
   "mp3",
