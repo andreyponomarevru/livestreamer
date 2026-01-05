@@ -12,6 +12,7 @@
     "------": "---------------------------------------------------------------",
     "login:dev": "NODE_ENV=development node ./build/index.js login",
     "logout:dev": "NODE_ENV=development node ./build/index.js logout",
+    "schedule:dev": "NODE_ENV=development node ./build/index.js schedule",
     "stream:dev": "NODE_ENV=development node ./build/index.js stream"
   },
   "keywords": [],
@@ -37,6 +38,7 @@
   "dependencies": {
     "axios": "^1.13.2",
     "axios-cookiejar-support": "^6.0.5",
+    "date-fns": "^4.1.0",
     "fs-extra": "^11.3.3",
     "tough-cookie": "^6.0.0",
     "wav": "^1.0.2"
