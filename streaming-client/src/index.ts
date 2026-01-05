@@ -1,19 +1,11 @@
 import util from "util";
+import fsExtra from "fs-extra";
 
-import { startStream, buildRequestOptions, signOut } from "./http-client";
+import dateFns from "date-fns";
+
+import { startStream, signOut, schedule } from "./http-client";
 import { signIn } from "./http-client";
-import { writeStream } from "./utils";
-import { audioStream } from "./audio-process";
 import { apiConfig, NDOE_ENV } from "./config/api";
-const {
-  API_HOST,
-  API_PORT,
-  BROADCASTER_PASSWORD,
-  BROADCASTER_USERNAME,
-  API_SESSION_URL,
-  API_ROOT_PATH,
-  API_STREAM_PATH,
-} = apiConfig[NDOE_ENV];
 
 async function onCtrlC(): Promise<void> {
   console.error("Broadcast is finished.\nConnection has been closed.");
@@ -33,37 +25,78 @@ async function onUnhandledRejection(
   process.exit(1);
 }
 
-async function startBroadcast() {
-  const options = await buildRequestOptions();
-  await startStream(options);
+async function startBroadcast(url: string) {
+  console.log(
+    `====================\nStart broadcast ${url}\n====================`,
+  );
 
-  setInterval(function () {
+  const sessionCookie = await fsExtra.readFile("session-cookie");
+  // await jar.getCookieString(`http://${API_HOST}`);
+
+  await startStream({
+    host: apiConfig[NDOE_ENV].API_HOST,
+    port: apiConfig[NDOE_ENV].API_PORT,
+    path: url,
+    method: "PUT",
+    headers: {
+      "content-type": "audio/mpeg",
+      "transfer-encoding": "chunked",
+      // Don't include port number in URL, it will result in error
+      cookie: String(sessionCookie),
+    },
+  });
+
+  function log() {
     const timestamp = new Date().toISOString();
     console.log(`Send audio to server... ${timestamp}`);
-  }, 1000);
+  }
+
+  setInterval(log, 1000);
 }
 
-async function startApp(action?: string) {
+async function startApp(action?: string, actionArg?: string) {
   switch (action) {
     case "login": {
-      await signIn();
+      await signIn(`${apiConfig[NDOE_ENV].API_ROOT_PATH}/sessions`, {
+        username: apiConfig[NDOE_ENV].BROADCASTER_USERNAME,
+        password: apiConfig[NDOE_ENV].BROADCASTER_PASSWORD,
+      });
       break;
     }
 
     case "stream": {
-      await startBroadcast();
-      SAVE_STREAM = args[1] === "save" ? true : false;
-      if (SAVE_STREAM) {
-        const saveTo = `./recordings/${crypto.randomUUID()}.wav`;
-        writeStream(audioStream.stdout, saveTo);
-      }
+      const broadcastId = actionArg;
+      await startBroadcast(
+        `${apiConfig[NDOE_ENV].API_ROOT_PATH}/users/me/broadcasts/${broadcastId}/stream`,
+      );
       break;
     }
 
     case "logout": {
-      await signOut();
+      await signOut(`${apiConfig[NDOE_ENV].API_ROOT_PATH}/sessions`);
       break;
     }
+
+    case "schedule": {
+      const artwork = "./default-broadcast-artwork.jpg";
+      const startAt = new Date();
+      const endAt = dateFns.addHours(startAt, 2);
+      const newBroadcast = {
+        artwork,
+        broadcast: {
+          title: "My new broadcast",
+          startAt: startAt.toISOString(),
+          endAt: endAt.toISOString(),
+          description: "",
+        },
+      };
+      console.log(newBroadcast);
+      await schedule(newBroadcast);
+      break;
+    }
+
+    default:
+      throw new Error("Unsupported command-line arg");
   }
 }
 
@@ -72,15 +105,19 @@ process.on("uncaughtException", onUncaughtException);
 process.on("unhandledRejection", onUnhandledRejection);
 
 console.log(
-  `NODE_ENV:${process.env.NODE_ENV}\nAPI_HOST: ${API_HOST}\nAPI_PORT: ${API_PORT}\nAPI_ROOT_PATH: ${API_ROOT_PATH}\nAPI_STREAM_PATH: ${API_STREAM_PATH}\nAPI_SESSION_URL: ${API_SESSION_URL}\n
-BROADCASTER_USERNAME: ${BROADCASTER_USERNAME}\nBROADCASTER_PASSWORD: ${BROADCASTER_PASSWORD}\n`,
+  `NODE_ENV:${process.env.NODE_ENV}
+  API_HOST: ${apiConfig[NDOE_ENV].API_HOST}
+  API_PORT: ${apiConfig[NDOE_ENV].API_PORT}
+  API_ROOT_PATH: ${apiConfig[NDOE_ENV].API_ROOT_PATH}
+  BROADCASTER_USERNAME: ${apiConfig[NDOE_ENV].BROADCASTER_USERNAME}
+  BROADCASTER_PASSWORD: ${apiConfig[NDOE_ENV].BROADCASTER_PASSWORD}`,
 );
 
 const args = process.argv.slice(2);
 const ACTION = args[0];
-let SAVE_STREAM = false;
+const ACTION_ARG = args[1];
 
-startApp(ACTION).catch((err) => {
+startApp(ACTION, ACTION_ARG).catch((err) => {
   console.error(err);
   process.exit(0);
 });
