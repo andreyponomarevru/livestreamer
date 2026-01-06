@@ -1,38 +1,48 @@
 import { Request, Response, NextFunction } from "express";
-import { logger } from "../../config/logger";
+
+import { streamService } from "../../services/stream";
 import { HttpError } from "../../utils/http-error";
-import { inoutStream } from "../../services/stream";
 
-export function pull(req: Request, res: Response, next: NextFunction): void {
-  logger.debug("[data] event listeners: ", inoutStream.listeners("data")); // added below by 'pipe' method
-  logger.debug("[pause] event listeners: ", inoutStream.listeners("pause")); // added below manually
+export function relayStreamToListener(
+  req: Request<{ broadcastId?: string }>,
+  res: Response,
+  next: NextFunction,
+): void {
+  const broadcastId = Number(req.params.broadcastId!);
 
-  // Before doing anything further, check whether the broadcaster-client is actually streaming.
-  // If the stream is in the flowing mode, that means the broadcast-client is streaming, hence we're able to send the stream to listener-clients and we set response code to 200. Next, the 'data' event handler will be triggered starting sending the stream.
-  // If the stream is paused, it means the broadcaster doesn't stream.
+  const relay = streamService.streamsHub.get(broadcastId)?.stream;
 
-  if (inoutStream.readableFlowing) {
-    res.writeHead(200, {
-      "content-type": "audio/mpeg",
-      "transfer-encoding": "chunked",
-      connection: "keep-alive",
-      "cache-control": "no-cache, no-store, must-revalidate",
-      pragma: "no-cache",
-      expires: "0",
-    });
-
-    /// 'pipe' automatically switches the stream back into the 'flowing' mode
-    inoutStream.pipe(res);
-    inoutStream.on("pause", res.end);
-    req.on("close", () => {
-      inoutStream.removeListener("pause", res.end);
-    });
-  } else {
-    next(
+  if (!relay) {
+    res.status(404).send(
       new HttpError({
         code: 404,
         message: "The requested page does not exist",
       }),
     );
+    return;
   }
+
+  const listeners = streamService.streamsHub.get(broadcastId)?.listeners;
+
+  listeners?.add(res);
+
+  res.writeHead(200, {
+    "content-type": "audio/mpeg",
+    "transfer-encoding": "chunked",
+    connection: "keep-alive",
+    "cache-control": "no-cache, no-store, must-revalidate",
+    pragma: "no-cache",
+    expires: "0",
+    // If it doesn't work, add this header to Nginx config:
+    "X-Accel-Buffering": "no",
+  });
+
+  function cleanup() {
+    streamService.streamsHub.get(broadcastId)?.listeners.delete(res);
+  }
+
+  res.on("error", cleanup);
+  res.on("close", cleanup);
+
+  console.log(listeners);
 }

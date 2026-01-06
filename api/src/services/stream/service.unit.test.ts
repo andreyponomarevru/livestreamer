@@ -52,8 +52,3 @@ describe("streamService", () => {
     it.todo("returns the stream title");
   });
 });
-
-describe("inoutStream", () => {
-  it.todo("the stream is in the 'paused' mode");
-  it.todo("the stream is piping into \\\\.\\NUL");
-});
