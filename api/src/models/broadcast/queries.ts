@@ -149,20 +149,20 @@ export const broadcastRepo = {
   },
 
   update: async function (broadcast: BroadcastUpdate): Promise<void> {
-    const sql =
-      "UPDATE \
-        broadcast \
-      SET \
-        title               = COALESCE($1, title), \
-        listener_peak_count = COALESCE($2, listener_peak_count),\
-        is_visible          = COALESCE($3, is_visible), \
-        start_at            = COALESCE($4, start_at) \
-        end_at              = COALESCE($5, end_at) \
-        artwork_url         = COALESCE($6, artwork_url) \
-        description         = COALESCE($7, description) \
-      WHERE \
-        broadcast_id = $8 AND\
-        appuser_id = $9";
+    const sql = `
+        UPDATE 
+          broadcast 
+        SET 
+          title               = COALESCE($1, title)               , 
+          listener_peak_count = COALESCE($2, listener_peak_count) ,
+          is_visible          = COALESCE($3, is_visible)          , 
+          start_at            = COALESCE($4, start_at)            ,
+          end_at              = COALESCE($5, end_at)              ,
+          artwork_url         = COALESCE($6, artwork_url)         ,
+          description         = COALESCE($7, description) 
+        WHERE 
+          broadcast_id = $8 AND
+          appuser_id = $9`;
     const values = [
       broadcast.title,
       broadcast.listenerPeakCount,
