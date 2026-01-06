@@ -1,27 +1,33 @@
 import { logger } from "../../../src/config/logger";
 
 interface Scheduler {
-  start: (callback: () => void, interfval: number) => void;
-  stop: () => void;
-  timerId?: NodeJS.Timeout;
+  start: (roomId: number, interfval: number, callback: () => void) => void;
+  stop: (roomId: number) => void;
+  timerIds: Map<number, NodeJS.Timeout>;
 }
 
 class IntervalScheduler implements Scheduler {
-  timerId?: NodeJS.Timeout;
+  timerIds = new Map<number, NodeJS.Timeout>();
 
-  start(callback: () => void, interval: number): NodeJS.Timeout {
-    this.timerId = setInterval(callback, interval);
+  start(
+    roomId: number,
+    interval: number,
+    callback: () => void,
+  ): NodeJS.Timeout {
+    const id = setInterval(callback, interval);
+    this.timerIds.set(roomId, id);
 
-    return this.timerId;
+    return id;
   }
 
-  stop(): void {
-    if (!this.timerId) return;
+  stop(roomId: number): void {
+    const id = this.timerIds.get(roomId);
 
-    clearInterval(this.timerId);
-    this.timerId = undefined;
+    clearInterval(id);
+    this.timerIds.delete(roomId);
+
     logger.debug(
-      `${__filename} Scheduler stopped, cleare timeerId ${this.timerId}`,
+      `${__filename} WS Scheduler has been stopped.\nAll currently existing timers: ${this.timerIds}`,
     );
   }
 }

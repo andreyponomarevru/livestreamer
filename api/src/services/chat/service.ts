@@ -34,31 +34,16 @@ export const chatService = {
     }
   },
 
-  readMsgsPaginated: async function ({
-    broadcastId,
-    limit,
-    nextCursor,
-  }: {
+  readMsgsPaginated: async function (params: {
     broadcastId: number;
     limit: number;
     nextCursor?: string;
   }): Promise<{
     nextCursor: string | null;
-    messages: {
-      messageId: number;
-      broadcastId: number;
-      userId: number;
-      username: string;
-      createdAt: string;
-      message: string;
-      likedByUserId: number[];
-    }[];
+    messages: ChatMsg[];
   }> {
-    const page = await chatRepo.readMsgsPaginated({
-      broadcastId,
-      limit,
-      nextCursor,
-    });
+    const page = await chatRepo.readMsgsPaginated(params);
+
     return {
       nextCursor: page.nextCursor,
       messages: page.items,
@@ -66,18 +51,27 @@ export const chatService = {
   },
 
   likeMsg: async function (
-    msg: ChatMsgId & { userUUID: string },
+    like: ChatMsgId & { userUUID: string },
   ): Promise<void> {
-    const like = await chatRepo.createMsgLike(msg);
-    if (like)
-      this.events.likeChatMsg({ ...like, likedByUserUUID: msg.userUUID });
+    const savedLike = await chatRepo.createMsgLike(like);
+    if (savedLike) {
+      this.events.likeChatMsg({
+        broadcastId: like.broadcastId,
+        ...savedLike,
+        likedByUserUUID: like.userUUID,
+      });
+    }
   },
 
   unlikeMsg: async function (
     unlike: ChatMsgId & { userUUID: string },
   ): Promise<void> {
-    const msg = await chatRepo.destroyMsgLike(unlike);
-    if (msg)
-      this.events.unlikeChatMsg({ ...msg, unlikedByUserUUID: unlike.userUUID });
+    const updatedLikes = await chatRepo.destroyMsgLike(unlike);
+    if (updatedLikes)
+      this.events.unlikeChatMsg({
+        broadcastId: unlike.broadcastId,
+        ...updatedLikes,
+        unlikedByUserUUID: unlike.userUUID,
+      });
   },
 };

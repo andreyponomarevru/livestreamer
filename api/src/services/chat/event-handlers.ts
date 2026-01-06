@@ -1,4 +1,4 @@
-import { wsService } from "../ws";
+import { sanitizeWSClient, wsService } from "../ws";
 import {
   SanitizedWSChatClient,
   ClientCount,
@@ -10,73 +10,79 @@ import {
   DeletedWSClient,
 } from "../../types";
 
-export function onCreateChatMsg(msg: ChatMsg & { userUUID: string }): void {
-  wsService.sendToAllExceptSender(
-    { event: "chat:created_message", data: msg },
-    { senderUUID: msg.userUUID },
-    wsService.clientStore.clients,
-  );
+export function onCreateChatMsg(event: ChatMsg & { userUUID: string }): void {
+  wsService.sendToAllExceptSender({
+    message: { event: "chat:created_message", data: event },
+    senderUUID: event.userUUID,
+    broadcastId: event.broadcastId,
+  });
 }
 
-export function onDestroyChatMsg(msg: ChatMsgId & { userUUID: string }): void {
-  wsService.sendToAllExceptSender(
-    { event: "chat:deleted_message", data: msg },
-    { senderUUID: msg.userUUID },
-    wsService.clientStore.clients,
-  );
+export function onDestroyChatMsg(
+  event: ChatMsgId & { userUUID: string },
+): void {
+  wsService.sendToAllExceptSender({
+    message: { event: "chat:deleted_message", data: event },
+    senderUUID: event.userUUID,
+    broadcastId: event.broadcastId,
+  });
 }
 
 export function onLikeChatMsg(
-  like: ChatMsgLike & { likedByUserUUID: string },
+  event: ChatMsgLike & { likedByUserUUID: string },
 ): void {
-  wsService.sendToAllExceptSender(
-    { event: "chat:liked_message", data: like },
-    { senderUUID: like.likedByUserUUID },
-    wsService.clientStore.clients,
-  );
+  wsService.sendToAllExceptSender({
+    message: { event: "chat:liked_message", data: event },
+    senderUUID: event.likedByUserUUID,
+    broadcastId: event.broadcastId,
+  });
 }
 
 export function onUnlikeChatMsg(
-  unlike: ChatMsgUnlike & { unlikedByUserUUID: string },
+  event: ChatMsgUnlike & { unlikedByUserUUID: string },
 ): void {
-  wsService.sendToAllExceptSender(
-    { event: "chat:unliked_message", data: unlike },
-    { senderUUID: unlike.unlikedByUserUUID },
-    wsService.clientStore.clients,
-  );
+  wsService.sendToAllExceptSender({
+    message: { event: "chat:unliked_message", data: event },
+    senderUUID: event.unlikedByUserUUID,
+    broadcastId: event.broadcastId,
+  });
 }
 
-export function onChatStart(client: WSClient) {
-  wsService.send(
-    { event: "chat:client_list", data: wsService.clientStore.sanitizedClients },
-    client,
-  );
-  wsService.send<ClientCount>(
-    {
-      event: "chat:client_count",
-      data: { count: wsService.clientStore.clientCount },
-    },
-    client,
-  );
+export function onChatStart(event: WSClient) {
+  const clients = wsService.clientStore.getSanitizedClients(event.broadcastId);
+  wsService.send({
+    message: { event: "chat:client_list", data: clients },
+    socket: event.socket,
+  });
+
+  const count = wsService.clientStore.getClientsCount(event.broadcastId) || 0;
+
+  wsService.send<ClientCount>({
+    message: { event: "chat:client_count", data: { count } },
+    socket: event.socket,
+  });
 }
 
-export function onAddClient(client: SanitizedWSChatClient): void {
-  wsService.sendToAll<SanitizedWSChatClient>(
-    { event: "chat:new_client", data: client },
-    wsService.clientStore.clients,
-  );
+export function onAddClient(client: WSClient): void {
+  wsService.sendToAll<SanitizedWSChatClient>({
+    broadcastId: client.broadcastId,
+    message: { event: "chat:new_client", data: sanitizeWSClient(client) },
+  });
 }
 
-export function onDeleteClient(client: DeletedWSClient): void {
-  wsService.sendToAll<DeletedWSClient>(
-    { event: "chat:deleted_client", data: client },
-    wsService.clientStore.clients,
-  );
+export function onDeleteClient(event: DeletedWSClient): void {
+  wsService.sendToAll<DeletedWSClient>({
+    broadcastId: event.broadcastId,
+    message: { event: "chat:deleted_client", data: event },
+  });
 }
 
-export function onUpdateClientCount(clientCount: number): void {
-  wsService.sendToAll<ClientCount>(
-    { event: "chat:client_count", data: { count: clientCount } },
-    wsService.clientStore.clients,
-  );
+export function onUpdateClientCount(event: {
+  broadcastId: number;
+  count: number;
+}): void {
+  wsService.sendToAll<ClientCount>({
+    broadcastId: event.broadcastId,
+    message: { event: "chat:client_count", data: { count: event.count } },
+  });
 }

@@ -1,38 +1,50 @@
 import util from "util";
-import { WSClientStore } from "./ws-client-store";
-import { logger } from "../../config/logger";
-import { IntervalScheduler } from "./scheduler";
-import { WSClient, WSMsg, WSUserMsg } from "../../types";
 
-type Message<Data> = WSMsg | WSUserMsg<Data>;
+import { WebSocket } from "ws";
+
+import { WSClientStore } from "./ws-client-store";
+import { IntervalScheduler } from "./scheduler";
+import { logger } from "../../config/logger";
+import { type WSMsg, type WSUserMsg } from "../../types";
+
+type Message<M> = WSMsg | WSUserMsg<M>;
+type MsgToAllExceptSender<M> = {
+  message: Message<M>;
+  senderUUID: string;
+  broadcastId: number;
+};
+type MsgToSingleUser<M> = {
+  message: Message<M>;
+  socket: WebSocket;
+};
+type MsgToAll<M> = {
+  message: WSMsg | WSUserMsg<M>;
+  broadcastId: number;
+};
 
 export const wsService = {
   clientStore: new WSClientStore(new IntervalScheduler()),
 
-  send: function <Data>(msg: Message<Data>, reciever: WSClient): void {
-    reciever.socket.send(JSON.stringify(msg));
-    logger.info(
-      `${__filename}: [send] To ${reciever.username}: ${util.inspect(msg)}`,
-    );
+  send: function <M>({ message, socket }: MsgToSingleUser<M>): void {
+    socket.send(JSON.stringify(message));
+
+    logger.debug(`[send] ${util.inspect(message)}`);
   },
 
-  sendToAll: function <Data>(
-    msg: WSMsg | WSUserMsg<Data>,
-    recievers: WSClient[],
-  ): void {
-    for (const client of recievers) {
-      client.socket.send(JSON.stringify(msg));
+  sendToAll: function <M>({ message, broadcastId }: MsgToAll<M>): void {
+    const recievers = this.clientStore.getClientsSockets(broadcastId);
+
+    for (const reciever of recievers) {
+      reciever.socket.send(JSON.stringify(message));
     }
   },
 
-  sendToAllExceptSender: function <Data>(
-    msg: Message<Data>,
-    { senderUUID }: { senderUUID: string },
-    recievers: WSClient[],
-  ): void {
-    for (const client of recievers) {
-      if (senderUUID !== client.uuid) {
-        client.socket.send(JSON.stringify(msg));
+  sendToAllExceptSender: function <M>(msg: MsgToAllExceptSender<M>): void {
+    const recievers = this.clientStore.getClientsSockets(msg.broadcastId);
+
+    for (const reciever of recievers) {
+      if (msg.senderUUID !== reciever.uuid) {
+        reciever.socket.send(JSON.stringify(msg.message));
       }
     }
   },

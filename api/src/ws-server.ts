@@ -28,6 +28,10 @@ wsServer.on("close", onClose);
 wsService.clientStore.on("add_client", onAddClient);
 wsService.clientStore.on("delete_client", onDeleteClient);
 wsService.clientStore.on("update_client_count", onUpdateClientCount);
+wsService.clientStore.on(
+  "update_client_count",
+  streamService.updateListenerPeakCount,
+);
 streamService.events.on("start", onStreamStart);
 streamService.events.on("end", onStreamEnd);
 streamService.events.on("like", onStreamLike);

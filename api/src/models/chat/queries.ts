@@ -2,8 +2,6 @@ import { dbConnection } from "../../config/postgres";
 import {
   ChatMsg,
   ChatMsgId,
-  ChatMsgLike,
-  ChatMsgUnlike,
   NewChatMsg,
   PaginatedItems,
   ReadMsgDBResponse,
@@ -114,9 +112,6 @@ export const chatRepo = {
     const pool = await dbConnection.open();
     const res = await pool.query<{ chat_message_id: number }>(sql, values);
 
-    console.log(
-      "================================================================================================================================================================================================================================",
-    );
     console.log(msg);
     console.log(res.rows);
 
@@ -136,17 +131,7 @@ export const chatRepo = {
     broadcastId: number;
     limit: number;
     nextCursor?: string;
-  }): Promise<
-    PaginatedItems<{
-      broadcastId: number;
-      messageId: number;
-      userId: number;
-      username: string;
-      createdAt: string;
-      message: string;
-      likedByUserId: number[];
-    }>
-  > {
+  }): Promise<PaginatedItems<ChatMsg>> {
     const sql = `
       SELECT 
         username, v_c_h.*
@@ -182,15 +167,7 @@ export const chatRepo = {
     const pool = await dbConnection.open();
     const res = await pool.query<ReadMsgDBResponse>(sql, values);
 
-    const items: {
-      messageId: number;
-      broadcastId: number;
-      userId: number;
-      username: string;
-      createdAt: string;
-      message: string;
-      likedByUserId: number[];
-    }[] = res.rows.map((row) => {
+    const items: ChatMsg[] = res.rows.map((row) => {
       return {
         messageId: row.chat_message_id,
         broadcastId: row.broadcast_id,
@@ -206,7 +183,7 @@ export const chatRepo = {
     if (items.length === 0) {
       return { nextCursor: null, items: [] };
     } else if (items.length <= limit) {
-      return { nextCursor: null, items: items };
+      return { nextCursor: null, items };
     } else {
       // To handle cases when multiple records have the same timestamp, we create composite cursor (for the last raw) combining record's timestamp and id
       const newNextCursor = encodeNextPageCursor(
@@ -222,16 +199,18 @@ export const chatRepo = {
   createMsgLike: async function (msg: {
     messageId: number;
     userId: number;
-  }): Promise<ChatMsgLike> {
+  }): Promise<{
+    messageId: number;
+    likedByUserId: number;
+    likedByUserIds: number[];
+  }> {
     const insertSql = `
-      INSERT INTO \
+      INSERT INTO 
         chat_message_like (
           appuser_id, chat_message_id
         )
       VALUES 
-        ($1, $2) 
-      ON CONFLICT 
-        DO NOTHING`;
+        ($1, $2)`;
     const insertValues = [msg.userId, msg.messageId];
     const pool = await dbConnection.open();
     await pool.query(insertSql, insertValues);
@@ -251,9 +230,11 @@ export const chatRepo = {
     };
   },
 
-  destroyMsgLike: async function (
-    msg: ChatMsgId,
-  ): Promise<ChatMsgUnlike | void> {
+  destroyMsgLike: async function (msg: ChatMsgId): Promise<{
+    messageId: number;
+    unlikedByUserId: number;
+    likedByUserIds: number[];
+  } | void> {
     const deleteSql = `
       DELETE FROM 
         chat_message_like 

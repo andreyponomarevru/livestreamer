@@ -4,23 +4,20 @@ import { logger } from "../../config/logger";
 import { sendBroadcastState, streamService } from "../stream";
 
 export async function onConnection(
-  client: WSClient,
+  wsClient: WSClient,
   req: unknown,
   params: unknown,
 ): Promise<void> {
-  client.socket.on("close", () =>
-    wsService.clientStore.deleteClient(client.uuid),
+  wsClient.socket.on("close", () =>
+    wsService.clientStore.deleteClient(wsClient.uuid, wsClient.broadcastId),
   );
 
-  sendBroadcastState(
-    client,
-    await streamService.readBroadcastStreamState(
-      client.id!,
-      0 /*client.broadcastId!,*/,
-    ),
+  const state = await streamService.readBroadcastStreamState(
+    wsClient.broadcastId,
   );
+  sendBroadcastState(wsClient, state);
 
-  wsService.clientStore.addClient(client);
+  wsService.clientStore.addClient(wsClient);
 }
 
 export function onClose(): void {
