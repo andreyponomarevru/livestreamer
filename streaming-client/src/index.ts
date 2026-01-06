@@ -36,12 +36,12 @@ async function startBroadcast(url: string) {
   await startStream({
     host: apiConfig[NDOE_ENV].API_HOST,
     port: apiConfig[NDOE_ENV].API_PORT,
+    // Don't include port number in URL, it will result in error
     path: url,
     method: "PUT",
     headers: {
       "content-type": "audio/mpeg",
       "transfer-encoding": "chunked",
-      // Don't include port number in URL, it will result in error
       cookie: String(sessionCookie),
     },
   });
