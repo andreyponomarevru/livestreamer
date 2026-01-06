@@ -9,7 +9,6 @@ import { SanitizedUser } from "../../types";
 import { sanitizeUser } from "../../models/user/sanitize-user";
 import { COOKIE_NAME } from "../../config/env";
 import { wsService } from "../../services/ws";
-import { WSClient } from "../../types";
 
 export const sessionController = {
   createSession: async function (
@@ -91,43 +90,22 @@ export const sessionController = {
     next: NextFunction,
   ): Promise<void> {
     try {
-      let wsClient: WSClient | undefined;
-
-      if (
-        req.session &&
-        req.session.authenticatedUser &&
-        req.session.authenticatedUser.uuid
-      ) {
-        wsClient = wsService.clientStore.getClient(
-          req.session.authenticatedUser.uuid,
-        );
-      }
-
       logger.debug(
-        `${__filename} [destroySession] Authenticated user is signing out: `,
+        `${__filename} [destroySession] Authenticated user is signing out, session destroyed `,
         req.session.authenticatedUser,
       );
       logger.debug(
         `${__filename} [destroySession] clients in store: ${util.inspect(
-          wsService.clientStore.clients,
+          wsService.clientStore,
         )}`,
       );
-
-      // Handle situation when the client has signed in, but hadn't connected over WS (for example, when the client is 'broadcaster' who connected only over HTTP through CLI)
-      if (wsClient) {
-        logger.debug(
-          `WSClient ${util.inspect(
-            wsClient.username,
-          )} will be deleted from WSStore`,
-        );
-      }
 
       req.session.destroy((err) => {
         // You cannot access session here, it has been already destroyed
         if (err) logger.error(`${__filename}: ${err}`);
 
-        if (wsClient) wsClient.socket.close();
         res.clearCookie(COOKIE_NAME);
+
         res.status(204).end();
 
         logger.debug(
