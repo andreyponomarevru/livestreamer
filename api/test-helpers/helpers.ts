@@ -1,4 +1,5 @@
 import request from "supertest";
+import { faker } from "@faker-js/faker";
 
 import { dbConnection } from "../src/config/postgres";
 import { authnService } from "../src/services/authn";
@@ -25,6 +26,28 @@ export const RESPONSE_401 = {
   statusText: "Unauthorized",
   moreInfo: "https://github.com/ponomarevandrey/",
   message: "You must authenticate to access this resource",
+};
+
+export const newUser = {
+  roleId: 2,
+  email: faker.internet.email(),
+  displayName: faker.internet
+    .displayName()
+    .substring(0, DATABASE_CONSTRAINTS.maxDisplayName),
+  isEmailConfirmed: true,
+  isDeleted: false,
+  profilePictureUrl: faker.system.filePath(),
+  about: faker.lorem.paragraphs(),
+};
+
+export const newBroadcast = {
+  artworkUrl: faker.internet.url(),
+  description: faker.lorem.paragraphs(),
+  listenerPeakCount: faker.number.int({ min: 0, max: 10000 }),
+  title: faker.book
+    .title()
+    .substring(0, DATABASE_CONSTRAINTS.maxBroadcastTitle),
+  isVisible: true,
 };
 
 type Credentials = { username: string; password: string };
