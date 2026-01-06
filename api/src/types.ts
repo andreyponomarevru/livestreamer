@@ -8,15 +8,19 @@ import { User } from "./models/user/user";
 //
 
 export interface WSClient {
+  readonly userId?: number;
   readonly uuid: string;
-  readonly id?: number;
+  readonly broadcastId: number;
   readonly username: string;
   readonly socket: WebSocket;
+  readonly profilePictureUrl: string;
 }
-export type SanitizedWSChatClient = { uuid: string; username: string };
+export type SanitizedWSChatClient = Pick<
+  WSClient,
+  "uuid" | "username" | "profilePictureUrl"
+>;
 export type AppState = { isStreamPaused: boolean };
 export type WebSocketUUID = { uuid: string };
-export type UnauthenticatedWSClient = { id: string; socket: WebSocket };
 export type BroadcastStreamWebSocketData = {
   isStreaming: boolean;
   broadcast?: BroadcastStream;
@@ -27,7 +31,12 @@ export type WSUserMsg<Data> = {
   username: string;
   data?: Data;
 };
-export type DeletedWSClient = { uuid: string; id: number; username: string };
+export type DeletedWSClient = {
+  broadcastId: number;
+  uuid: string;
+  userId: number;
+  username: string;
+};
 export type ClientCount = { count: number };
 export type WSMsg =
   | AddClientMsg
@@ -79,11 +88,8 @@ export type UpdateClientCountMsg = {
 export type BroadcastStream = {
   userId: number;
   broadcastId: number;
-  title: string;
   likeCount: number;
   listenerPeakCount: number;
-  startAt: string;
-  endAt: string;
 };
 
 export interface UserAccount {
@@ -180,11 +186,13 @@ export type NewChatMsg = {
   message: string;
 };
 export type ChatMsgLike = {
+  broadcastId: number;
   messageId: number;
   likedByUserId: number;
   likedByUserIds: number[];
 };
 export type ChatMsgUnlike = {
+  broadcastId: number;
   messageId: number;
   unlikedByUserId: number;
   likedByUserIds: number[];
