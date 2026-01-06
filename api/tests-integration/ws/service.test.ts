@@ -1,6 +1,6 @@
 import { jest, describe, it, expect } from "@jest/globals";
 import { faker } from "@faker-js/faker";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import WebSocket from "ws";
 import { wsService } from "../../src/services/ws";
 import { logger } from "../../src/config/logger";
@@ -10,12 +10,12 @@ jest.mock("../../src/config/logger");
 
 const wsMessage: WSMsg = {
   event: "chat:new_client",
-  data: { uuid: uuidv4(), username: faker.internet.username() },
+  data: { uuid: randomUUID(), username: faker.internet.username() },
 };
 
 function createWSClient(): WSClient {
   return {
-    uuid: uuidv4(),
+    uuid: randomUUID(),
     username: faker.internet.username(),
     socket: { send: jest.fn() } as unknown as WebSocket,
   };
