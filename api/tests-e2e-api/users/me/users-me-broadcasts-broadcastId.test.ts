@@ -19,6 +19,7 @@ import {
   createUser,
   DATABASE_CONSTRAINTS,
   generateUrlPath,
+  newUser,
 } from "../../../test-helpers/helpers";
 import { httpServer } from "../../../src/http-server";
 import { dbConnection } from "../../../src/config/postgres";
@@ -49,17 +50,9 @@ beforeEach(async () => {
     .substring(0, DATABASE_CONSTRAINTS.maxPasswordLength);
 
   const { appuser_id } = await createUser({
-    roleId: 2,
+    ...newUser,
     username: username!,
     password: password!,
-    email: faker.internet.email(),
-    displayName: faker.internet
-      .displayName()
-      .substring(0, DATABASE_CONSTRAINTS.maxDisplayName),
-    isEmailConfirmed: true,
-    isDeleted: false,
-    profilePictureUrl: faker.system.filePath(),
-    about: faker.lorem.paragraphs(),
   });
 
   userId = appuser_id;
@@ -69,6 +62,8 @@ describe(ROUTE, () => {
   describe("DELETE - delete broadcast by id", () => {
     describe("204", () => {
       it("responds with an empty body on successfull delete", async () => {
+        expect(typeof userId).toBe("number");
+
         const from = faker.date.anytime();
         const to = dateFns.addHours(from, 3);
         const [startAt, endAt] = faker.date.betweens({ from, to, count: 2 });
@@ -85,13 +80,7 @@ describe(ROUTE, () => {
           endAt: endAt.toISOString(),
           listenerPeakCount: faker.number.int(100000),
         });
-
-        const pool = await dbConnection.open();
-        const savedBroadcast = await pool.query(
-          `SELECT 1 FROM view_broadcast WHERE appuser_id = $1`,
-          [userId],
-        );
-        expect(savedBroadcast.rows).toHaveLength(1);
+        expect(typeof newBroadcast.broadcast_id).toBe("number");
 
         const agent = request.agent(httpServer);
         await agent
@@ -108,6 +97,7 @@ describe(ROUTE, () => {
           )
           .expect(204);
 
+        const pool = await dbConnection.open();
         const deletedBroadcast = await pool.query(
           "SELECT 1 FROM broadcast WHERE broadcast_id = $1",
           [newBroadcast.broadcast_id],

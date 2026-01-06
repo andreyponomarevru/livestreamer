@@ -65,7 +65,7 @@ describe(ROUTE, () => {
     isVisible: true,
     startAt: startAt.toISOString(),
     endAt: endAt.toISOString(),
-    artworkUrl: faker.internet.url(),
+    artworkUrl: faker.system.filePath(),
     description: faker.lorem.paragraphs(),
     listenerPeakCount: faker.number.int({ min: 0, max: 10000 }),
   };

@@ -20,7 +20,9 @@ const unconfirmedUser = {
     .username()
     .substring(0, DATABASE_CONSTRAINTS.maxUsernameLength),
   email: faker.internet.email(),
-  password: faker.internet.password(),
+  password: faker.internet.password({
+    length: DATABASE_CONSTRAINTS.maxPasswordLength,
+  }),
   emailConfirmationToken: faker.string.uuid(),
   displayName: faker.internet
     .displayName()
@@ -55,7 +57,11 @@ describe(ROUTE, () => {
           .post(
             `${API_URL_PREFIX}/verification?token=${unconfirmedUser.emailConfirmationToken}`,
           )
-          .expect(204);
+          .expect(204)
+          .catch((err) => {
+            console.error(err);
+            throw err;
+          });
 
         const pool = await dbConnection.open();
         const confirmedUser = await pool.query(

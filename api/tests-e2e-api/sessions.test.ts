@@ -57,7 +57,7 @@ describe(ROUTE, () => {
       .substring(0, DATABASE_CONSTRAINTS.maxDisplayName),
     isEmailConfirmed: true,
     isDeleted: false,
-    profilePictureUrl: faker.internet.url(),
+    profilePictureUrl: faker.system.filePath(),
     about: faker.lorem.paragraphs(),
   };
 

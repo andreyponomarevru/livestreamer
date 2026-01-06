@@ -42,7 +42,7 @@ describe(ROUTE, () => {
           .expect(202);
       });
 
-      it("saves a new user in database, marking its email as unconfirmed", async () => {
+      it("saves a new user in database, marking his email as unconfirmed", async () => {
         await request(httpServer)
           .post(ROUTE)
           .set("authorization", `Basic ${btoa(`${username}:${password}`)}`)
@@ -65,7 +65,7 @@ describe(ROUTE, () => {
             is_email_confirmed: false,
             email_confirmation_token: expect.any(String),
             password_reset_token: null,
-            about: expect.any(String),
+            about: "",
             display_name: username,
             profile_picture_url: expect.any(String),
             subscription_name: expect.any(String),

@@ -19,10 +19,15 @@ import {
   createBroadcast,
   createUser,
   DATABASE_CONSTRAINTS,
+  newUser,
 } from "../../../test-helpers/helpers";
 import { dbConnection } from "../../../src/config/postgres";
 
 const ROUTE = `${API_URL_PREFIX}/users/me/broadcasts`;
+
+let username: undefined | string;
+let password: undefined | string;
+let userId: undefined | number;
 
 beforeAll(async () => {
   httpServer.listen();
@@ -34,10 +39,6 @@ afterAll(async () => {
   });
 });
 
-let username: undefined | string;
-let password: undefined | string;
-let userId: undefined | number;
-
 beforeEach(async () => {
   username = faker.internet
     .username()
@@ -48,17 +49,9 @@ beforeEach(async () => {
     .substring(0, DATABASE_CONSTRAINTS.maxPasswordLength);
 
   const { appuser_id } = await createUser({
-    roleId: 2,
+    ...newUser,
     username: username!,
     password: password!,
-    email: faker.internet.email(),
-    displayName: faker.internet
-      .displayName()
-      .substring(0, DATABASE_CONSTRAINTS.maxDisplayName),
-    isEmailConfirmed: true,
-    isDeleted: false,
-    profilePictureUrl: faker.internet.url(),
-    about: faker.lorem.paragraphs(),
   });
 
   userId = appuser_id;
@@ -100,7 +93,7 @@ describe(ROUTE, () => {
         expect(response.body?.results).toHaveLength(totalBroadcasts);
       });
 
-      it.only("sets the broadcast artworkUrl field in reponse relative to API upload dir", async () => {
+      it("sets the broadcast artworkUrl field in reponse relative to API upload dir", async () => {
         const from = faker.date.anytime();
         const to = dateFns.addHours(from, 3);
         const [startAt, endAt] = faker.date.betweens({ from, to, count: 2 });
@@ -163,10 +156,7 @@ describe(ROUTE, () => {
           description: faker.lorem.paragraphs(),
         };
 
-        const imgPath = path.resolve(
-          __dirname,
-          "../../../test-helpers/test-data/broadcast-artwork.jpg",
-        );
+        const imgPath = path.resolve(__dirname, "./broadcast-artwork.jpg");
         expect(fs.existsSync(imgPath)).toBe(true);
 
         const response = await agent

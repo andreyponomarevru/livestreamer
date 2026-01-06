@@ -23,7 +23,7 @@ afterAll(async () => {
 });
 
 describe(ROUTE, () => {
-  describe(`PATCH - update the pasword`, () => {
+  describe(`PATCH - update the password`, () => {
     describe("if the user attempts to reset password (submits only req.body.email)", () => {
       describe("202", () => {
         describe("if the user email is already confirmed and his account is not marked as deleted", () => {
@@ -92,7 +92,7 @@ describe(ROUTE, () => {
       });
     });
 
-    describe("if the request is to save the new password (the user sends the request containing the previously provided password reset token - the one he got on email - (req.body.token) + a new password (req.body.newPassword))", () => {
+    describe("if the user attempts to confirm the new password (the request containing the previously provided password reset token - the one he got on email - (req.body.token) + a new password (req.body.newPassword))", () => {
       describe("204", () => {
         it.todo(
           "responds with an empty body if a new password has been saved  successfuly",
