@@ -82,11 +82,11 @@ async function schedule(newBroadcast: {
       },
     );
   } catch (err) {
-    console.error((err as AxiosError).response?.data);
+    console.error((err as AxiosError).response);
     process.exit(1);
   }
 
-  if (response.status >= 200) {
+  if (response.status === 200) {
     console.log(
       `Scheduled broadcast successfully: ${response.headers["location"]}`,
     );
@@ -95,16 +95,16 @@ async function schedule(newBroadcast: {
   process.exit(0);
 }
 
-async function debugOnResponseData(chunk: any): Promise<void> {
+async function onDebugResponseData(chunk: any): Promise<void> {
   console.log(chunk.toString());
 }
 
-async function debugOnResponseError(err: Error): Promise<void> {
+async function onDebugResponseError(err: Error): Promise<void> {
   console.error(`Response error: ${err}`);
   process.exit(1);
 }
 
-async function debugOnRequestError(err: Error): Promise<void> {
+async function onDebugRequestError(err: Error): Promise<void> {
   console.error(`Request error: ${err}`);
   process.exit(1);
 }
@@ -116,16 +116,18 @@ async function startStream(
     process.env.NODE_ENV === "production" ? https : http
   ).request(requestOptions);
 
-  request.on("response", (res) => {
+  function onResponse(res: http.IncomingMessage) {
     console.log(`Response status code: ${res.statusCode}`);
     if (res.statusCode !== 200) {
       process.exit(1);
     }
 
-    res.on("data", debugOnResponseData);
-    res.on("error", debugOnResponseError);
-  });
-  request.on("error", debugOnRequestError);
+    res.on("data", onDebugResponseData);
+    res.on("error", onDebugResponseError);
+  }
+
+  request.on("response", onResponse);
+  request.on("error", onDebugRequestError);
 
   process.on("SIGINT", () => request.end());
 
