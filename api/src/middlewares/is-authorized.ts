@@ -3,8 +3,6 @@ import { Request, Response, NextFunction } from "express";
 import { HttpError } from "../utils/http-error";
 import { logger } from "../config/logger";
 
-// TODO looks like extraAuthZ is never used anywhere so you  can safely remove it but first write e2e tests for all routes
-
 export function isAuthorized(
   action: string,
   resource: string,
@@ -15,7 +13,7 @@ export function isAuthorized(
     res: Response,
     next: NextFunction,
   ): Promise<void> {
-    logger.info(`${__filename}: Access "${resource}", action: "${action}"`);
+    logger.debug(`${__filename}: Access "${resource}", action: "${action}"`);
 
     const authUser = req.session.authenticatedUser;
     const permissions = authUser!.permissions?.[resource];
