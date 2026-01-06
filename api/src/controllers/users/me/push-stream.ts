@@ -38,11 +38,10 @@ export async function sendStreamfromBroadcaster(
       });
     }
 
-    const isTimeToBroadcast = await broadcastService.isISOTimestampInRange(
+    const isTimeToBroadcast = await broadcastService.isTimestampInRange(
       new Date().toISOString(),
-      { startTs: broadcast.startAt, endTs: broadcast.endAt },
+      { start: broadcast.startAt, end: broadcast.endAt },
     );
-    console.log("is time to broadcast? ", isTimeToBroadcast);
     if (!isTimeToBroadcast) {
       throw new HttpError({
         code: 403,
