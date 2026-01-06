@@ -25,10 +25,8 @@ const date4 = generatePastBroadcastDates();
 const date5 = generatePastBroadcastDates();
 const date6 = generatePastBroadcastDates();
 
-const broadcasts: Broadcast[] = [
+const broadcasts: Omit<Broadcast, "broadcastId" | "userId">[] = [
   {
-    broadcastId: 1,
-    userId: 2,
     title: "Ambient Live Special",
     ...date1,
     listenerPeakCount: 23,
@@ -38,8 +36,6 @@ const broadcasts: Broadcast[] = [
     likeCount: 65,
   },
   {
-    broadcastId: 2,
-    userId: 1,
     title: "Chillout Live",
     ...date2,
     listenerPeakCount: 16,
@@ -49,8 +45,6 @@ const broadcasts: Broadcast[] = [
     likeCount: 48,
   },
   {
-    broadcastId: 3,
-    userId: 2,
     title: "Downtempo Live",
     ...date3,
     listenerPeakCount: 7,
@@ -60,8 +54,6 @@ const broadcasts: Broadcast[] = [
     likeCount: 34,
   },
   {
-    broadcastId: 4,
-    userId: 2,
     title: "Jungle/Ambient Live",
     ...date4,
     listenerPeakCount: 12,
@@ -71,8 +63,6 @@ const broadcasts: Broadcast[] = [
     likeCount: 67,
   },
   {
-    broadcastId: 5,
-    userId: 1,
     title: "Test Live",
     ...date5,
     listenerPeakCount: 3,
@@ -82,8 +72,6 @@ const broadcasts: Broadcast[] = [
     likeCount: 21,
   },
   {
-    broadcastId: 6,
-    userId: 2,
     title: "Second Test Live",
     ...date6,
     listenerPeakCount: 8,
@@ -95,8 +83,13 @@ const broadcasts: Broadcast[] = [
 ];
 
 export async function up(pgm: MigrationBuilder): Promise<void> {
+  const randomUsers = await pgm.db.query("SELECT appuser_id FROM appuser");
+  const randomUserId = randomUsers.rows.map(
+    (u: { appuser_id: number }) => u.appuser_id,
+  )[Math.floor(Math.random() * randomUsers.rows.length)];
+
   for (const broadcast of broadcasts) {
-    pgm.sql(`
+    const response = await pgm.db.query(`
     INSERT INTO broadcast (
       appuser_id,
       title, 
@@ -108,7 +101,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
       description
     )
     VALUES (
-      ${broadcast.userId},
+      ${randomUserId},
       '${broadcast.title}',
       '${broadcast.startAt}',
       '${broadcast.endAt}',
@@ -116,7 +109,9 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
       ${broadcast.isVisible},
       '${broadcast.artworkUrl}',
       '${broadcast.description}'
-    )`);
+    ) 
+    RETURNING 
+      broadcast_id`);
 
     pgm.sql(`
     INSERT INTO broadcast_like (
@@ -126,8 +121,8 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
       created_at
     )
     VALUES (
-      ${broadcast.broadcastId},
-      ${broadcast.userId},
+      ${response.rows[0].broadcast_id},
+      ${randomUserId},
       ${broadcast.likeCount}, 
       '${faker.date
         .between({
