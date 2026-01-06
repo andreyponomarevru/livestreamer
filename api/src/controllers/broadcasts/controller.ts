@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 
-import { streamService, inoutStream } from "../../services/stream";
+import { streamService } from "../../services/stream";
 import { cacheService } from "../../services/cache";
 import { HttpError } from "../../utils/http-error";
-import { pull } from "./pull-stream";
+import { relayStreamToListener } from "./pull-stream";
 import { chatService } from "../../services/chat/service";
 import { type Broadcast, type ChatMsg } from "../../types";
 import { logger } from "../../config/logger";
@@ -43,15 +43,16 @@ export const broadcastController = {
       next: NextFunction,
     ): Promise<void> {
       try {
-        if (inoutStream.isPaused())
+        if (!streamService.streamsHub.has(Number(req.params.broadcastId)))
           throw new HttpError({
             code: 410,
-            message: "The broadcast (stream) has finished",
+            message: "You can't like a stream which is offline",
           });
 
         await streamService.likeStream({
           userUUID: req.session.authenticatedUser!.uuid!,
           userId: req.session.authenticatedUser!.userId,
+          username: req.session.authenticatedUser!.username,
           broadcastId: req.params.broadcastId!,
         });
         res.status(204).end();
@@ -60,7 +61,7 @@ export const broadcastController = {
       }
     },
 
-    pull,
+    relayStreamToListener,
   },
 
   chat: {
@@ -119,11 +120,7 @@ export const broadcastController = {
         });
         res.status(204).end();
       } catch (err) {
-        if ("23503" === err.code) {
-          next(new HttpError({ code: 422 }));
-        } else {
-          next(err);
-        }
+        next(err);
       }
     },
 
@@ -141,8 +138,8 @@ export const broadcastController = {
     ): Promise<void> {
       try {
         const msgs = await chatService.readMsgsPaginated({
-          broadcastId: req.params!.broadcastId as number,
-          limit: req.query.limit || 50,
+          broadcastId: req.params.broadcastId!,
+          limit: req.query.limit || 20,
           nextCursor: req.query.next_cursor,
         });
 

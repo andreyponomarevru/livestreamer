@@ -1,5 +1,7 @@
 import path from "path";
 
+import dateFns from "date-fns";
+
 import { UPLOADED_BROADCAST_ARTWORKS_IMG_DIR } from "../../config/env";
 import { broadcastRepo } from "../../models/broadcast/queries";
 import { Broadcast, BroadcastFilters } from "../../types";
@@ -45,6 +47,7 @@ export const broadcastService = {
     filters?: BroadcastFilters,
   ): Promise<Broadcast[]> {
     const broadcasts = await broadcastRepo.readAll(user, filters);
+
     return broadcasts.map((b) => {
       return {
         ...b,
@@ -66,7 +69,8 @@ export const broadcastService = {
     endAt?: string;
     isVisible?: boolean;
   }) {
-    // TODO: check that the updated broadcast doesn't overlap in time (schedule) with any existing one. If there is overlapping, return a sensible error to be able to print in UI
+    // TODO: check that the updated broadcast doesn't overlap in time (schedule) with any existing one. If there is overlapping, return a sensible error to be able to print in UI. dateFns.areIntervalsOverlapping(...) or do it in SQL: SELECT (start1, end1) OVERLAPS (start2, end2);
+
     return await broadcastRepo.update(updatedBroadcast);
   },
 
@@ -78,15 +82,13 @@ export const broadcastService = {
     return await broadcastRepo.isExist(userId, broadcastId);
   },
 
-  isISOTimestampInRange: function (
-    current: string,
-    start: string,
-    end: string,
+  isTimestampInRange: function (
+    currentTs: string,
+    range: { start: string; end: string },
   ) {
-    const currentTs = new Date(current);
-    const startTs = new Date(start);
-    const endTs = new Date(end);
-
-    return currentTs >= startTs && currentTs < endTs;
+    return dateFns.isWithinInterval(new Date(currentTs), {
+      start: new Date(range.start),
+      end: new Date(range.end),
+    });
   },
 };

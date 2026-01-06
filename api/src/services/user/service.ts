@@ -1,3 +1,4 @@
+import path from "path";
 import { randomUUID } from "crypto";
 
 import { Permissions } from "../../types";
@@ -7,6 +8,9 @@ import { mailService } from "../mail";
 import { userRepo } from "../../models/user/queries";
 import { EXCHANGE_NAME, QUEUES } from "../../config/rabbitmq/config";
 import { rabbitMQPublisher } from "../../config/rabbitmq/publisher";
+import { UPLOADED_PROFILE_PICS_IMG_DIR } from "../../config/env";
+
+export const USER_PIC_PLACEHOLDER_PATH = `assets/profile-placeholder.svg`;
 
 export const userService = {
   createUser: async function ({
@@ -28,7 +32,7 @@ export const userService = {
       emailConfirmationToken: userToken,
       isEmailConfirmed: false,
       displayName: username,
-      profilePictureUrl: "/mnt/default-avatar.jpg",
+      profilePictureUrl: "",
       subscriptionName: "basic",
       about: "",
       websiteUrl: "",
@@ -65,12 +69,32 @@ export const userService = {
 
     const permissions = await userRepo.readUserPermissions(user.userId);
 
-    return { uuid: randomUUID(), ...user, permissions };
+    return {
+      ...user,
+      uuid: randomUUID(),
+      permissions,
+      profilePictureUrl:
+        user.profilePictureUrl === ""
+          ? USER_PIC_PLACEHOLDER_PATH
+          : path.resolve(UPLOADED_PROFILE_PICS_IMG_DIR, user.profilePictureUrl),
+    };
   },
 
   readAllUsers: async function (): Promise<User[]> {
     const users = await userRepo.readAllUsers();
-    return users.map((user) => ({ uuid: randomUUID(), ...user }));
+    return users.map((user) => {
+      return {
+        ...user,
+        uuid: randomUUID(),
+        profilePictureUrl:
+          user.profilePictureUrl === ""
+            ? USER_PIC_PLACEHOLDER_PATH
+            : path.resolve(
+                UPLOADED_PROFILE_PICS_IMG_DIR,
+                user.profilePictureUrl,
+              ),
+      };
+    });
   },
 
   updateUser: async function ({

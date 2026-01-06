@@ -14,7 +14,7 @@ export const streamRepo = {
     });
 
     await client.HSET(
-      this.getRedisBroadcastStreamKey(broadcast.userId, broadcast.broadcastId),
+      this.getRedisBroadcastStreamKey(broadcast.broadcastId),
       stringifiedBroadcast,
     );
   },
@@ -24,23 +24,17 @@ export const streamRepo = {
     await client.del(`livebroadcast:${userId}:${broadcastId}`);
   },
 
-  read: async function (
-    userId: number,
-    broadcastId: number,
-  ): Promise<BroadcastStream> {
+  read: async function (broadcastId: number): Promise<BroadcastStream> {
     const client = await redisConnection.open();
     const broadcast = await client.HGETALL(
-      this.getRedisBroadcastStreamKey(userId, broadcastId),
+      this.getRedisBroadcastStreamKey(broadcastId),
     );
 
     return {
       userId: Number(broadcast.userId),
       broadcastId: Number(broadcast.id),
-      title: broadcast.title,
       listenerPeakCount: Number(broadcast.listenerPeakCount),
       likeCount: Number(broadcast.likeCount),
-      startAt: broadcast.startAt,
-      endAt: broadcast.endAt,
     };
   },
 
@@ -50,86 +44,66 @@ export const streamRepo = {
   ): Promise<boolean> {
     const client = await redisConnection.open();
     return Boolean(
-      await client.exists(this.getRedisBroadcastStreamKey(userId, broadcastId)),
+      await client.exists(this.getRedisBroadcastStreamKey(broadcastId)),
     );
   },
 
   updateListenerPeakCount: async function (
-    userId: number,
     broadcastId: number,
     count: number,
   ): Promise<void> {
     const client = await redisConnection.open();
-    await client.HSET(this.getRedisBroadcastStreamKey(userId, broadcastId), {
+    await client.HSET(this.getRedisBroadcastStreamKey(broadcastId), {
       listenerPeakCount: `${count}`,
     });
   },
 
-  readListenerPeakCount: async function (
-    userId: number,
-    broadcastId: number,
-  ): Promise<number> {
+  readListenerPeakCount: async function (broadcastId: number): Promise<number> {
     const client = await redisConnection.open();
     return Number(
       await client.HGET(
-        this.getRedisBroadcastStreamKey(userId, broadcastId),
+        this.getRedisBroadcastStreamKey(broadcastId),
         "listenerPeakCount",
       ),
     );
   },
 
   createLike: async function (
-    userId: number,
+    likedByUserId: number,
     broadcastId: number,
-  ): Promise<{
-    broadcastId: number;
-    likedByUserId: number;
-    likedByUsername: string;
-    likeCount: number;
-  }> {
-    // TODO looks like you retrieve only particular user's likes, but you need to retrieve ALL user likes
-
-    // If the user already has liked the broadcast, 'ON CONFLICT' clause allows us to just increment the counter of an existing row
-    const insertSql =
-      "WITH like_counter AS (\
-      /* Insert like */ \
-      INSERT INTO \
-        broadcast_like (broadcast_id, appuser_id, count) \
-      VALUES \
-        ($1, $2, 1) \
-      ON CONFLICT \
-        (broadcast_id, appuser_id) \
-      DO UPDATE SET \
-        count = broadcast_like.count + 1\
-      RETURNING \
-        appuser_id, broadcast_id, count\
-      /* Retrieve username */\
-    ) SELECT \
-        au.appuser_id, au.username, lc.broadcast_id, lc.count \
-      FROM \
-        appuser AS au \
-      INNER JOIN \
-        like_counter AS lc \
-      ON \
-        au.appuser_id = lc.appuser_id";
-    const insertValues = [broadcastId, userId];
+  ): Promise<{ likesCount: number }> {
+    const insertLikeAndSelectTotalLikesCountSql = `
+      WITH saved_like AS (
+        INSERT INTO 
+          broadcast_like (broadcast_id, appuser_id, count) 
+        VALUES 
+          ($1, $2, 1) 
+        ON CONFLICT 
+          (broadcast_id, appuser_id) 
+        DO UPDATE SET 
+          count = broadcast_like.count + 1
+      ) 
+      SELECT 
+        SUM(count) AS count
+      FROM 
+        broadcast_like  
+      WHERE
+        broadcast_id = $1
+      GROUP by
+        broadcast_id`;
+    const insertValues = [broadcastId, likedByUserId];
     const pool = await dbConnection.open();
-    const res = await pool.query<{
-      appuser_id: number;
-      username: string;
-      broadcast_id: number;
-      count: number;
-    }>(insertSql, insertValues);
+    const res = await pool.query<{ count: number }>(
+      insertLikeAndSelectTotalLikesCountSql,
+      insertValues,
+    );
 
     return {
-      likedByUserId: res.rows[0].appuser_id,
-      likedByUsername: res.rows[0].username,
-      broadcastId: res.rows[0].broadcast_id,
-      likeCount: res.rows[0].count,
+      likesCount: res.rows[0].count,
     };
   },
 
-  getRedisBroadcastStreamKey(userId: number, broadcastId: number) {
-    return `broadcaststream:${userId}:${broadcastId}`;
+  getRedisBroadcastStreamKey(broadcastId: number) {
+    return `stream:${broadcastId}`;
   },
 };

@@ -4,17 +4,18 @@ import { Request, Response, NextFunction } from "express";
 
 import { userService } from "../../../services/user/service";
 import { HttpError } from "../../../utils/http-error";
-import { Permissions } from "../../../types";
+import {
+  type Permissions,
+  type SanitizedUser,
+  type Broadcast,
+} from "../../../types";
 import { logger } from "../../../config/logger";
 import { COOKIE_NAME } from "../../../config/env";
-import { wsService } from "../../../services/ws";
 import { cacheService } from "../../../services/cache";
-import { SanitizedUser } from "../../../types";
 import { sanitizeUser } from "../../../models/user/sanitize-user";
 import { authnService } from "../../../services/authn";
-import { Broadcast } from "../../../types";
 import { broadcastService } from "../../../services/broadcast";
-import { push } from "../../broadcasts/push-stream";
+import { sendStreamfromBroadcaster } from "./push-stream";
 
 export const meController = {
   destroyUser: async function (
@@ -24,7 +25,6 @@ export const meController = {
   ): Promise<void> {
     try {
       const userId = req.session.authenticatedUser!.userId;
-      const userUUID = req.session.authenticatedUser!.uuid!;
 
       if (!(await userService.isUserExists({ userId }))) {
         res.status(204).end();
@@ -33,13 +33,10 @@ export const meController = {
 
       await userService.destroyUser(userId);
 
-      const wsClient = wsService.clientStore.getClient(userUUID);
-
       req.session.destroy((err) => {
         // You cannot access session here, it has already been destroyed
         if (err) logger.error(`${__filename}: ${err}`);
 
-        if (wsClient) wsClient.socket.close();
         res.clearCookie(COOKIE_NAME);
         res.status(204).end();
 
@@ -191,8 +188,6 @@ export const meController = {
       next: NextFunction,
     ): Promise<void> {
       try {
-        // TODO: fix path,s it should start with public/ or smth, see express.static()
-
         const newBroadcast = await broadcastService.create({
           userId: req.session.authenticatedUser!.userId,
           artworkUrl: path.basename(req.file!.path),
@@ -243,12 +238,15 @@ export const meController = {
     update: async function (
       req: Request<
         { broadcastId?: number },
+        Record<string, unknown>,
         {
-          title?: string;
-          description?: string;
-          isVisible?: boolean;
-          startAt?: string;
-          endAt?: string;
+          broadcast: {
+            title?: string;
+            description?: string;
+            isVisible?: boolean;
+            startAt?: string;
+            endAt?: string;
+          };
         }
       >,
       res: Response,
@@ -256,10 +254,10 @@ export const meController = {
     ): Promise<void> {
       try {
         await broadcastService.update({
+          ...req.body.broadcast,
           userId: req.session.authenticatedUser!.userId,
           broadcastId: req.params.broadcastId!,
-          ...req.body,
-          artworkUrl: req.file?.path,
+          artworkUrl: path.basename(req.file!.path),
         });
 
         res.status(204).end();
@@ -285,7 +283,7 @@ export const meController = {
     },
 
     stream: {
-      push,
+      sendStreamfromBroadcaster,
     },
   },
 };

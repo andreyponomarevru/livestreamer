@@ -138,7 +138,6 @@ meRouter.delete(
   meController.broadcasts.destroy,
 );
 
-// Send binary stream from an authenticated user
 meRouter.put(
   "/broadcasts/:broadcastId/stream",
   isAuthenticated,
@@ -159,7 +158,7 @@ meRouter.put(
       .unknown(true),
     "headers",
   ),
-  meController.broadcasts.stream.push,
+  meController.broadcasts.stream.sendStreamfromBroadcaster,
 );
 
 // User settings

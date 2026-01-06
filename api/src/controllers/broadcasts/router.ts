@@ -18,7 +18,7 @@ broadcastsRouter.get(
     Joi.object({ broadcastId: idSchema }).required().unknown(true),
     "params",
   ),
-  broadcastController.stream.pull,
+  broadcastController.stream.relayStreamToListener,
 );
 
 // Send like for a stream
