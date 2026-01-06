@@ -11,12 +11,14 @@ describe("sanitizeUser function", () => {
   const email = faker.internet.exampleEmail();
   const username = faker.internet.username();
   const password = faker.internet.password();
+  const displayName = username;
   const createdAt = faker.date.past().toISOString();
   const isEmailConfirmed = faker.datatype.boolean();
   const isDeleted = faker.datatype.boolean();
   const permissions = { broadcast: [faker.string.sample()] } as Permissions;
 
   const user: User = {
+    displayName,
     uuid,
     userId,
     email,
