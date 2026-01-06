@@ -1,6 +1,6 @@
 {
   "superadmin": {
-    "any_audio_stream": ["create", "read", "update", "delete"],
+    "own_audio_stream": ["create", "read", "update", "delete"],
     "own_broadcast": ["create", "read", "update", "delete"],
     "any_broadcast": ["create", "read", "update", "delete"],
     "own_user_account": ["read", "update"],
