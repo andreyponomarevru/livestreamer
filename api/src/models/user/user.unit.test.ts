@@ -3,13 +3,17 @@ import { faker } from "@faker-js/faker";
 import { randomUUID } from "crypto";
 import { User } from "./user";
 import { type Permissions } from "../../types";
+import { DATABASE_CONSTRAINTS } from "../../../test-helpers/helpers";
 
 describe("User class", () => {
   const uuid = randomUUID();
   const userId = faker.number.int();
   const email = faker.internet.exampleEmail();
   const username = faker.internet.username();
-  const password = faker.internet.password();
+  const password = faker.internet.password({
+    length: DATABASE_CONSTRAINTS.maxPasswordLength,
+  });
+  const displayName = username;
   const createdAt = faker.date.past().toISOString();
   const isEmailConfirmed = faker.datatype.boolean();
   const isDeleted = faker.datatype.boolean();
@@ -17,28 +21,29 @@ describe("User class", () => {
   const lastLoginAt = faker.date.past().toISOString();
 
   it("returns a new user instance", () => {
-    const USER: User = {
+    const user: User = {
       uuid,
       userId,
       email,
       username,
       password,
+      displayName,
       createdAt,
       isEmailConfirmed,
       isDeleted,
       permissions,
     };
-    const user = new User(USER);
+    const user = new User(user);
 
-    expect(user.uuid).toBe(USER.uuid);
-    expect(user.userId).toBe(USER.userId);
-    expect(user.email).toBe(USER.email);
-    expect(user.username).toBe(USER.username);
-    expect(user.password).toBe(USER.password);
-    expect(user.createdAt).toBe(USER.createdAt);
-    expect(user.isEmailConfirmed).toBe(USER.isEmailConfirmed);
-    expect(user.isDeleted).toBe(USER.isDeleted);
-    expect(user.permissions).toStrictEqual(USER.permissions);
+    expect(user.uuid).toBe(user.uuid);
+    expect(user.userId).toBe(user.userId);
+    expect(user.email).toBe(user.email);
+    expect(user.username).toBe(user.username);
+    expect(user.password).toBe(user.password);
+    expect(user.createdAt).toBe(user.createdAt);
+    expect(user.isEmailConfirmed).toBe(user.isEmailConfirmed);
+    expect(user.isDeleted).toBe(user.isDeleted);
+    expect(user.permissions).toStrictEqual(user.permissions);
   });
 
   it("sets the last login date if it is provided", () => {
@@ -48,6 +53,7 @@ describe("User class", () => {
       email,
       username,
       password,
+      displayName,
       createdAt,
       isEmailConfirmed,
       isDeleted,
@@ -66,6 +72,7 @@ describe("User class", () => {
       email,
       username,
       password,
+      displayName,
       createdAt,
       isEmailConfirmed,
       isDeleted,
