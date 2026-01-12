@@ -1,3 +1,5 @@
+import util from "util";
+
 import { logger } from "../../../src/config/logger";
 
 interface Scheduler {
@@ -27,7 +29,7 @@ class IntervalScheduler implements Scheduler {
     this.timerIds.delete(roomId);
 
     logger.debug(
-      `${__filename} WS Scheduler has been stopped.\nAll currently existing timers: ${this.timerIds}`,
+      `${__filename} WS Scheduler has been stopped.\nAll currently existing timers: ${util.inspect(this.timerIds)}`,
     );
   }
 }

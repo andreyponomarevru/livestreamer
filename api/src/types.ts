@@ -32,7 +32,7 @@ export type WSUserMsg<Data> = {
   data?: Data;
 };
 export type DeletedWSClient = {
-  broadcastId: number;
+  roomId: number;
   uuid: string;
   userId: number;
   username: string;

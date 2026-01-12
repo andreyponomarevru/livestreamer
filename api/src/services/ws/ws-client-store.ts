@@ -24,23 +24,25 @@ class WSClientStore extends EventEmitter {
   }
 
   addClient(client: WSClient): void {
-    if (!this._store.has(client.broadcastId)) {
-      this._store.set(client.broadcastId, new Map());
-    }
-    this._store.get(client.broadcastId)?.set(client.uuid, client);
+    const roomId = client.broadcastId;
 
-    this.scheduleStatsUpdates(client.broadcastId);
+    if (!this._store.has(roomId)) {
+      this._store.set(roomId, new Map());
+    }
+    this._store.get(roomId)?.set(client.uuid, client);
+
     this.emit("add_client", client);
+    this.scheduleStatsUpdates(roomId);
 
     logger.debug(
-      `${__filename} new WS client is added to broadcast ${client.broadcastId}`,
+      `${__filename} new WS client is added to room/broadcast ${roomId}`,
     );
   }
 
   closeSocket(uuid: string) {
     let found = false;
 
-    for (const [broadcastId, clientsMap] of this._store.entries()) {
+    for (const [roomId, clientsMap] of this._store.entries()) {
       if (clientsMap.has(uuid)) {
         const client = clientsMap.get(uuid);
         if (client) client.socket.close();
@@ -55,34 +57,33 @@ class WSClientStore extends EventEmitter {
     }
   }
 
-  deleteClient(uuid: string, broadcastId: number): void {
-    const room = this._store.get(broadcastId);
+  deleteClient(uuid: string, roomId: number): void {
+    const room = this._store.get(roomId);
     const client = room?.get(uuid);
+
+    room?.delete(uuid);
 
     if (client) {
       this.emit("delete_client", {
-        broadcastId,
+        roomId,
         uuid,
         userId: client.userId,
         username: client.username,
       } as DeletedWSClient);
     }
 
-    room?.delete(uuid);
-
     if (room?.size === 0) {
-      this._store.delete(broadcastId);
+      this._store.delete(roomId);
       // To avoid memory leak, when all users left the chat, delete the timer.
-      this.statsUpdatesScheduler.stop(broadcastId);
+      this.statsUpdatesScheduler.stop(roomId);
     }
 
     logger.debug(`${__filename} WS client deleted`);
   }
 
-  private scheduleStatsUpdates(broadcastId: number): void {
-    const clientsCount = this.getClientsCount(broadcastId);
-    const isRoomTimerStarted =
-      this.statsUpdatesScheduler.timerIds.get(broadcastId);
+  private scheduleStatsUpdates(roomId: number): void {
+    const clientsCount = this.getClientsCount(roomId);
+    const isRoomTimerStarted = this.statsUpdatesScheduler.timerIds.get(roomId);
 
     logger.debug(`[scheduleStatsUpdates] clientsCount: ${clientsCount}`);
     // To avoid memory leaks, start timer only once, when the very first client connects. We will reuse this timer for all other clients, instead of creating a new timer per client.
@@ -90,43 +91,46 @@ class WSClientStore extends EventEmitter {
       logger.debug("Start WS Scheduler");
 
       const emitUpdateClientCountEvent = () => {
-        this.emit("update_client_count", { broadcastId, count: clientsCount });
-        logger.debug(`[update_client_count] clientsCount: ${clientsCount}`);
+        this.emit("update_client_count", {
+          roomId,
+          count: this.getClientsCount(roomId),
+        });
+        logger.debug(
+          `[update_client_count] clientsCount: ${this.getClientsCount(roomId)}`,
+        );
       };
 
       this.statsUpdatesScheduler.start(
-        broadcastId,
+        roomId,
         STATS_MSG_TIME_INTERVAL,
         emitUpdateClientCountEvent,
       );
     }
   }
 
-  getClientsCount(broadcastId: number): number | undefined {
-    return this._store.get(broadcastId)?.size;
+  getClientsCount(roomId: number): number | undefined {
+    return this._store.get(roomId)?.size;
   }
 
-  getClientSocket(broadcastId: number, uuid: string): WebSocket | undefined {
-    return this._store.get(broadcastId)?.get(uuid)?.socket;
+  getClientSocket(roomId: number, uuid: string): WebSocket | undefined {
+    return this._store.get(roomId)?.get(uuid)?.socket;
   }
 
-  getClientsSockets(
-    broadcastId: number,
-  ): { uuid: string; socket: WebSocket }[] {
-    return Array.from(this._store.get(broadcastId) || [], ([uuid, client]) => ({
+  getClientsSockets(roomId: number): { uuid: string; socket: WebSocket }[] {
+    return Array.from(this._store.get(roomId) || [], ([uuid, client]) => ({
       uuid,
       socket: client.socket,
     }));
   }
 
-  getSanitizedClients(broadcastId: number): SanitizedWSChatClient[] {
-    return Array.from(this._store.get(broadcastId) || [], ([uuid, client]) =>
+  getSanitizedClients(roomId: number): SanitizedWSChatClient[] {
+    return Array.from(this._store.get(roomId) || [], ([uuid, client]) =>
       sanitizeWSClient(client),
     );
   }
 
-  getClient(broadcastId: number, uuid: string): WSClient | undefined {
-    return this._store.get(broadcastId)?.get(uuid);
+  getClient(roomId: number, uuid: string): WSClient | undefined {
+    return this._store.get(roomId)?.get(uuid);
   }
 }
 

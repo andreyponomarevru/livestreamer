@@ -9,12 +9,13 @@ import {
   ChatMsgUnlike,
   DeletedWSClient,
 } from "../../types";
+import { streamService } from "../stream";
 
 export function onCreateChatMsg(event: ChatMsg & { userUUID: string }): void {
   wsService.sendToAllExceptSender({
     message: { event: "chat:created_message", data: event },
     senderUUID: event.userUUID,
-    broadcastId: event.broadcastId,
+    roomId: event.broadcastId,
   });
 }
 
@@ -24,7 +25,7 @@ export function onDestroyChatMsg(
   wsService.sendToAllExceptSender({
     message: { event: "chat:deleted_message", data: event },
     senderUUID: event.userUUID,
-    broadcastId: event.broadcastId,
+    roomId: event.broadcastId,
   });
 }
 
@@ -34,7 +35,7 @@ export function onLikeChatMsg(
   wsService.sendToAllExceptSender({
     message: { event: "chat:liked_message", data: event },
     senderUUID: event.likedByUserUUID,
-    broadcastId: event.broadcastId,
+    roomId: event.broadcastId,
   });
 }
 
@@ -44,45 +45,66 @@ export function onUnlikeChatMsg(
   wsService.sendToAllExceptSender({
     message: { event: "chat:unliked_message", data: event },
     senderUUID: event.unlikedByUserUUID,
-    broadcastId: event.broadcastId,
+    roomId: event.broadcastId,
   });
 }
 
-export function onChatStart(event: WSClient) {
+export async function onChatStart(event: WSClient) {
   const clients = wsService.clientStore.getSanitizedClients(event.broadcastId);
   wsService.send({
     message: { event: "chat:client_list", data: clients },
     socket: event.socket,
   });
 
-  const count = wsService.clientStore.getClientsCount(event.broadcastId) || 0;
-
-  wsService.send<ClientCount>({
-    message: { event: "chat:client_count", data: { count } },
+  const streamState = await streamService.readBroadcastStreamState(
+    event.broadcastId,
+  );
+  wsService.send({
+    message: { event: "stream:state", data: streamState },
     socket: event.socket,
   });
 }
 
 export function onAddClient(client: WSClient): void {
   wsService.sendToAll<SanitizedWSChatClient>({
-    broadcastId: client.broadcastId,
+    roomId: client.broadcastId,
     message: { event: "chat:new_client", data: sanitizeWSClient(client) },
+  });
+
+  wsService.sendToAll<SanitizedWSChatClient>({
+    roomId: client.broadcastId,
+    message: {
+      event: "chat:client_count",
+      data: {
+        count: wsService.clientStore.getClientsCount(client.broadcastId) || 0,
+      },
+    },
   });
 }
 
 export function onDeleteClient(event: DeletedWSClient): void {
   wsService.sendToAll<DeletedWSClient>({
-    broadcastId: event.broadcastId,
+    roomId: event.roomId,
     message: { event: "chat:deleted_client", data: event },
+  });
+
+  wsService.sendToAll<SanitizedWSChatClient>({
+    roomId: event.roomId,
+    message: {
+      event: "chat:client_count",
+      data: {
+        count: wsService.clientStore.getClientsCount(event.roomId) || 0,
+      },
+    },
   });
 }
 
 export function onUpdateClientCount(event: {
-  broadcastId: number;
+  roomId: number;
   count: number;
 }): void {
   wsService.sendToAll<ClientCount>({
-    broadcastId: event.broadcastId,
+    roomId: event.roomId,
     message: { event: "chat:client_count", data: { count: event.count } },
   });
 }

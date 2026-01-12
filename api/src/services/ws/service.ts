@@ -11,7 +11,7 @@ type Message<M> = WSMsg | WSUserMsg<M>;
 type MsgToAllExceptSender<M> = {
   message: Message<M>;
   senderUUID: string;
-  broadcastId: number;
+  roomId: number;
 };
 type MsgToSingleUser<M> = {
   message: Message<M>;
@@ -19,7 +19,7 @@ type MsgToSingleUser<M> = {
 };
 type MsgToAll<M> = {
   message: WSMsg | WSUserMsg<M>;
-  broadcastId: number;
+  roomId: number;
 };
 
 export const wsService = {
@@ -31,8 +31,8 @@ export const wsService = {
     logger.debug(`[send] ${util.inspect(message)}`);
   },
 
-  sendToAll: function <M>({ message, broadcastId }: MsgToAll<M>): void {
-    const recievers = this.clientStore.getClientsSockets(broadcastId);
+  sendToAll: function <M>({ message, roomId }: MsgToAll<M>): void {
+    const recievers = this.clientStore.getClientsSockets(roomId);
 
     for (const reciever of recievers) {
       reciever.socket.send(JSON.stringify(message));
@@ -40,7 +40,7 @@ export const wsService = {
   },
 
   sendToAllExceptSender: function <M>(msg: MsgToAllExceptSender<M>): void {
-    const recievers = this.clientStore.getClientsSockets(msg.broadcastId);
+    const recievers = this.clientStore.getClientsSockets(msg.roomId);
 
     for (const reciever of recievers) {
       if (msg.senderUUID !== reciever.uuid) {
