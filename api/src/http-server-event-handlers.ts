@@ -1,16 +1,16 @@
 import { type Socket } from "net";
-import util from "util";
 import { randomUUID } from "crypto";
+import util from "util";
 
 import { type Request, type Response } from "express";
 
 import { wsServer } from "./ws-server";
-import { WSChatClient } from "./services/ws";
 import { NODE_HTTP_PORT } from "./config/env";
 import { logger } from "./config/logger";
 import { sessionParser } from "./express-app";
 import { rabbitMQConsumer } from "./config/rabbitmq/consumer";
 import { AMQP_SERVER_CONFIG, QUEUES } from "./config/rabbitmq/config";
+import { WSChatClient } from "./services/ws";
 
 export async function onServerListening(): Promise<void> {
   await rabbitMQConsumer.connection.open(AMQP_SERVER_CONFIG, [
@@ -47,56 +47,6 @@ export function onServerError(err: NodeJS.ErrnoException): void | never {
   }
 }
 
-export function handleNewWSConnection(
-  req: Request,
-  socket: Socket,
-  head: Buffer,
-) {
-  logger.debug(
-    `${__filename} onServerUpgrade > sessionParser: session ID is ${req.sessionID}`,
-  );
-  logger.debug(
-    `${__filename} onServerUpgrade > sessionParser: ${util.inspect(
-      req.session,
-    )}`,
-  );
-
-  if (req.session && req.session.authenticatedUser) {
-    logger.info(`${__filename} [upgrade] User successfully authenticated`);
-
-    const username = req.session.authenticatedUser.username;
-    const userId = req.session.authenticatedUser.userId;
-    const uuid = req.session.authenticatedUser!.uuid!;
-
-    wsServer.handleUpgrade(req, socket, head, (newSocket) => {
-      wsServer.emit(
-        "connection",
-        new WSChatClient({ uuid, userId, username, socket: newSocket }),
-      );
-    });
-  } else {
-    logger.info(`${__filename}: [upgrade] User is not authenticated.`);
-    // Add unauthenticated users to the store too, to be able to track the total number of opened connections
-    wsServer.handleUpgrade(req, socket, head, (newSocket) => {
-      const uuid = randomUUID();
-
-      wsServer.emit(
-        "connection",
-        new WSChatClient({
-          uuid,
-          username: uuid,
-          socket: newSocket,
-        }),
-      );
-    });
-
-    // Alternatively we can completely deny the access for unauthenticated users
-    // socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-    // socket.destroy();
-    // return;
-  }
-}
-
 // For an example of WebSocket authentication using express-session, refer to
 // https://github.com/websockets/ws#client-authentication (just a basic idea)
 // https://github.com/websockets/ws/blob/master/examples/express-session-parse/index.js — this is what i've based my code on
@@ -105,9 +55,69 @@ export async function onServerUpgrade(
   socket: Socket,
   head: Buffer,
 ): Promise<void> {
-  logger.debug("Parse session from request");
+  socket.on("error", onSocketError);
 
   sessionParser(req, {} as Response, () => {
-    handleNewWSConnection(req, socket, head);
+    logger.debug("Parse session from request...");
+    logger.debug(`${__filename} session ID is ${req.sessionID}`);
+    logger.debug(`${__filename} ${util.inspect(req.session)}`);
+
+    socket.removeListener("error", onSocketError);
+
+    const broadcastId = Number(req.url.slice(1));
+    const validPathRegexp = /^[1-9]\d*$/;
+    if (!validPathRegexp.test(String(broadcastId))) {
+      logger.error(`${req.url} does not match the regex`);
+
+      socket.write("HTTP/1.1 400 Bad Request\r\n\r\n");
+      socket.destroy();
+      return;
+    }
+
+    // We need the req.url to strictly match the ws server url provided in its config (which is ws://website.ru i.e. not containing any params). If we leave the url as is - with the client-provided parameters e.g. "ws://website.ru/25" - the callback of handleUpgrade will never be triggered and ws will silently reject the upgrade.
+    req.url = "/";
+
+    wsServer.handleUpgrade(req, socket, head, function (newSocket) {
+      let wsClient: WSChatClient;
+
+      if (req.session && req.session.authenticatedUser) {
+        logger.debug(`${__filename} [upgrade] User successfully authenticated`);
+
+        const username = req.session.authenticatedUser.username;
+        const userId = req.session.authenticatedUser.userId;
+        const uuid = req.session.authenticatedUser.uuid!;
+        const profilePictureUrl =
+          req.session.authenticatedUser.profilePictureUrl;
+
+        wsClient = new WSChatClient({
+          uuid,
+          userId,
+          username,
+          broadcastId,
+          profilePictureUrl,
+          socket: newSocket,
+        });
+      } else {
+        // Add unauthenticated users to the store too, to be able to track the total number of chat clients
+
+        logger.debug(`${__filename}: [upgrade] User is not authenticated.`);
+
+        const uuid = randomUUID();
+
+        wsClient = new WSChatClient({
+          uuid,
+          username: uuid,
+          broadcastId,
+          socket: newSocket,
+          profilePictureUrl: "",
+        });
+      }
+
+      wsServer.emit("connection", new WSChatClient(wsClient));
+    });
   });
+}
+
+function onSocketError(err: Error) {
+  console.error(err);
 }
