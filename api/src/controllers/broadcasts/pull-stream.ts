@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
+import { logger } from "../../config/logger";
 import { streamService } from "../../services/stream";
 import { HttpError } from "../../utils/http-error";
 
@@ -44,5 +45,5 @@ export function relayStreamToListener(
   res.on("error", cleanup);
   res.on("close", cleanup);
 
-  console.log(listeners);
+  logger.debug(listeners);
 }
