@@ -4,7 +4,6 @@ import { Request, Response, NextFunction } from "express";
 
 import { logger } from "../../../config/logger";
 import { streamService } from "../../../services/stream/service";
-import { wsService } from "../../../services/ws/service";
 import { broadcastService } from "../../../services/broadcast";
 import { HttpError } from "../../../utils/http-error";
 
@@ -50,13 +49,7 @@ export async function sendStreamfromBroadcaster(
       });
     }
 
-    await streamService.startBroadcastStream({
-      broadcastId,
-      userId,
-      listenersCount: wsService.clientStore.getClientsCount(
-        broadcast.broadcastId,
-      ),
-    });
+    await streamService.startBroadcastStream({ broadcastId, userId });
 
     logger.debug("Starting push stream from broadcaster to server...");
 
