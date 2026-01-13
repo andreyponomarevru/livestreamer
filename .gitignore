@@ -1,5 +1,6 @@
 session-cookie
-recordings
+recordings/
+uploads/
 
 _source/
 *.env
