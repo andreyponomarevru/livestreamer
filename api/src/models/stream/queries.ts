@@ -26,13 +26,14 @@ export const streamRepo = {
 
   read: async function (broadcastId: number): Promise<BroadcastStream> {
     const client = await redisConnection.open();
+
     const broadcast = await client.HGETALL(
       this.getRedisBroadcastStreamKey(broadcastId),
     );
 
     return {
       userId: Number(broadcast.userId),
-      broadcastId: Number(broadcast.id),
+      broadcastId: broadcastId,
       listenerPeakCount: Number(broadcast.listenerPeakCount),
       likeCount: Number(broadcast.likeCount),
     };
