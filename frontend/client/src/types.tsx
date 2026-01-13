@@ -15,6 +15,7 @@ export type Credentials = {
   username?: string;
   email?: string;
 };
+export type UserSettings = { username: string };
 
 //
 // API
@@ -33,16 +34,17 @@ export type Permissions = {
 export type APIError = { status: number; moreInfo: string; message: string };
 
 export interface ChatMsg {
-  id: number;
+  messageId: number;
+  broadcastId: number;
   userId: number;
+  userUUID: string;
   username: string;
   createdAt: string;
   message: string;
   likedByUserId: number[];
-  userUUID: string;
 }
 export type ScheduledBroadcast = {
-  id: number;
+  broadcastId: number;
   title: string;
   startAt: string;
   endAt: string;
@@ -60,7 +62,7 @@ export type Broadcast = {
 };
 export type User = {
   uuid?: string;
-  id: number;
+  userId: number;
   email: string;
   username: string;
   permissions: Permissions;
@@ -68,9 +70,10 @@ export type User = {
   lastLoginAt?: string | null;
   isEmailConfirmed?: boolean;
   isDeleted?: boolean;
+  profilePictureUrl: string;
 };
 export interface BroadcastDraft {
-  id: number;
+  broadcastId: number;
   title: string;
   startAt: string;
   listenerPeakCount: number;
@@ -98,8 +101,8 @@ export type NewChatMsg = { userId: number; message: string };
 export type BroadcastState = {
   isOnline: boolean;
   broadcast?: {
+    broadcastId: number;
     likeCount: number;
-    id: number;
     title: string;
     startAt: string;
     listenerPeakCount: number;
@@ -110,17 +113,11 @@ export type BroadcastState = {
 // Web Socket
 //
 
-export interface WSClient {
-  readonly uuid: string;
-  readonly id?: number;
-  readonly username: string;
-  readonly socket: WebSocket;
-  sanitized: { uuid: string; username: string };
-}
-export type SanitizedWSChatClient = { uuid: string; username: string };
-export type AppState = { isStreamPaused: boolean };
-export type WebSocketUUID = { uuid: string };
-export type UnauthenticatedWSClient = { id: string; socket: WebSocket };
+export type SanitizedWSChatClient = {
+  broadcastId: number;
+  uuid: string;
+  username: string;
+};
 export type WSUserMsg<Data> = {
   event: string;
   clientUUID: string;
@@ -180,10 +177,10 @@ export type StreamLikeMsg = { event: "stream:like"; data: SavedBroadcastLike };
 
 //
 
-export type WSMsgEvent = WSMsg["event"];
+export type WSMsgEventName = WSMsg["event"];
 export type WSMsgPayload = WSMsg["data"];
 export type DispatchEvent = {
   socket: WebSocket;
-  event: WSMsgEvent;
+  event: WSMsgEventName;
   msg: WSMsgPayload;
 };
