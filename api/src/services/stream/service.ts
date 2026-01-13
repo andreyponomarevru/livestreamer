@@ -29,17 +29,22 @@ export const streamService = {
   startBroadcastStream: async function ({
     broadcastId,
     userId,
-    listenersCount,
   }: {
     broadcastId: number;
     userId: number;
-    listenersCount: number | undefined;
   }): Promise<void> {
     const broadcast = await broadcastRepo.readForUser(userId, broadcastId);
     if (!broadcast) return;
-    const broadcastStream = await streamRepo.read(broadcastId);
 
-    this.events.start({ ...broadcast, ...broadcastStream, listenersCount });
+    const newStream = {
+      userId: broadcast.userId,
+      broadcastId: broadcast.broadcastId,
+      likeCount: broadcast.likeCount,
+      listenerPeakCount: broadcast.listenerPeakCount,
+    };
+
+    await streamRepo.create(newStream);
+    this.events.start(newStream);
   },
 
   endBroadcastStream: async function (
