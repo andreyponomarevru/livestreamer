@@ -57,16 +57,16 @@ export const streamService = {
   },
 
   updateListenerPeakCount: async function ({
-    broadcastId,
+    roomId,
     count,
   }: {
-    broadcastId: number;
+    roomId: number;
     count: number;
   }): Promise<void> {
-    const oldPeakCount = await streamRepo.readListenerPeakCount(broadcastId);
+    const oldPeakCount = await streamRepo.readListenerPeakCount(roomId);
     if (count > oldPeakCount) {
-      await streamRepo.updateListenerPeakCount(broadcastId, count);
-      this.events.newListenersPeak({ broadcastId, count: count });
+      await streamRepo.updateListenerPeakCount(roomId, count);
+      this.events.newListenersPeak({ broadcastId: roomId, count: count });
     }
   },
 
