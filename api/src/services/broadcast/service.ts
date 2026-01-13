@@ -71,7 +71,7 @@ export const broadcastService = {
   }) {
     // TODO: check that the updated broadcast doesn't overlap in time (schedule) with any existing one. If there is overlapping, return a sensible error to be able to print in UI. dateFns.areIntervalsOverlapping(...) or do it in SQL: SELECT (start1, end1) OVERLAPS (start2, end2);
 
-    return await broadcastRepo.update(updatedBroadcast);
+    await broadcastRepo.update(updatedBroadcast);
   },
 
   destroy: async function (userId: number, broadcastId: number) {
