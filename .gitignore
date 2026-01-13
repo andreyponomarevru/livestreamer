@@ -26,6 +26,7 @@ coverage/
 volume_postgresql-data/
 rabbitmq_log/
 rabbitmq_data/
+.dev/
 
 !.gitignore
 !.gitattributes
