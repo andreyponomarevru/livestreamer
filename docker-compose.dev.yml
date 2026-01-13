@@ -28,12 +28,18 @@ services:
       - ./api/docker/.api.dev.env
       - ./postgres/docker/.postgres.env
       - ./rabbitmq/docker/.rabbitmq.env
+    user: "1000:1000"
     volumes:
       # Recompile code on changes
       - ./api:/home/node
       # Set the container timezone to the time zone of host machine
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+      # These paths should match the ones set in .api.common.env
+      # IMPORTANTS When deploying the app, manually run chown -R 777 uploads, otherwise noone will be able to upload files.
+      - /home/node/uploads/profile-pics
+      - /home/node/uploads/broadcast-artworks
+      - /home/node/uploads/misc
     depends_on:
       - postgres
       - redis

@@ -32,6 +32,11 @@ services:
       # set the container timezone to the time zone of host machine
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+      # These paths should match the ones set in .api.common.env
+      # IMPORTANTS When deploying the app, manually run chown -R 777 uploads, otherwise noone will be able to upload files.
+      - /home/node/uploads/profile-pics
+      - /home/node/uploads/broadcast-artworks
+      - /home/node/uploads/misc
     depends_on:
       - postgres
       - redis
