@@ -29,7 +29,7 @@ export function getRTKQueryErr(err: unknown): string {
 }
 
 export async function handleResponseErr(
-  err: Response
+  err: Response,
 ): Promise<APIError | Error> {
   const contentType = err.headers.get("content-type");
 
@@ -49,7 +49,7 @@ interface HasPermission {
 
 export function hasPermission(
   checkPermission: HasPermission,
-  user?: User | null
+  user?: User | null,
 ): boolean {
   const isAuthenticated = !!user;
   const hasPermission = !!(
@@ -71,12 +71,12 @@ export type ParsedResponse<T> = {
   body: T | null;
 };
 
+// TODO get rid of this function
+
 export async function parseResponse<T>(
-  response: Response
+  response: Response,
 ): Promise<ParsedResponse<T>> {
   const contentType = response.headers.get("content-type");
-
-  // console.log("[parseResponse] ", response);
 
   if (contentType && contentType.indexOf("application/json") !== -1) {
     if (response.ok) {
@@ -93,6 +93,21 @@ export async function parseResponse<T>(
   }
 }
 
-export function sortMessages(a: ChatMsg, b: ChatMsg): number {
-  return a.id - b.id;
+export function sortMessages(
+  a: Pick<ChatMsg, "createdAt">,
+  b: Pick<ChatMsg, "createdAt">,
+): number {
+  return a.createdAt.localeCompare(b.createdAt);
+}
+
+export function generatePath(
+  routePattern: string,
+  params: Record<string, unknown>,
+) {
+  let url = routePattern;
+  for (const key in params) {
+    url = url.replace(`:${key}`, String(params[key]));
+  }
+
+  return url;
 }
