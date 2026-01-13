@@ -24,7 +24,7 @@
   echo "*** vm_memory_high_watermark set to $VM_MEMORY_HIGH_WATERMARK ***" ; \
   echo "*** Virtual Host '$RABBITMQ_VHOST1' created. ***" ; \
   echo "*** User '$RABBITMQ_USER' with password '$RABBITMQ_PASSWORD' created. ***" ; \
-  echo "*** Log in the WebUI at port 15672 (example: http:/localhost:15672) ***"\
+  echo "*** Log in the WebUI at port 15672 (example: http://localhost:15672) ***"\
 
 ) &
 # $@ is used to pass arguments to the rabbitmq-server command.
