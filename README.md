@@ -120,21 +120,37 @@ To authenticate to the application server, the client uses regular cookie authen
 
 This command-line app requires two environment variables containing your username and password: `BROADCASTER_USERNAME` and `BROADCASTER_PASSWORD`.
 
-### How to use
+### How to use (Linux)
 
-1. First, log in to the application server: `node build/index.js login:prod`
-2. Now you can start broadcasting audio. Issue the following command:
+Short explanation:
 
+1. Sign up to the app
+2. Set up env vars in your OS with username and password
+3. Using the streaming-client CLI-app:
    ```shell
-   node build/index.js stream:prod
-
-   # You can pass additional 'save' option to write the stream to disk while you're streaming:
-   node build/index.js stream:prod save
+   yarn run login:prod
+   yarn run schedule:prod
+   yarn run stream:prod
    ```
 
-3. After the stream is finished, log out: `node build/index.js logout:prod`
+Full explanation:
 
-   If you have passed the `save` option in step 2, you will find the `.wav` file of the recorded stream in the `recordings` directory.
+1. Go to the website and sign up to the app at `https://livestreamer.andreyponomarev.ru`
+2. Set up two env vars in OS, with username and password you've used for the app signup above
+3. Sign in to the application server: `node build/index.js login:prod`
+4. Schedule the broadcast. The best way to do this is via the web app at `https://livestreamer.andreyponomarev.ru`. After scheduling a stream you will see a link to it in the format `https://livestreamer.andreyponomarev.ru/users/me/broadcasts/x`, where x is your broadcast id. You will need to pass it as argument in the next step.
+
+   **NOTE** Alternatively you can schedule the stream via the command line by issuing `yarn run schedule:prod`. This will schedule a new stream to be broadcasted _immediately_ (you can edit and update it later via web app if you want). In response you will get the url in the format `/users/me/broadcasts/x`, where `x` is your broadcast id
+
+5. Now you can start streaming. Issue the following command passing it the broadcast id: `yarn run stream:prod x`, where `x` is your scheduled broadcast id.
+
+   The audio of the stream will be automatically saved locally.
+
+   **WARNING** If you will attempt to start streaming at the time which does not match the scheduled broadcast time range, you will recieve the error response.
+
+6. (optional) After the stream is finished, log out: `yarn run logout:prod`
+
+   You will find the `.wav` file of the recorded stream in the `recordings` directory of this command-line app.
 
 # How it works
 
