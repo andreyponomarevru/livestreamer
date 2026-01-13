@@ -30,7 +30,7 @@ wsService.clientStore.on("delete_client", onDeleteClient);
 wsService.clientStore.on("update_client_count", onUpdateClientCount);
 wsService.clientStore.on(
   "update_client_count",
-  streamService.updateListenerPeakCount,
+  streamService.updateListenerPeakCount.bind(streamService),
 );
 streamService.events.on("start", onStreamStart);
 streamService.events.on("end", onStreamEnd);
