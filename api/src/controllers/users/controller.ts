@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from "express";
+
 import { userService } from "../../services/user/service";
 import { HttpError } from "../../utils/http-error";
 import { CustomRequest } from "../../types";
-import { logger } from "../../config/logger";
-import { cacheService } from "../../services/cache";
 import { SanitizedUser } from "../../types";
 import { sanitizeUser } from "../../models/user/sanitize-user";
 import { Broadcast } from "../../types";
@@ -56,19 +55,10 @@ export const userController = {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const cacheKey = `user_id_${req.params.username}`;
-      const cachedData = await cacheService.get(cacheKey);
-      if (cachedData) {
-        logger.debug(`${__filename} Got cached data`);
-        res.status(200).json(cachedData as { results: SanitizedUser });
-        return;
-      }
-
       const user = await userService.readUser({
         username: req.params.username!,
       });
       const sanitizedUser = user ? sanitizeUser(user) : null;
-      await cacheService.saveWithTTL(cacheKey, { results: sanitizedUser }, 300);
 
       res.status(200).json({ results: sanitizedUser });
     } catch (err) {
