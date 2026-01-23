@@ -1,26 +1,15 @@
 export const RESOURCES = [
-  "user_own_account",
-  "all_user_accounts",
-  "user_own_settings",
-  "user_own_bookmarks",
-  "broadcast",
-  "all_broadcasts",
-  "broadcast_draft",
-  "all_broadcast_drafts",
-  "scheduled_broadcast",
+  "own_user_account",
+  "any_user_account",
+  "own_broadcast",
+  "any_broadcast",
   "stream_like",
-  "audio_stream",
-  "user_own_chat_message",
+  "own_audio_stream",
+  "own_chat_message",
   "any_chat_message",
 ] as const;
 
-export const PERMISSIONS = [
-  "create",
-  "read",
-  "update",
-  "delete",
-  "update_partially",
-] as const;
+export const PERMISSIONS = ["create", "read", "update", "delete"] as const;
 
 export const PATHS = {
   root: "/",
@@ -33,10 +22,9 @@ export const PATHS = {
   confirmRegistration: "/confirm-registration",
 
   public: {
-    root: "/username",
-    streams: "/username/streams",
-    about: "/username/about",
-    listen: "/username/listen",
+    streams: "/:username/streams",
+    about: "/:username/about",
+    listen: "/:username/broadcasts/:broadcastId",
   },
 
   private: {

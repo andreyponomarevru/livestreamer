@@ -34,7 +34,7 @@ export const ROUTES: RouteObject[] = [
             element: (
               <ProtectedRoute
                 requiresPermission={{
-                  resource: "broadcast_draft",
+                  resource: "own_broadcast",
                   action: "read",
                 }}
               >
@@ -95,8 +95,15 @@ export const ROUTES: RouteObject[] = [
         element: <ChildLayout2 />,
         children: [
           { path: PATHS.public.about, element: <AboutPage /> },
-          { index: true, path: PATHS.public.streams, element: <StreamsPage /> },
-          { path: PATHS.public.listen, element: <ListenPage /> },
+          {
+            index: true,
+            path: PATHS.public.streams,
+            element: <StreamsPage />,
+          },
+          {
+            path: PATHS.public.listen,
+            element: <ListenPage />,
+          },
         ],
       },
     ],
