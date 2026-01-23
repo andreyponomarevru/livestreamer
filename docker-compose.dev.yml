@@ -9,10 +9,15 @@ services:
       target: development
     restart: on-failure
     healthcheck:
-      test: "curl --fail http://localhost:5000"
-      interval: 5s
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail http://localhost:8080/api/v1/health || exit 1",
+        ]
+      interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
     init: true
     tty: true
     ports:
@@ -35,11 +40,10 @@ services:
       # Set the container timezone to the time zone of host machine
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-      # These paths should match the ones set in .api.common.env
+      # These paths should match those set in .api.common.env
       # IMPORTANTS When deploying the app, manually run chown -R 777 uploads, otherwise noone will be able to upload files.
-      - /home/node/uploads/profile-pics
-      - /home/node/uploads/broadcast-artworks
-      - /home/node/uploads/misc
+      - ./api/uploads/profile-pics:/home/node/uploads/profile-pics
+      - ./uploads/broadcasts:/home/node/uploads/broadcasts
     depends_on:
       - postgres
       - redis
@@ -59,7 +63,11 @@ services:
       # This var is required to run the healthcheck 'test' command
       PGUSER: "postgres"
     healthcheck:
-      test: "pg_isready --user $$POSTGRES_USER --databse $$POSTGRES_DB"
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready --username=$$POSTGRES_USER --dbname=$$POSTGRES_DB",
+        ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -99,10 +107,11 @@ services:
       dockerfile: ./docker/Dockerfile
     restart: on-failure
     healthcheck:
-      test: "curl --fail http://localhost:15672"
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_port_connectivity"]
       interval: 30s
       timeout: 10s
       retries: 5
+      start_period: 15s
     init: true
     ports:
       # Message broker itself:
