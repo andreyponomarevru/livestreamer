@@ -12,4 +12,5 @@ export const apiRouter = express
   .use("/users", usersRouter)
   .use("/sessions", sessionRouter)
   .use("/verification", verificationRouter)
-  .use("/admin", adminRouter);
+  .use("/admin", adminRouter)
+  .use("/health", (req, res) => res.status(200).send("OK"));
