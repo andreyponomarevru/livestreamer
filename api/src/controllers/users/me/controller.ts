@@ -55,20 +55,11 @@ export const meController = {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const cacheKey = `user_id_${req.session.authenticatedUser!.userId}`;
-      const cachedData = await cacheService.get(cacheKey);
-      if (cachedData) {
-        logger.debug(`${__filename} Got cached data`);
-        res.status(200).json(cachedData as { results: SanitizedUser });
-        return;
-      }
-
       const user = await userService.readUser({
         userId: req.session.authenticatedUser!.userId,
       });
 
       const sanitizedUser = user ? sanitizeUser(user) : null;
-      await cacheService.saveWithTTL(cacheKey, { results: sanitizedUser }, 300);
 
       res.status(200).json({ results: sanitizedUser });
     } catch (err) {
