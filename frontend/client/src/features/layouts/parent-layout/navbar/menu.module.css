@@ -115,6 +115,7 @@
   width: 100%;
   height: auto;
   max-width: 38px;
+  border-radius: 50%;
 
   fill: var(--color_charcoal-30);
 }
