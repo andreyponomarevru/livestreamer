@@ -76,7 +76,7 @@ export const userService = {
       profilePictureUrl:
         user.profilePictureUrl === ""
           ? USER_PIC_PLACEHOLDER_PATH
-          : path.resolve(UPLOADED_PROFILE_PICS_IMG_DIR, user.profilePictureUrl),
+          : path.join(UPLOADED_PROFILE_PICS_IMG_DIR, user.profilePictureUrl),
     };
   },
 
