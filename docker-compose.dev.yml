@@ -43,7 +43,7 @@ services:
       # These paths should match those set in .api.common.env
       # IMPORTANTS When deploying the app, manually run chown -R 777 uploads, otherwise noone will be able to upload files.
       - ./api/uploads/profile-pics:/home/node/uploads/profile-pics
-      - ./uploads/broadcasts:/home/node/uploads/broadcasts
+      - ./api/uploads/broadcasts:/home/node/uploads/broadcasts
     depends_on:
       - postgres
       - redis
