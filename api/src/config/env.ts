@@ -19,6 +19,8 @@ export const SHOULD_SET_SECURE_SESSION_COOKIE =
 export const SHOULD_TRUST_PROXY_SECURE_SESSION_COOKIE =
   process.env.SHOULD_TRUST_PROXY_SECURE_SESSION_COOKIE === "true";
 export const API_URL_PREFIX = process.env.API_URL_PREFIX || uninit;
+export const EXPRESS_SESSION_COOKIE_SAMESITE =
+  process.env.EXPRESS_SESSION_COOKIE_SAMESITE === "true";
 
 // WebSocket Server
 

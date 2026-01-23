@@ -9,6 +9,7 @@ import {
   EXPRESS_SESSION_COOKIE_MAXAGE,
   SHOULD_TRUST_PROXY_SECURE_SESSION_COOKIE,
   REDIS_URI,
+  EXPRESS_SESSION_COOKIE_SAMESITE,
 } from "./env";
 
 export type RedisClient = Awaited<ReturnType<typeof redisConnection.open>>;
@@ -41,7 +42,7 @@ export const sessionConfig = {
   proxy: SHOULD_TRUST_PROXY_SECURE_SESSION_COOKIE,
   cookie: {
     httpOnly: true,
-    sameSite: true,
+    sameSite: EXPRESS_SESSION_COOKIE_SAMESITE,
     maxAge: EXPRESS_SESSION_COOKIE_MAXAGE,
     secure: SHOULD_SET_SECURE_SESSION_COOKIE,
   },
