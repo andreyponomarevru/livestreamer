@@ -1,9 +1,12 @@
 import React from "react";
 import { NavLink } from "react-router";
 
-import { hasPermission } from "../../../../utils";
+import { generatePath, hasPermission } from "../../../../utils";
 import { useAppSelector } from "../../../../hooks/redux-ts-helpers";
-import { selectCurrentUserProfile, useSignOutMutation } from "../../../auth";
+import {
+  selectCurrentUserProfile,
+  useSignOutMutation,
+} from "../../../current-user";
 import {
   HiOutlineLogout,
   FaCircleUser,
@@ -14,6 +17,7 @@ import { PATHS } from "../../../../config/constants";
 
 import styles from "./menu.module.css";
 import type { User } from "../../../../types";
+import { API_ROOT_URL } from "../../../../config/env";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   user: User | null;
@@ -23,6 +27,10 @@ export function Menu(props: Props) {
   const user = useAppSelector(selectCurrentUserProfile);
   const [signOut] = useSignOutMutation();
 
+  const listenUrl = generatePath(PATHS.public.listen, {
+    username: user?.username,
+  });
+
   async function handleSignOut() {
     try {
       await signOut().unwrap();
@@ -31,17 +39,21 @@ export function Menu(props: Props) {
     }
   }
 
+  if (!user) return null;
+
+  const profilePictureUrl =
+    new URL(API_ROOT_URL).origin + "/" + user.profilePictureUrl;
+
   return (
     <ul className={`${styles["menu"]} ${props.className || ""}`}>
       <li
         className={`${styles["menu__item"]} ${styles["menu__user-box"]} ${styles["menu__item"]}`}
       >
-        {(user as any).avatar || (
-          <FaCircleUser className={styles["menu__avatar"]} />
-        )}
+        <img src={profilePictureUrl} className={styles["menu__avatar"]} />
+
         <div className={styles["menu__user-meta-box"]}>
           <p className={styles["menu__username"]}>{props.user?.username}</p>
-          <a className={styles["menu__tip-link"]} href={PATHS.public.listen}>
+          <a className={styles["menu__tip-link"]} href={listenUrl}>
             Open profile
           </a>
         </div>
@@ -71,7 +83,7 @@ export function Menu(props: Props) {
       </li>
 
       {hasPermission(
-        { resource: "all_user_accounts", action: "read" },
+        { resource: "any_user_account", action: "read" },
         user,
       ) && (
         <>
