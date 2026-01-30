@@ -1,9 +1,9 @@
 import * as React from "react";
 
-import { UserDetails } from "../../features/moderation/users/components/user-details-component";
+import { UserDetails } from "../../features/admin/users/components/user-details-component";
 import { Loader } from "../../features/ui/loader/loader-component";
 import { Message } from "../../features/ui/message/message-component";
-import { useGetUsersQuery } from "../../features/moderation/users/users-slice";
+import { useGetUsersQuery } from "../../features/admin/admin-slice";
 import { Page } from "../../features/ui/page/page-component";
 
 export function UsersPage(): React.ReactElement {
@@ -15,7 +15,7 @@ export function UsersPage(): React.ReactElement {
 
       {isLoading && <Loader />}
       {isError && <Message type="warning">{String(error)}</Message>}
-      {users?.map((user) => <UserDetails {...user} key={user.id} />)}
+      {users?.map((user) => <UserDetails {...user} key={user.userId} />)}
     </Page>
   );
 }
