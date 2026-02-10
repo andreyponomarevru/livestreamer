@@ -8,6 +8,7 @@ import {
   type Permissions,
   type SanitizedUser,
   type Broadcast,
+  SortedBroadcasts,
 } from "../../../types";
 import { logger } from "../../../config/logger";
 import { COOKIE_NAME } from "../../../config/env";
@@ -201,7 +202,8 @@ export const meController = {
         Record<string, unknown>,
         { time?: "past" | "current" | "future"; is_visible?: boolean }
       >,
-      res: Response<{ results: Broadcast[] }>,
+      res: Response<{ results: SortedBroadcasts }>,
+
       next: NextFunction,
     ): Promise<void> {
       try {
@@ -209,7 +211,7 @@ export const meController = {
         const cachedData = await cacheService.get(cacheKey);
         if (cachedData) {
           logger.debug(`${__filename} Got cached data`);
-          res.status(200).json(cachedData as { results: Broadcast[] });
+          res.status(200).json(cachedData as { results: SortedBroadcasts });
           return;
         }
 

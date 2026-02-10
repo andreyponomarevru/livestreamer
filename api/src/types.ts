@@ -133,6 +133,11 @@ export type Broadcast = NewBroadcast & {
   broadcastId: number;
   likeCount: number;
 };
+export type SortedBroadcasts = {
+  past: Broadcast[];
+  current: Broadcast[];
+  future: Broadcast[];
+};
 export interface BroadcastUpdate {
   userId: number;
   broadcastId: number;

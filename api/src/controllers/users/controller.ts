@@ -2,10 +2,9 @@ import { Request, Response, NextFunction } from "express";
 
 import { userService } from "../../services/user/service";
 import { HttpError } from "../../utils/http-error";
-import { CustomRequest } from "../../types";
+import { CustomRequest, SortedBroadcasts } from "../../types";
 import { SanitizedUser } from "../../types";
 import { sanitizeUser } from "../../models/user/sanitize-user";
-import { Broadcast } from "../../types";
 import { broadcastService } from "../../services/broadcast";
 
 export const userController = {
@@ -73,7 +72,7 @@ export const userController = {
       Record<string, unknown>,
       { time?: "past" | "current" | "future" }
     >,
-    res: Response<{ results: Broadcast[] }>,
+    res: Response<{ results: SortedBroadcasts }>,
     next: NextFunction,
   ): Promise<void> {
     try {

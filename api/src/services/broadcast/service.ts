@@ -4,7 +4,7 @@ import dateFns from "date-fns";
 
 import { UPLOADED_BROADCAST_ARTWORKS_IMG_DIR } from "../../config/env";
 import { broadcastRepo } from "../../models/broadcast/queries";
-import { Broadcast, BroadcastFilters } from "../../types";
+import { Broadcast, BroadcastFilters, SortedBroadcasts } from "../../types";
 
 export const broadcastService = {
   create: async function (newBroadcast: {
@@ -45,18 +45,31 @@ export const broadcastService = {
   readAllForUser: async function (
     user: { userId?: number; username?: string },
     filters?: BroadcastFilters,
-  ): Promise<Broadcast[]> {
+  ): Promise<SortedBroadcasts> {
     const broadcasts = await broadcastRepo.readAll(user, filters);
 
-    return broadcasts.map((b) => {
+    const broadcastsWithArtworks = broadcasts.map((b) => {
       return {
         ...b,
-        artworkUrl: path.resolve(
+        artworkUrl: path.join(
           UPLOADED_BROADCAST_ARTWORKS_IMG_DIR,
           b.artworkUrl,
         ),
       };
     });
+
+    const past: Broadcast[] = [];
+    const current: Broadcast[] = [];
+    const future: Broadcast[] = [];
+
+    const now = new Date();
+    broadcastsWithArtworks.forEach((broadcast) => {
+      if (dateFns.isAfter(broadcast.startAt, now)) future.push(broadcast);
+      else if (dateFns.isBefore(broadcast.endAt, now)) past.push(broadcast);
+      else current.push(broadcast);
+    });
+
+    return { past, current, future };
   },
 
   update: async function (updatedBroadcast: {
