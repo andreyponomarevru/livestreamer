@@ -108,11 +108,11 @@ export const broadcastRepo = {
       WHERE 
         ( appuser_id = $1 OR username = $2 ) AND 
         
-        /* If is NULL, return ALL records, ignoring is_visible */
+        /* If NULL, return ALL records, ignoring is_visible */
         ( $3::boolean IS NULL OR is_visible = $3::boolean ) AND 
         
         (
-          /* Return all records if null */
+          /* If NULL, return ALL records */
           ( $4::text ) IS NULL OR
           ( $4::text = 'future'  AND CURRENT_TIMESTAMP < end_at ) OR
           ( $4::text = 'past'    AND CURRENT_TIMESTAMP > end_at ) OR
