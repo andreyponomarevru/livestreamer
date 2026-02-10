@@ -1,3 +1,5 @@
+import path from "path";
+
 import { describe, it, beforeAll, afterAll, expect } from "@jest/globals";
 import request from "supertest";
 import setCookie from "set-cookie-parser";
@@ -22,7 +24,7 @@ const sessionCookieResponse = [
   {
     name: "sess.sid",
     httpOnly: true,
-    sameSite: "Strict",
+    // sameSite: "Strict" // commented out because this is set only in prod env
     path: "/",
     value: expect.any(String),
     expires: expect.any(Date),
@@ -78,6 +80,10 @@ describe(ROUTE, () => {
           })
           .expect(200);
 
+        console.log("=====================================================");
+        console.log(setCookie.parse(response.headers["set-cookie"]));
+        console.log("=====================================================");
+
         expect(setCookie.parse(response.headers["set-cookie"])).toStrictEqual(
           sessionCookieResponse,
         );
@@ -106,7 +112,10 @@ describe(ROUTE, () => {
               email: testUser.email,
               displayName: testUser.displayName,
               isEmailConfirmed: testUser.isEmailConfirmed,
-              profilePictureUrl: PROFILE_IMG_PATH + testUser.profilePictureUrl,
+              profilePictureUrl: path.join(
+                PROFILE_IMG_PATH,
+                testUser.profilePictureUrl,
+              ),
               about: testUser.about,
               createdAt: expect.any(String),
               lastLoginAt: expect.any(String),
@@ -144,7 +153,10 @@ describe(ROUTE, () => {
               email: testUser.email,
               displayName: testUser.displayName,
               isEmailConfirmed: testUser.isEmailConfirmed,
-              profilePictureUrl: testUser.profilePictureUrl,
+              profilePictureUrl: path.join(
+                PROFILE_IMG_PATH,
+                testUser.profilePictureUrl,
+              ),
               about: testUser.about,
               createdAt: expect.any(String),
               lastLoginAt: expect.any(String),
