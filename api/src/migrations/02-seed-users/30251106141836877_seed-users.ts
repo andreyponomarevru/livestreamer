@@ -31,7 +31,7 @@ let superadminUser: User = {
   displayName: process.env.HAL_USERNAME || "",
   websiteUrl: "http://test-url-a.ru",
   about: "A few lines about myself",
-  profilePictureUrl: "/mnt/d587g587ewrfv/profile-pics/1.jpg",
+  profilePictureUrl: "1.jpg",
 };
 let streamerUser: User = {
   roleName: "streamer",
@@ -43,7 +43,7 @@ let streamerUser: User = {
   displayName: process.env.ANDREYPONOMAREV_USERNAME || "",
   websiteUrl: "http://test-url-b.ru",
   about: "A few more lines about myself",
-  profilePictureUrl: "/mnt/d587g587ewrfv/profile-pics/2.jpg",
+  profilePictureUrl: "2.jpg",
 };
 
 async function seedUser(

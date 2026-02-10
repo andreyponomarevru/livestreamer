@@ -7,6 +7,9 @@ import { httpServer } from "../src/http-server";
 import { API_URL_PREFIX } from "../src/config/env";
 import { NewChatMsg, ReadMsgDBResponse, type NewBroadcast } from "../src/types";
 
+export const PROFILE_IMG_PATH = "uploads/profile-pics/";
+export const BROADCAST_IMG_PATH = "uploads/broadcasts/";
+
 export const DATABASE_CONSTRAINTS = {
   maxUsernameLength: 16,
   maxPasswordLength: 50,
@@ -36,12 +39,12 @@ export const newUser = {
     .substring(0, DATABASE_CONSTRAINTS.maxDisplayName),
   isEmailConfirmed: true,
   isDeleted: false,
-  profilePictureUrl: faker.system.filePath(),
+  profilePictureUrl: PROFILE_IMG_PATH + "ava.jpg",
   about: faker.lorem.paragraphs(),
 };
 
 export const newBroadcast = {
-  artworkUrl: faker.internet.url(),
+  artworkUrl: BROADCAST_IMG_PATH + "artwork.jpg",
   description: faker.lorem.paragraphs(),
   listenerPeakCount: faker.number.int({ min: 0, max: 10000 }),
   title: faker.book
