@@ -39,7 +39,7 @@ describe(ROUTE, () => {
           .substring(0, DATABASE_CONSTRAINTS.maxDisplayName),
         isEmailConfirmed: true,
         isDeleted: false,
-        profilePictureUrl: faker.system.filePath(),
+        profilePictureUrl: faker.system.fileName(),
         about: faker.lorem.paragraphs(),
       };
 
@@ -60,7 +60,7 @@ describe(ROUTE, () => {
             email: testUser.email,
             displayName: testUser.displayName,
             isEmailConfirmed: testUser.isEmailConfirmed,
-            profilePictureUrl: testUser.profilePictureUrl,
+            profilePictureUrl: `uploads/profile-pics/${testUser.profilePictureUrl}`,
             about: testUser.about,
             createdAt: expect.any(String),
             lastLoginAt: null,

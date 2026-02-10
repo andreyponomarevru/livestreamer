@@ -16,6 +16,7 @@ import request from "supertest";
 import { API_URL_PREFIX } from "../../../src/config/env";
 import { httpServer } from "../../../src/http-server";
 import {
+  BROADCAST_IMG_PATH,
   createBroadcast,
   createUser,
   DATABASE_CONSTRAINTS,
@@ -60,7 +61,7 @@ beforeEach(async () => {
 describe(ROUTE, () => {
   describe("GET - get all existing broadcasts for the authenticated user", () => {
     describe("200", () => {
-      it("responds with a list of all broadcasts", async () => {
+      it("responds with a list of sorted broadcasts", async () => {
         const totalBroadcasts = 5;
         for (let i = 0; i < totalBroadcasts; i++) {
           const from = faker.date.anytime();
@@ -89,12 +90,19 @@ describe(ROUTE, () => {
           .expect(200);
 
         const response = await agent.get(ROUTE).expect(200);
-        expect(response.body).toStrictEqual({ results: expect.any(Array) });
-        expect(response.body?.results).toHaveLength(totalBroadcasts);
+        expect(response.body).toStrictEqual({
+          results: {
+            past: expect.any(Array),
+            current: expect.any(Array),
+            future: expect.any(Array),
+          },
+        });
       });
 
+      it.todo("sorts broadcasts into three groups: past, current and future");
+
       it("sets the broadcast artworkUrl field in reponse relative to API upload dir", async () => {
-        const from = faker.date.anytime();
+        const from = faker.date.future();
         const to = dateFns.addHours(from, 3);
         const [startAt, endAt] = faker.date.betweens({ from, to, count: 2 });
         const broadcast = {
@@ -119,11 +127,10 @@ describe(ROUTE, () => {
           .expect(200);
 
         const response = await agent.get(ROUTE).expect(200);
-        expect(response.body).toEqual({ results: expect.any(Array) });
-        expect(response.body.results).toHaveLength(1);
-        expect(response.body.results[0]).toHaveProperty("artworkUrl");
-        expect(response.body.results[0].artworkUrl).toMatch(
-          "/uploads/broadcasts/",
+        expect(response.body.results.future).toHaveLength(1);
+        expect(response.body.results.future[0]).toHaveProperty("artworkUrl");
+        expect(response.body.results.future[0].artworkUrl).toMatch(
+          BROADCAST_IMG_PATH,
         );
       });
     });

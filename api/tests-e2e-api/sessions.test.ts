@@ -9,6 +9,7 @@ import {
   MORE_INFO,
   DATABASE_CONSTRAINTS,
   RESPONSE_401,
+  PROFILE_IMG_PATH,
 } from "../test-helpers/helpers";
 import { signIn } from "../test-helpers/helpers";
 import { API_URL_PREFIX } from "../src/config/env";
@@ -57,7 +58,7 @@ describe(ROUTE, () => {
       .substring(0, DATABASE_CONSTRAINTS.maxDisplayName),
     isEmailConfirmed: true,
     isDeleted: false,
-    profilePictureUrl: faker.system.filePath(),
+    profilePictureUrl: faker.system.fileName(),
     about: faker.lorem.paragraphs(),
   };
 
@@ -105,7 +106,7 @@ describe(ROUTE, () => {
               email: testUser.email,
               displayName: testUser.displayName,
               isEmailConfirmed: testUser.isEmailConfirmed,
-              profilePictureUrl: testUser.profilePictureUrl,
+              profilePictureUrl: PROFILE_IMG_PATH + testUser.profilePictureUrl,
               about: testUser.about,
               createdAt: expect.any(String),
               lastLoginAt: expect.any(String),
@@ -353,7 +354,8 @@ describe(ROUTE, () => {
         await request(httpServer)
           .delete(ROUTE)
           .set("Cookie", `${sessionCookie.name}=${sessionCookie.value}`)
-          .expect(204);
+          .expect(204)
+          .catch(console.error);
 
         const sessionsAfterSignOut = await redisClient.keys(sessionKeyPattern);
         expect(sessionsAfterSignOut.length).toBe(0);

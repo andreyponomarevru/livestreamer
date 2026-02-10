@@ -1,5 +1,8 @@
+import path from "path";
+
 import { dbConnection } from "../../../src/config/postgres";
 import { authnService } from "../../../src/services/authn";
+import { PROFILE_IMG_PATH } from "../../helpers";
 
 // USERS USED ONLY FOR TESTING
 
@@ -29,7 +32,7 @@ let superadminUser: User = {
   displayName: process.env.HAL_USERNAME || "",
   websiteUrl: "http://test.ru",
   about: "A few words",
-  profilePictureUrl: "/home/ava.jpg",
+  profilePictureUrl: path.join(PROFILE_IMG_PATH, "/ava.jpg"),
   subscriptionName: "unlimited",
 };
 let broadcasterUser: User = {
@@ -42,7 +45,7 @@ let broadcasterUser: User = {
   displayName: process.env.ANDREYPONOMAREV_USERNAME || "",
   websiteUrl: "http://test2.ru",
   about: "A few words more",
-  profilePictureUrl: "/home/ava2.jpg",
+  profilePictureUrl: path.join(PROFILE_IMG_PATH, "ava2.jpg"),
   subscriptionName: "basic",
 };
 

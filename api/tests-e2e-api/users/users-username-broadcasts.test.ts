@@ -12,6 +12,7 @@ import * as dateFns from "date-fns";
 
 import { httpServer } from "../../src/http-server";
 import {
+  BROADCAST_IMG_PATH,
   createBroadcast,
   createUser,
   DATABASE_CONSTRAINTS,
@@ -65,7 +66,7 @@ describe(ROUTE, () => {
     isVisible: true,
     startAt: startAt.toISOString(),
     endAt: endAt.toISOString(),
-    artworkUrl: faker.system.filePath(),
+    artworkUrl: faker.system.fileName(),
     description: faker.lorem.paragraphs(),
     listenerPeakCount: faker.number.int({ min: 0, max: 10000 }),
   };
@@ -84,20 +85,24 @@ describe(ROUTE, () => {
           .expect(200);
 
         expect(response.body).toStrictEqual({
-          results: [
-            {
-              broadcastId: expect.any(Number),
-              title: broadcast.title,
-              startAt: broadcast.startAt,
-              endAt: broadcast.endAt,
-              artworkUrl: broadcast.artworkUrl,
-              description: broadcast.description,
-              listenerPeakCount: broadcast.listenerPeakCount,
-              isVisible: broadcast.isVisible,
-              likeCount: 0,
-              userId: testUserId,
-            },
-          ],
+          results: {
+            past: [],
+            current: [],
+            future: [
+              {
+                broadcastId: expect.any(Number),
+                title: broadcast.title,
+                startAt: broadcast.startAt,
+                endAt: broadcast.endAt,
+                artworkUrl: BROADCAST_IMG_PATH + broadcast.artworkUrl,
+                description: broadcast.description,
+                listenerPeakCount: broadcast.listenerPeakCount,
+                isVisible: broadcast.isVisible,
+                likeCount: 0,
+                userId: testUserId,
+              },
+            ],
+          },
         });
       });
 

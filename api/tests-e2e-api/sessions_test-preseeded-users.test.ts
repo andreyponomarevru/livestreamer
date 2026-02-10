@@ -1,3 +1,5 @@
+import path from "path";
+
 import { describe, it, beforeAll, afterAll, expect } from "@jest/globals";
 import request from "supertest";
 
@@ -7,6 +9,7 @@ import {
 } from "../test-helpers/jest-hooks/utils/user";
 import { httpServer } from "../src/http-server";
 import { API_URL_PREFIX } from "../src/config/env";
+import { PROFILE_IMG_PATH } from "../test-helpers/helpers";
 
 const ROUTE = `${API_URL_PREFIX}/sessions`;
 
@@ -56,12 +59,14 @@ describe(`${ROUTE} (for the pre-seeded user with the role superadmin)`, () => {
             createdAt: expect.any(String),
             lastLoginAt: expect.any(String),
             isEmailConfirmed: superadminUser.isEmailConfirmed,
-            profilePictureUrl: superadminUser.profilePictureUrl,
+            profilePictureUrl: path.join(
+              PROFILE_IMG_PATH + superadminUser.profilePictureUrl,
+            ),
             websiteUrl: superadminUser.websiteUrl,
             subscriptionName: superadminUser.subscriptionName,
             about: superadminUser.about,
             permissions: {
-              any_audio_stream: ["create", "delete", "read", "update"],
+              own_audio_stream: ["create", "delete", "read", "update"],
               own_broadcast: ["create", "delete", "read", "update"],
               any_broadcast: ["create", "delete", "read", "update"],
               own_user_account: ["read", "update"],
@@ -100,7 +105,10 @@ describe("/sessions (for the pre-seeded user with the role streamer)", () => {
             isEmailConfirmed: broadcasterUser.isEmailConfirmed,
             displayName: broadcasterUser.displayName,
             websiteUrl: broadcasterUser.websiteUrl,
-            profilePictureUrl: broadcasterUser.profilePictureUrl,
+            profilePictureUrl: path.join(
+              PROFILE_IMG_PATH,
+              broadcasterUser.profilePictureUrl,
+            ),
             subscriptionName: broadcasterUser.subscriptionName,
             permissions: {
               own_audio_stream: ["create", "delete", "read", "update"],
