@@ -55,6 +55,53 @@ Here's a quick overview of features implemented in application server's API:
 - cursor pagination
 - chat (over HTTP + WebSocket)
 
+Available endpoints:
+
+```http
+Broadcasts
+
+   GET /broadcasts/:broadcastId/stream
+   PUT /broadcasts/:broadcastId/stream/likes
+   GET /broadcasts/:broadcastId/messages
+  POST /broadcasts/:broadcastId/messages
+DELETE /broadcasts/:broadcastId/messages/:messageId
+  POST /broadcasts/:broadcastId/messages/:messageId/likes
+DELETE /broadcasts/:broadcastId/messages/:messageId/likes
+
+Users
+
+  POST /users
+   GET /users/:username
+   GET /users/:username/broadcasts
+   GET /users/me
+ PATCH /users/me
+DELETE /users/me
+   GET /users/me/broadcasts
+  POST /users/me/broadcasts
+ PATCH /users/me/broadcasts/:broadcastId
+DELETE /users/me/broadcasts/:broadcastId
+   PUT /users/me/broadcasts/:broadcastId/stream
+ PATCH /users/me/settings/password
+
+Sessions
+
+  POST /sessions
+DELETE /sessions
+
+Verification
+
+  POST /verification
+
+Admin
+
+DELETE /admin/broadcasts/:broadcastId/messages/:messageId
+   GET /admin/users
+
+Health
+
+   GET /health
+```
+
 ### Database (`/postgres` dir)
 
 Application main database, PostgreSQL.
