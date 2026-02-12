@@ -11,6 +11,7 @@
   color: white;
   text-transform: uppercase;
   letter-spacing: 0.05rem;
+  line-height: 1.7;
 }
 
 .stream-status-badge_online {
@@ -24,4 +25,5 @@
 .stream-status-badge__icon {
   height: 1.5rem;
   width: auto;
+  line-height: 1.4;
 }
