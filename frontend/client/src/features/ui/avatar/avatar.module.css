@@ -1,0 +1,7 @@
+.avatar {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+
+  fill: var(--color_charcoal-30);
+}

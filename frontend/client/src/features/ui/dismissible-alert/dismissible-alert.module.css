@@ -1,0 +1,8 @@
+.dismissible-alert {
+  display: grid;
+  align-items: flex-start;
+}
+
+.dismissible-alert__btn {
+  justify-self: flex-end;
+}

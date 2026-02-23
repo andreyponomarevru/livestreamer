@@ -1,0 +1,26 @@
+.empty-placeholder {
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: var(--spacing_sm);
+  justify-self: center;
+  align-self: center;
+  align-items: center;
+
+  width: 100%;
+  padding: var(--spacing_l) 0;
+
+  text-align: center;
+  color: var(--color_charcoal-50);
+}
+
+.empty-placeholder__icon {
+  height: auto;
+  width: 8rem;
+
+  fill: var(--color_charcoal-30);
+}
+
+.empty-placeholder__text-l {
+  font-size: var(--font-size_l);
+  font-weight: 600;
+}

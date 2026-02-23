@@ -1,8 +1,12 @@
 .message {
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: var(--spacing_sm);
+  align-items: flex-start;
+
   border-radius: var(--border_radius_xxl);
   padding: var(--spacing_sm) var(--spacing_m);
   border-radius: var(--border_radius_m);
-  margin: var(--spacing_sm) var(--spacing_sm);
   padding: var(--spacing_sm);
 
   font-size: var(--font-size_root);

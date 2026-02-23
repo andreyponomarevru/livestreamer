@@ -8,12 +8,14 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 
 export function Popup(props: Props) {
   return (
-    <div
-      className={`${styles["popup"]} ${
-        props.isOpen ? styles["popup_open"] : ""
-      } ${props.className}`}
-    >
-      {props.children}
-    </div>
+    props.isOpen && (
+      <div
+        className={`${styles["popup"]} ${
+          styles["popup_open"]
+        } ${props.className}`}
+      >
+        {props.children}
+      </div>
+    )
   );
 }

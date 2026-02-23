@@ -6,6 +6,7 @@ import { type CommonProps } from "./common-props";
 interface Props extends CommonProps, React.HTMLAttributes<HTMLSpanElement> {
   handleClick?: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
   name?: string;
+  theme?: "primary" | "secondary" | "tertiary" | "quaternary";
 }
 
 export function Btn(props: Props): React.ReactElement {

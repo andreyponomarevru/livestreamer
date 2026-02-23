@@ -2,7 +2,7 @@
   position: absolute;
   top: 4rem;
   right: var(--spacing_xs);
-  z-index: var(--zindex-dropdown);
+  z-index: var(--zindex-popover);
 
   display: none;
 
