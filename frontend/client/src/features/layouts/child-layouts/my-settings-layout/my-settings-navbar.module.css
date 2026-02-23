@@ -1,0 +1,57 @@
+.my-settings-navbar {
+  overflow-x: auto;
+
+  list-style-type: none;
+  display: flex;
+  flex-flow: row nowrap;
+  column-gap: var(--spacing_sm);
+  align-items: center;
+  justify-content: center;
+}
+
+/* 
+ * Link 
+ */
+
+.my-settings-navbar__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: var(--spacing_xs);
+
+  border-radius: 1rem;
+  background-color: none;
+
+  line-height: 1.5;
+
+  transition: background-color 0.15s linear;
+}
+.my-settings-navbar__link:not(:first-child),
+.my-settings-navbar__link:not(:last-child) {
+  padding: 0.2rem 0.7rem 0.3rem 0.7rem;
+}
+.my-settings-navbar__link:link {
+  color: var(--color_black-80);
+}
+.my-settings-navbar__link:visited {
+  color: var(--color_black-80);
+}
+.my-settings-navbar__link:hover {
+  background-color: var(--color_charcoal-10);
+  color: var(--color_black-80);
+}
+.my-settings-navbar__link:active {
+  color: var(--color_black-80);
+}
+.my-settings-navbar__link:focus {
+  color: var(--color_black-80);
+}
+
+.my-settings-navbar__link_active,
+.my-settings-navbar__link_active:visited {
+  pointer-events: none;
+
+  font-weight: 600;
+
+  background-color: var(--color_charcoal-10);
+}

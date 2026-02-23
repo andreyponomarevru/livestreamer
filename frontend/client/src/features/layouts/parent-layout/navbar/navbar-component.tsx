@@ -1,87 +1,88 @@
 import React from "react";
-import { Link, useLocation } from "react-router";
+import { useLocation, useParams } from "react-router";
 
-import { FaCircleUser, RxHamburgerMenu, IoClose } from "../../../ui/icons";
+import { RxHamburgerMenu, IoClose } from "../../../ui/icons";
 import { Menu } from "./menu-component";
-import { useAppSelector } from "../../../../hooks/redux-ts-helpers";
-import { AuthToggle, selectCurrentUserProfile } from "../../../auth";
-import { Logo } from "./logo";
+import { AuthToggle } from "../../../auth";
 import { PATHS } from "../../../../config/constants";
 import { Popup } from "../../../ui/popup/popup-component";
+import { useGetMeQuery } from "../../../auth";
+import { Avatar, Loader } from "../../../ui";
+import { API_ROOT_URL } from "../../../../config/env";
+import { useGetUserProfileQuery } from "../../../public-profile";
+import { Logo } from "./logo-component";
 
 import styles from "./navbar.module.css";
 
 const displayWhiteLocations = [
   "/",
-  PATHS.private.settings.profile,
-  PATHS.private.settings.account,
-  PATHS.private.settings.notifications,
-  PATHS.private.adminDashboard,
-  PATHS.private.streams,
+  PATHS.protected.mySettingsIndex,
+  PATHS.protected.myAccountSettings,
+  PATHS.protected.adminDashboard,
 ];
 
 export function Navbar(
   props: React.HTMLAttributes<HTMLElement>,
 ): React.ReactElement {
-  const location = useLocation();
-  const user = useAppSelector(selectCurrentUserProfile);
+  const { pathname } = useLocation();
+  const isMeRoute = pathname.startsWith("/me");
+
+  const { username: usernameFromParams } = useParams();
+
+  const { data: user } = useGetUserProfileQuery(
+    { username: usernameFromParams! },
+    { skip: isMeRoute },
+  );
+
+  const { data: me, isLoading: isMeLoading } = useGetMeQuery();
+
+  // Popup
 
   const [isPopupMenuOpen, setIsPopupMenuOpen] = React.useState(false);
   function toggleMenu() {
     setIsPopupMenuOpen((isOpen) => !isOpen);
+    console.log("isPopupMenuOpen: ", isPopupMenuOpen);
   }
-
   React.useEffect(() => {
     setIsPopupMenuOpen(false);
-  }, [location]);
-
-  const authedUser = "Chillout Aggregator";
-
-  const isDarkState = displayWhiteLocations.some(
-    (path) => path === location.pathname,
-  );
+  }, [pathname]);
 
   return (
     <nav
-      className={`${styles["navbar"]} ${isDarkState ? styles["navbar_light"] : styles["navbar_dark"]} ${props.className || ""}`}
+      className={`${styles["navbar"]} ${styles["navbar_dark"]} ${props.className || ""}`}
     >
       <div className={styles["navbar__wrapper"]}>
-        {isDarkState ? (
-          <Link to="/" className={styles["navbar__logo"]}>
-            <Logo />
-          </Link>
+        {!user?.displayName && !me?.displayName ? (
+          <Logo className={styles["navbar__logo"]} />
         ) : (
-          <Link
-            to={user ? PATHS.private.settings.profile : PATHS.signIn}
-            className={styles["navbar__user"]}
-          >
-            <FaCircleUser
-              color="white"
-              className={styles["navbar__user-profile-icon"]}
+          <div className={styles["navbar__user"]}>
+            <Avatar
+              apiRootUrl={API_ROOT_URL}
+              imgUrl={me?.profilePictureUrl || user?.profilePictureUrl}
+              className={styles["navbar__avatar"]}
             />
-            {authedUser}
-          </Link>
+            {user?.displayName || me?.displayName}
+          </div>
         )}
 
-        <nav className={styles["navbar__nested-nav"]}>
-          <button onClick={toggleMenu} className={styles["navbar__btn"]}>
-            {isPopupMenuOpen ? (
-              <IoClose
-                color={isDarkState ? "var(--color_charcoal-100)" : "white"}
-                className={styles["navbar__menu-icon"]}
-              />
-            ) : (
-              <RxHamburgerMenu
-                color={isDarkState ? "var(--color_charcoal-100)" : "white"}
-                className={styles["navbar__menu-icon"]}
-              />
-            )}
-          </button>
-        </nav>
+        <button onClick={toggleMenu} className={styles["navbar__btn"]}>
+          {isPopupMenuOpen ? (
+            <IoClose color="white" className={styles["navbar__menu-icon"]} />
+          ) : (
+            <RxHamburgerMenu
+              color="white"
+              className={styles["navbar__menu-icon"]}
+            />
+          )}
+        </button>
 
-        <Popup isOpen={isPopupMenuOpen} className={styles["navbar__popup"]}>
-          {user ? (
-            <Menu user={user} className={styles["navbar__menu"]} />
+        <Popup
+          isOpen={isPopupMenuOpen}
+          className={`${styles["navbar__popup"]} ${me ? "" : styles["navbar__auth-box"]}`}
+        >
+          {isMeLoading && <Loader />}
+          {me ? (
+            <Menu user={me} className={styles["navbar__menu"]} />
           ) : (
             <AuthToggle />
           )}

@@ -1,6 +1,7 @@
 .navbar {
   position: fixed;
   z-index: var(--zindex-fixed);
+  z-index: var(-zindex-popover);
   top: 0;
   left: 0;
   right: 0;
@@ -10,6 +11,19 @@
 
   border-radius: 0;
   padding: var(--spacing_xs) 0;
+}
+
+.navbar__logo {
+  fill: white;
+  height: 100%;
+  width: auto;
+  padding: 0.5rem;
+}
+
+.navbar__auth-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .navbar__wrapper {
@@ -36,15 +50,19 @@
   background-color: var(--color_charcoal-100);
 }
 
-.navbar_light {
-  color: var(--color_charcoal-100);
-  background-color: white;
-}
-
 .navbar__user {
   display: flex;
   column-gap: 0.5rem;
   color: white;
+  align-items: center;
+  column-gap: var(--spacing_sm);
+  height: 100%;
+  width: auto;
+}
+
+.navbar__avatar {
+  height: 100%;
+  max-height: 2rem;
 }
 
 .navbar__btn {
@@ -52,6 +70,8 @@
   padding: var(--spacing_xs);
   margin: 0;
   background-color: transparent;
+
+  grid-area: MenuBtn;
 }
 
 .navbar__btn:focus {
@@ -74,30 +94,15 @@
   width: auto;
 }
 
-.navbar__logo {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 30px;
-  text-decoration: none;
-  padding-left: 12px;
-}
-.navbar__logo svg {
-  fill: var(--color_charcoal-100);
-  height: 85%;
-}
-@media (max-width: 500px) {
-  .navbar__logo svg {
-    height: 75%;
-  }
-}
-
 .navbar__menu {
   margin: var(--spacing_sm) var(--spacing_m) var(--spacing_m) var(--spacing_m);
+  max-width: 100%;
 }
 
 @media (max-width: 500px) {
   .navbar__popup {
+    display: flex;
+
     width: 100%;
     height: 100vh;
     top: var(--spacing_l);

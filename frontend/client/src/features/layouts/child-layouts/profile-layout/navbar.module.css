@@ -1,7 +1,6 @@
 .navbar {
-  z-index: 0;
-
-  display: inline-flex;
+  display: flex;
+  flex-wrap: nowrap;
   column-gap: var(--spacing_xs);
   align-items: flex-start;
 
@@ -16,7 +15,8 @@
     position: fixed;
     top: var(--navbar-h);
     height: 5rem;
-    z-index: var(--zindex-fixed);
+    width: 100%;
+    overflow-x: auto;
 
     padding-top: 0;
     overflow-x: auto;

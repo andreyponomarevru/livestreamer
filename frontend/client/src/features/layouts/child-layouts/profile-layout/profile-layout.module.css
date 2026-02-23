@@ -1,4 +1,4 @@
-.child-layout-2 {
+.profile-layout {
   display: flex;
   justify-content: center;
   align-items: stretch;
@@ -8,7 +8,7 @@
   height: 100%;
 }
 
-.child-layout-2__content {
+.profile-layout__content {
   position: relative;
   /* to cut the not rounded corners of nested containers : */
   overflow: hidden;
@@ -19,24 +19,24 @@
   margin-top: var(--spacing_xl);
 }
 @media (max-width: 620px) {
-  .child-layout-2__content {
+  .profile-layout__content {
     margin-top: var(--spacing_xxl);
 
     border-radius: 0;
   }
 }
 
-.child-layout-2__body {
+.profile-layout__body {
   overflow: hidden;
   position: relative;
-  z-index: calc(var(--zindex-fixed) + 1);
+  z-index: 1000;
 
   border-radius: var(--border_radius_xxl);
 
   transform: translate(0, -1.9rem);
 }
 @media (max-width: 620px) {
-  .child-layout-2__body {
+  .profile-layout__body {
     margin-bottom: 0.5rem;
     border-radius: var(--border_radius_xxl) var(--border_radius_xxl) 0 0;
 
