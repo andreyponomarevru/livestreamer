@@ -14,28 +14,29 @@ type Props = RouteProps & {
   children: React.ReactNode;
 };
 
-export function ProtectedRoute(props: Props): React.ReactElement {
+export function ProtectedRoute({
+  requiresPermission,
+  children,
+}: Props): React.ReactElement {
   const user = useAppSelector(selectCurrentUserProfile);
-  const isAuthenticated = !!user;
+  const isAuthenticated = Boolean(user);
 
   if (!isAuthenticated) {
-    return <Navigate to={PATHS.signIn} />;
+    console.error("Error: not authenticated. Redirect to sign in page");
+    return <Navigate to={PATHS.signIn} replace />;
   }
 
-  if (!props.requiresPermission) {
-    return <React.Fragment>{props.children}</React.Fragment>;
+  if (requiresPermission) {
+    const { resource, action } = requiresPermission;
+    const isAuthorized = user?.permissions[resource]?.includes(action);
+
+    if (!isAuthorized) {
+      console.error(
+        `Error: not authorized. User lacks permission for ${action} on ${resource}`,
+      );
+      return <Navigate to={PATHS.root} replace />;
+    }
   }
 
-  if (props.requiresPermission) {
-    const isAuthorized = user?.permissions[
-      props.requiresPermission.resource
-    ]?.includes(props.requiresPermission.action);
-    return isAuthorized ? (
-      <React.Fragment>{props.children}</React.Fragment>
-    ) : (
-      <Navigate to={PATHS.root} replace />
-    );
-  }
-
-  return <Navigate to={PATHS.root} />;
+  return <>{children}</>;
 }
